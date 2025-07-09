@@ -23,7 +23,7 @@ A clean, responsive travel planning application similar to Wanderlog, built with
 1. Clone the repository
 
 ```bash
-git clone <your-repo-url>
+git clone https://github.com/masina1/web-traveling.git
 cd web-traveling
 ```
 
