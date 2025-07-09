@@ -1,0 +1,15 @@
+---
+description: Map integration behavior and sync logic
+globs:
+  - "**/components/map/**"
+alwaysApply: true
+---
+
+- Use Mapbox GL JS or Google Maps JS API.
+- Pins are color-coded per day and numbered by insertion order.
+- Dragging a pin between days automatically updates its color.
+- Suggestions appear as gray pins near the first added destination of the day.
+- Clicking a map pin:
+  - Opens a bottom panel with name, description, image.
+  - Scrolls and highlights the corresponding item in the itinerary list.
+- Clicking an itinerary item scrolls the map to that pin and highlights it.

@@ -1,0 +1,245 @@
+
+🌍 Overview (PO Vision)
+Suggested or added locations must include an accurate address to ensure clarity when navigating to that destination. This avoids confusion at the time of travel and ensures the location shown in the itinerary and map is the precise one the user expects.
+The goal is to create a clean, responsive web application similar to Wanderlog, but simplified. The focus is on helping users:
+Log in securely
+Create and organize multi-day trips
+Add detailed destinations with time blocks
+View destinations on an interactive, color-coded map
+Get suggestions (with images) based on destination
+💡 Feature Set (User-Facing Stories & Details)
+🔑 Authentication
+Users can register/login/logout using email + password
+Redirect to dashboard after login
+🛍️ Trip Management
+Only authenticated users can view their own trips
+Trips are private by default
+Users can explicitly share a trip with others (read-only link)
+If a user makes a trip public, anyone can view it in read-only mode
+Create a new trip with name, start/end date, and notes
+View a list of trips on the dashboard
+Click a trip to go to its itinerary
+🌐 Destination Planner
+Location input uses autocomplete (e.g., typing “team labs” shows “TeamLabs Planets”, “TeamLabs Borderless”, etc.) with up to 5 intelligent suggestions
+Users can also add destinations without assigning them to a day or time — only the location name is required
+These freeform destinations will appear in a separate section or as part of a flexible list
+For each day, add/edit/remove destinations
+Each destination includes:
+Location name (with autocomplete)
+Start time / End time (HH:MM)
+Notes
+Destinations auto-sort by time
+Notes
+📍 Map Integration
+Map shows all trip destinations as pins
+Pins are:
+Numbered in order (1, 2, 3…)
+Color-coded by day (consistent visual grouping)
+Clicking a pin highlights the itinerary item and opens a bottom pane in the right panel with:
+Destination name
+Description/notes
+Image preview (if available)
+Clicking an itinerary item zooms to the map pin
+Pins are:
+Clicking a pin highlights the itinerary item
+🔍 Suggestions Panel
+Based on destination, show relevant places:
+Food, Attractions, Landmarks
+Each suggestion includes:
+Image (from Unsplash or Google Places)
+Name, category, brief description
+➕ Add button to include it in itinerary
+UI toggle for List vs Compact view
+📎 Optional
+Export trip to PDF or shareable link
+Drag to reorder destinations within a day
+🎨 Visual Layout (UI Expectations)
+Split View Design (Desktop):
+Left Panel (45%)
+Itinerary by days (collapsible sections)
+Destinations with times and notes
+Suggestions section (below itinerary)
+Toggle: List View / Compact View
+Right Panel (55%)
+Interactive map with:
+Pins numbered in order of visit (shown both on the map and in the itinerary list, with matching color codes based on the day)
+Color-coded by day (e.g., Day 1 = Purple, Day 2 = Blue)
+Route lines connecting pins
+Clicking a list item centers/highlights the pin
+Clicking a pin scrolls/highlights the list item
+Mobile View:
+Stacked view
+Tabs or swipeable sections: Itinerary / Map / Suggestions
+⚖️ Technical Build Plan (Developer Reference)
+Stack Recommendation
+🚜 Step-by-Step Dev Tasks
+1. Project Setup
+Initialize Git repo
+Create folders: /frontend, /backend, /assets
+Add README, .env.example
+2. Auth Flow
+Email/password auth with Firebase/Auth0
+Redirect to /dashboard upon login
+Protect routes
+3. Trip Dashboard
+List user’s trips
+➕ New trip modal
+Link to edit/view trip
+4. Trip Itinerary Page
+45/55 layout split
+Day sections on left
+Map component on right
+State shared across both
+5. Destination CRUD
+Add destination with: location, time, notes
+Store in DB by trip & day
+Auto-sort destinations
+6. Map Integration
+Display markers with sequence & color
+Draw route line (optional)
+List/map sync behavior
+7. Suggestion Engine
+Fetch Google Places / Unsplash data
+Render card grid or compact list
+➕ Add to itinerary
+8. UI Polish
+Tailwind for spacing/colors/rounded elements
+Responsive mobile-first design
+9. Local Setup (Windows)
+Node.js / Firebase CLI / Git required
+Run with npm run dev locally
+Provide .env with API keys
+10. Deployment (Later)
+Use Vercel or Firebase Hosting for production
+Updated Feature Roadmap
+✅ MVP (v1.0)
+- Auth (Login/Register)
+- Create trip (title, dates, location)
+- Add destinations per day
+- Autocomplete with address
+- Per-day itinerary with time (optional)
+- Map with pins, color-coded by day
+- Map/list sync (click → scroll/zoom)
+- Suggestions shown under each day
+- Local setup (Windows)
+🔜 v1.1 – Enhanced Usability
+- Freeform destinations (no time)
+- Suggestions show popular places if no destinations exist
+- Suggestions based on first pin location (gray pins)
+- Suggestions always appear below the day section
+- Drag-and-drop destinations (no confirmation)
+- Public trip view (read-only link)
+🔮 Future (v2.0 and beyond)
+- Export to PDF
+- Change history log: “Who moved/added what”
+- Route optimization (walkable flow)
+- Offline support
+- Save favorite locations
+User Flow Scenarios
+📌 6. User Starts a Trip Without Adding Any Destinations
+- Creates trip: “Trip to Kyoto” → selects country/city.
+- Sees empty day sections for July 3–5.
+- Below Day 1 section, system shows: 'Popular places in Kyoto' (Fushimi Inari, Gion, etc.)
+- User adds “Fushimi Inari” as first stop → pin appears.
+- Suggestions update: nearby temples, shrines, cafes.
+🧑‍🤝‍🧑 7. Shared Trip, Team Planning
+- PO shares a public read-only trip link with team.
+- Team sees: Itinerary view (non-editable), Pins and notes, Change history (v2.0 feature)
+- Later: team wants editable collaboration (not MVP yet).
+🧠 8. User Edits a Freeform Destination Into a Timed One
+- User adds “Shinjuku Gyoen” without time.
+- Appears in “Ungrouped” section.
+- Later, clicks “Add time” → enters 14:00–16:00.
+- Destination is moved to the correct day list (sorted by time).
+- Pin updates number, color stays the same.
+🧲 9. User Views Suggestions After Adding First Pin
+- User adds “Akihabara” to Day 2 at 10:00.
+- Gray suggestion pins appear on the map.
+- Suggestion section under Day 2 now shows: “Don Quijote,” “Gachapon Hall,” “Kanda Shrine”
+- User clicks “Add” on 2 places → they're inserted in order.
+- Gray pin becomes colored and numbered.
+Product Specification: Simple Trip Planner Web App
+✅ Summary for Developer
+Everything should work locally on Windows using localhost:3000
+Follow visual and functional expectations closely
+Prioritize map + itinerary sync, color-coded logic, and suggestion usability
+Expect feedback iterations after first MVP build
+🧾 API & Service Notes
+🔹 Google Maps/Places API offers $200/month in free usage. This is sufficient for most MVP and personal use cases. A billing account is required to activate APIs, but you won’t be charged unless you exceed limits.
+🔹 Firebase Spark Plan is free for small-scale apps:
+- 10k monthly logins
+- 50k Firestore reads/day
+- 10GB hosting bandwidth/month
+- No card required unless upgrading to Blaze Plan
+
+
+Component & Style Notes
+- Design should be clean and modern, but lightweight.
+- Use rounded buttons with bold text for primary actions.
+- Apply soft shadows on cards and interactive elements.
+- Suggestion cards include: image, title, category, and an “Add” button.
+- Use consistent spacing and margin/padding to ensure readability.
+- Use 24-hour format for time inputs.
+
+
+Permissions & Collaboration Logic
+- Trips can be shared via a unique link.
+- Anyone with the link can view or edit the shared trip.
+- No owner/admin distinction needed at this stage.
+- All shared users can add/edit/remove destinations equally.
+- Potential for role control in future if delete/archive becomes sensitive.
+
+
+Data Model Overview
+Trip
+
+{
+  "id": "trip_001",
+  "userId": "user_abc",
+  "name": "Japan Summer 2025",
+  "location": "Tokyo, Japan",
+  "startDate": "2025-07-01",
+  "endDate": "2025-07-05",
+  "isPublic": false
+}
+
+Destination
+
+{
+  "id": "dest_001",
+  "tripId": "trip_001",
+  "locationName": "Shibuya Sky",
+  "address": "Shibuya City, Tokyo, Japan",
+  "lat": 35.6595,
+  "lng": 139.7005,
+  "day": 1,
+  "startTime": "14:00",
+  "endTime": "15:30",
+  "notes": "Buy tickets in advance"
+}
+
+User
+
+{
+  "id": "user_abc",
+  "email": "user@example.com",
+  "displayName": "Alice",
+  "sharedTrips": ["trip_001"]
+}
+
+
+
+Trip Lifecycle Summary
+1. User creates a new trip by entering name, dates, and destination.
+2. App generates day sections based on selected date range.
+3. User adds destinations to one or more days.
+4. Pins appear on the map and are color-coded by day.
+5. Suggestions are shown automatically based on the location.
+6. Trip can be shared with others or exported later.
+
+
+Mobile Behavior Notes
+- On mobile, the itinerary (left panel) takes the full screen by default.
+- A toggle button allows opening/closing the itinerary view.
+- The map is not persistently visible but can be opened as a full-screen overlay.
+- Design must prioritize tap accuracy and simplified navigation.

@@ -1,0 +1,15 @@
+---
+description: Project setup and dev environment rules
+globs:
+  - "**/*"
+alwaysApply: true
+---
+
+- Use TypeScript in strict mode.
+- Project uses Next.js with App Router (not Pages Router).
+- Structure all components by feature (`/components/map/`, `/components/trip/`, etc).
+- Store environment variables in `.env.local` using the `.env.example` template.
+- Run project locally with:
+  ```bash
+  npm install && npm run dev
+  ```

@@ -1,0 +1,33 @@
+---
+description: Data model structure for trips and destinations
+globs:
+  - "**/types/**"
+alwaysApply: true
+---
+
+Use these types for frontend/backend:
+
+```ts
+type Trip = {
+  id: string;
+  userId: string;
+  name: string;
+  location: string;
+  startDate: string;
+  endDate: string;
+  isPublic: boolean;
+};
+
+type Destination = {
+  id: string;
+  tripId: string;
+  locationName: string;
+  address: string;
+  lat: number;
+  lng: number;
+  day: number;
+  startTime?: string;
+  endTime?: string;
+  notes?: string;
+};
+```

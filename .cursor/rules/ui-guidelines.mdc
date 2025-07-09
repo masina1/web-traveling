@@ -1,0 +1,16 @@
+---
+description: UI component structure and behavior for Trip Planner
+globs:
+  - "**/components/**"
+alwaysApply: true
+---
+
+- Use TailwindCSS for all component styling.
+- Buttons should be rounded (`rounded-xl`) with clear contrast and padding (`px-4 py-2`).
+- Suggestion cards must include: image, title, type label, and an `Add` button.
+- Time fields use 24-hour format (e.g., "14:30").
+- Itinerary layout uses a 45%/55% split (left: list, right: map).
+- On mobile:
+  - Left itinerary panel fills the screen.
+  - Toggle opens/closes the panel.
+  - Map can be viewed in full-screen modal.
