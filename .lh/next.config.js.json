@@ -1,0 +1,18 @@
+{
+    "sourceFile": "next.config.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752433004299,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752433004299,
+            "name": "Commit-0",
+            "content": "/** @type {import('next').NextConfig} */\r\nconst nextConfig = {\r\n  typescript: {\r\n    ignoreBuildErrors: false,\r\n  },\r\n  images: {\r\n    remotePatterns: [\r\n      {\r\n        protocol: 'https',\r\n        hostname: 'images.unsplash.com',\r\n        port: '',\r\n        pathname: '/**',\r\n      },\r\n      {\r\n        protocol: 'https',\r\n        hostname: 'maps.googleapis.com',\r\n        port: '',\r\n        pathname: '/**',\r\n      },\r\n    ],\r\n  },\r\n}\r\n\r\nmodule.exports = nextConfig "
+        }
+    ]
+}
