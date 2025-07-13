@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1752438533455,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1752441109107,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,8 +4,9 @@\n import { useAuth } from '@/lib/auth-context';\r\n import { getUserTrips } from '@/lib/trip-service';\r\n import { Trip } from '@/types';\r\n import Link from 'next/link';\r\n+import DatabaseTest from '@/components/DatabaseTest';\r\n \r\n export default function DebugPage() {\r\n   const { user, loading } = useAuth();\r\n   const [trips, setTrips] = useState<Trip[]>([]);\r\n@@ -202,8 +203,14 @@\n             </div>\r\n           )}\r\n         </div>\r\n \r\n+        {/* Database Test */}\r\n+        <div className=\"bg-white rounded-xl shadow-sm border border-gray-200 p-6\">\r\n+          <h2 className=\"text-lg font-semibold text-gray-900 mb-4\">Database Connection Test</h2>\r\n+          <DatabaseTest />\r\n+        </div>\r\n+\r\n         {/* Quick Actions */}\r\n         <div className=\"bg-white rounded-xl shadow-sm border border-gray-200 p-6\">\r\n           <h2 className=\"text-lg font-semibold text-gray-900 mb-4\">Quick Actions</h2>\r\n           <div className=\"grid grid-cols-1 md:grid-cols-3 gap-4\">\r\n"
                 }
             ],
             "date": 1752438533455,

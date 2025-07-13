@@ -11,6 +11,7 @@ interface TripMapProps {
   selectedDay: number;
   onDestinationSelect: (destination: Destination) => void;
   onDestinationAdd: (destination: Destination) => void;
+  isAddingDestination?: boolean;
 }
 
 export default function TripMap({
@@ -21,6 +22,7 @@ export default function TripMap({
   selectedDay,
   onDestinationSelect,
   onDestinationAdd,
+  isAddingDestination = false,
 }: TripMapProps) {
   const mapRef = useRef<HTMLDivElement>(null);
   const [map, setMap] = useState<google.maps.Map | null>(null);
@@ -34,8 +36,8 @@ export default function TripMap({
   // Debug function
   const addDebugInfo = (info: string) => {
     const timestamp = new Date().toLocaleTimeString();
-    console.log(`${timestamp}: ${info}`);
-    setDebugInfo(prev => [...prev, `${timestamp}: ${info}`]);
+    console.log(`TripMap: ${info}`);
+    setDebugInfo(prev => [...prev.slice(-5), `${timestamp}: ${info}`]); // Keep only last 5 messages
   };
 
   // Ensure component is mounted before trying to access DOM
@@ -188,142 +190,244 @@ export default function TripMap({
   // Update markers when destinations change
   useEffect(() => {
     if (!map || !destinations.length) {
-      addDebugInfo(`Skipping markers: map=${!!map}, destinations=${destinations.length}${isLoading ? ' map is in loading' : ''}`);
+      addDebugInfo(`Skipping markers: map=${!!map}, destinations=${destinations.length}${isLoading ? ', map is loading' : ''}`);
       return;
     }
 
-    addDebugInfo(`Updating ${destinations.length} markers`);
+    addDebugInfo(`Updating ${destinations.length} markers - destinations changed`);
 
-    // Clear existing markers
-    markers.forEach(marker => marker.setMap(null));
-
-    // Create new markers
-    const newMarkers: google.maps.Marker[] = [];
-    const bounds = new google.maps.LatLngBounds();
-
-    destinations.forEach((destination, index) => {
-      const dayColor = tripDays.find(d => d.day === destination.day)?.color;
-      
-      // Create marker with simple icon
-      const marker = new google.maps.Marker({
-        position: { lat: destination.lat, lng: destination.lng },
-        map: map,
-        title: destination.locationName,
-        icon: {
-          path: google.maps.SymbolPath.CIRCLE,
-          scale: 12,
-          fillColor: dayColor?.pin || '#6B7280',
-          fillOpacity: 1,
-          strokeColor: '#FFFFFF',
-          strokeWeight: 2,
-        },
-        label: {
-          text: destination.orderIndex?.toString() || (index + 1).toString(),
-          color: '#FFFFFF',
-          fontSize: '12px',
-          fontWeight: 'bold',
-        },
-      });
-
-      // Add click listener
-      marker.addListener('click', () => {
-        onDestinationSelect(destination);
-      });
-
-      // Create info window
-      const infoWindow = new google.maps.InfoWindow({
-        content: `
-          <div style="padding: 12px; max-width: 250px;">
-            <h3 style="font-weight: 600; color: #1F2937; margin-bottom: 4px;">${destination.locationName}</h3>
-            <p style="font-size: 14px; color: #6B7280; margin-bottom: 8px;">${destination.address}</p>
-            <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #9CA3AF;">
-              <span>Day ${destination.day}</span>
-              ${destination.startTime ? `<span>${destination.startTime}</span>` : ''}
-            </div>
-            ${destination.notes ? `<p style="font-size: 14px; color: #374151; margin-top: 8px;">${destination.notes}</p>` : ''}
-          </div>
-        `,
-      });
-
-      // Show info window on marker click
-      marker.addListener('click', () => {
-        infoWindow.open(map, marker);
-      });
-
-      newMarkers.push(marker);
-      bounds.extend(marker.getPosition()!);
+    // Clear existing markers completely
+    markers.forEach(marker => {
+      marker.setMap(null);
+      // Remove all event listeners
+      google.maps.event.clearInstanceListeners(marker);
     });
 
-    setMarkers(newMarkers);
-    addDebugInfo(`Created ${newMarkers.length} markers`);
+    // Small delay to ensure markers are fully cleared before creating new ones
+    setTimeout(() => {
+      // Create new markers
+      const newMarkers: google.maps.Marker[] = [];
+      const bounds = new google.maps.LatLngBounds();
 
-    // Fit map to show all markers
-    if (newMarkers.length > 0) {
-      map.fitBounds(bounds);
-      
-      // Prevent over-zooming for single marker
-      if (newMarkers.length === 1) {
-        map.setZoom(Math.min(map.getZoom() || 15, 15));
+      // Sort destinations by day and order index to ensure proper numbering
+      const sortedDestinations = [...destinations].sort((a, b) => {
+        if (a.day !== b.day) return a.day - b.day;
+        return (a.orderIndex || 0) - (b.orderIndex || 0);
+      });
+
+      sortedDestinations.forEach((destination, index) => {
+        const dayColor = tripDays.find(d => d.day === destination.day)?.color;
+        
+        // Create completely new marker with simple icon
+        const marker = new google.maps.Marker({
+          position: { lat: destination.lat, lng: destination.lng },
+          map: map,
+          title: destination.locationName,
+          icon: {
+            path: google.maps.SymbolPath.CIRCLE,
+            scale: 12,
+            fillColor: dayColor?.pin || '#6B7280',
+            fillOpacity: 1,
+            strokeColor: '#FFFFFF',
+            strokeWeight: 2,
+          },
+          label: {
+            text: destination.orderIndex?.toString() || (index + 1).toString(),
+            color: '#FFFFFF',
+            fontSize: '12px',
+            fontWeight: 'bold',
+          },
+          // Prevent any unwanted animations during creation
+          animation: null,
+        });
+
+        addDebugInfo(`Created marker ${destination.orderIndex} for ${destination.locationName} on day ${destination.day}`);
+
+        // Add click listener
+        marker.addListener('click', () => {
+          onDestinationSelect(destination);
+        });
+
+        // Create info window
+        const infoWindow = new google.maps.InfoWindow({
+          content: `
+            <div style="padding: 12px; max-width: 250px;">
+              <h3 style="font-weight: 600; color: #1F2937; margin-bottom: 4px;">${destination.locationName}</h3>
+              <p style="font-size: 14px; color: #6B7280; margin-bottom: 8px;">${destination.address}</p>
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #9CA3AF;">
+                <span>Day ${destination.day}</span>
+                ${destination.startTime ? `<span>${destination.startTime}</span>` : ''}
+              </div>
+              ${destination.notes ? `<p style="font-size: 14px; color: #374151; margin-top: 8px;">${destination.notes}</p>` : ''}
+            </div>
+          `,
+        });
+
+        // Show info window on marker click
+        marker.addListener('click', () => {
+          infoWindow.open(map, marker);
+        });
+
+        newMarkers.push(marker);
+        bounds.extend(marker.getPosition()!);
+      });
+
+      setMarkers(newMarkers);
+      addDebugInfo(`Created ${newMarkers.length} new markers`);
+
+      // Fit map to show all markers
+      if (newMarkers.length > 0) {
+        map.fitBounds(bounds);
+        
+        // Prevent over-zooming for single marker
+        if (newMarkers.length === 1) {
+          map.setZoom(Math.min(map.getZoom() || 15, 15));
+        }
       }
-    }
+    }, 50); // Small delay to ensure proper marker recreation
+
   }, [map, destinations, tripDays, onDestinationSelect, isLoading]);
+
+  // Handle map click to add new destination
+  const handleMapClick = (event: google.maps.MapMouseEvent) => {
+    if (!event.latLng || isAddingDestination) return;
+
+    const lat = event.latLng.lat();
+    const lng = event.latLng.lng();
+
+    // Use Places API first, then fall back to reverse geocoding
+    const placesService = new google.maps.places.PlacesService(map!);
+    
+    // Try to find nearby places first
+    placesService.nearbySearch(
+      {
+        location: { lat, lng },
+        radius: 50, // 50 meters
+        type: 'establishment' as any, // Cast to any to avoid TypeScript issues
+      },
+      (results, status) => {
+        if (status === google.maps.places.PlacesServiceStatus.OK && results && results[0]) {
+          // Found a business/place
+          const place = results[0];
+          const locationName = place.name || 'Unknown Place';
+          const address = place.vicinity || place.formatted_address || '';
+          
+          addDebugInfo(`Found business: ${locationName} at ${address}`);
+          
+          // Create new destination object
+          const selectedDayData = tripDays.find(d => d.day === selectedDay);
+          const newDestination: Destination = {
+            id: '', // Will be set by server
+            tripId: trip.id,
+            locationName, // Use the business name from Places API
+            address,
+            lat,
+            lng,
+            day: selectedDay,
+            orderIndex: (selectedDayData?.destinations.length || 0) + 1,
+            createdAt: new Date(),
+            updatedAt: new Date(),
+          };
+
+          addDebugInfo(`Creating destination with business name: ${locationName}`);
+          onDestinationAdd(newDestination);
+        } else {
+          // Fall back to reverse geocoding
+          addDebugInfo('No business found, falling back to reverse geocoding');
+          const geocoder = new google.maps.Geocoder();
+          geocoder.geocode({ location: { lat, lng } }, (results, status) => {
+            if (status === 'OK' && results?.[0]) {
+              const address = results[0].formatted_address;
+              
+              // Try to extract a meaningful name from the address components
+              let locationName = address;
+              const components = results[0].address_components;
+              
+              if (components && components.length > 0) {
+                // Look for business name, route name, or neighborhood
+                const businessComponent = components.find(c => 
+                  c.types.includes('establishment') || 
+                  c.types.includes('point_of_interest') ||
+                  c.types.includes('premise')
+                );
+                
+                if (businessComponent) {
+                  locationName = businessComponent.long_name;
+                } else {
+                  // Use street number + route if available
+                  const streetNumber = components.find(c => c.types.includes('street_number'))?.long_name;
+                  const route = components.find(c => c.types.includes('route'))?.long_name;
+                  
+                  if (streetNumber && route) {
+                    locationName = `${streetNumber} ${route}`;
+                  } else if (route) {
+                    locationName = route;
+                  } else {
+                    // Use first component as fallback
+                    locationName = components[0].long_name;
+                  }
+                }
+              }
+
+              addDebugInfo(`Using geocoded name: ${locationName}`);
+
+              // Create new destination object
+              const selectedDayData = tripDays.find(d => d.day === selectedDay);
+              const newDestination: Destination = {
+                id: '', // Will be set by server
+                tripId: trip.id,
+                locationName,
+                address,
+                lat,
+                lng,
+                day: selectedDay,
+                orderIndex: (selectedDayData?.destinations.length || 0) + 1,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+              };
+
+              onDestinationAdd(newDestination);
+            }
+          });
+        }
+      }
+    );
+  };
 
   // Highlight selected destination
   useEffect(() => {
     if (!selectedDestination || !markers.length) return;
 
+    // Clear all previous animations first to prevent interference
     markers.forEach(marker => {
-      const position = marker.getPosition();
-      if (
-        position &&
-        position.lat() === selectedDestination.lat &&
-        position.lng() === selectedDestination.lng
-      ) {
-        // Highlight selected marker
-        marker.setAnimation(google.maps.Animation.BOUNCE);
-        setTimeout(() => {
-          marker.setAnimation(null);
-        }, 1500);
-        
-        // Center map on selected destination
-        map?.panTo(position);
-      }
+      marker.setAnimation(null);
     });
-  }, [selectedDestination, markers, map]);
 
-  // Handle map click to add new destination
-  const handleMapClick = (event: google.maps.MapMouseEvent) => {
-    if (!event.latLng) return;
-
-    const lat = event.latLng.lat();
-    const lng = event.latLng.lng();
-
-    // Use reverse geocoding to get address
-    const geocoder = new google.maps.Geocoder();
-    geocoder.geocode({ location: { lat, lng } }, (results, status) => {
-      if (status === 'OK' && results?.[0]) {
-        const address = results[0].formatted_address;
-        const locationName = results[0].address_components?.[0]?.long_name || address;
-
-        // Create new destination object
-        const selectedDayData = tripDays.find(d => d.day === selectedDay);
-        const newDestination: Destination = {
-          id: '', // Will be set by server
-          tripId: trip.id,
-          locationName,
-          address,
-          lat,
-          lng,
-          day: selectedDay,
-          orderIndex: (selectedDayData?.destinations.length || 0) + 1,
-          createdAt: new Date(),
-          updatedAt: new Date(),
-        };
-
-        onDestinationAdd(newDestination);
-      }
-    });
-  };
+    // Small delay to ensure animations are cleared
+    setTimeout(() => {
+      // Find and animate only the selected marker based on both coordinates and destination ID
+      markers.forEach(marker => {
+        const position = marker.getPosition();
+        if (
+          position &&
+          Math.abs(position.lat() - selectedDestination.lat) < 0.0001 &&
+          Math.abs(position.lng() - selectedDestination.lng) < 0.0001
+        ) {
+          // Only animate if this marker corresponds to the selected destination
+          addDebugInfo(`Animating selected marker: ${selectedDestination.locationName} (ID: ${selectedDestination.id})`);
+          marker.setAnimation(google.maps.Animation.BOUNCE);
+          setTimeout(() => {
+            if (marker.getMap()) { // Check if marker still exists
+              marker.setAnimation(null);
+            }
+          }, 1500);
+          
+          // Center map on selected destination
+          map?.panTo(position);
+        }
+      });
+    }, 100);
+  }, [selectedDestination?.id, markers, map]); // Use selectedDestination.id as dependency
 
   // Add click listener to map
   useEffect(() => {
@@ -333,7 +437,7 @@ export default function TripMap({
     return () => {
       google.maps.event.removeListener(listener);
     };
-  }, [map, selectedDay, trip.id, tripDays, onDestinationAdd]);
+  }, [map, selectedDay, trip.id, tripDays, onDestinationAdd, isAddingDestination]);
 
   const handleRetry = () => {
     addDebugInfo('Retry button clicked');
@@ -419,7 +523,7 @@ export default function TripMap({
         </div>
       )}
       
-      {/* Map Controls - Only show when map is loaded */}
+      {/* Map Controls */}
       {!isLoading && !error && (
         <div className="absolute top-4 left-4 bg-white rounded-lg shadow-md p-2">
           <div className="flex items-center space-x-2 text-sm">
@@ -428,7 +532,14 @@ export default function TripMap({
               className="w-4 h-4 rounded-full"
               style={{ backgroundColor: tripDays.find(d => d.day === selectedDay)?.color.pin }}
             />
-            <span className="text-gray-600">Click to add destination</span>
+            {isAddingDestination ? (
+              <div className="flex items-center space-x-2">
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600"></div>
+                <span className="text-gray-600">Adding destination...</span>
+              </div>
+            ) : (
+              <span className="text-gray-600">Click to add destination</span>
+            )}
           </div>
         </div>
       )}

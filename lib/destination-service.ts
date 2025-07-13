@@ -19,16 +19,62 @@ const DESTINATIONS_COLLECTION = 'destinations';
 // Create a new destination
 export async function createDestination(destinationData: CreateDestinationData): Promise<string> {
   try {
+    // Validate required fields
+    if (!destinationData.tripId) {
+      throw new Error('Trip ID is required');
+    }
+    if (!destinationData.locationName) {
+      throw new Error('Location name is required');
+    }
+    if (!destinationData.address) {
+      throw new Error('Address is required');
+    }
+    if (typeof destinationData.lat !== 'number' || typeof destinationData.lng !== 'number') {
+      throw new Error('Valid coordinates are required');
+    }
+    if (!destinationData.day || destinationData.day < 1) {
+      throw new Error('Valid day number is required');
+    }
+    if (!destinationData.orderIndex || destinationData.orderIndex < 1) {
+      throw new Error('Valid order index is required');
+    }
+
+    // Clean the data - remove undefined values that might cause Firestore issues
+    const cleanedData: any = {
+      tripId: destinationData.tripId,
+      locationName: destinationData.locationName,
+      address: destinationData.address,
+      lat: destinationData.lat,
+      lng: destinationData.lng,
+      day: destinationData.day,
+      orderIndex: destinationData.orderIndex,
+    };
+
+    // Add optional fields only if they have valid values
+    if (destinationData.startTime) cleanedData.startTime = destinationData.startTime;
+    if (destinationData.endTime) cleanedData.endTime = destinationData.endTime;
+    if (destinationData.notes) cleanedData.notes = destinationData.notes;
+    if (destinationData.placeId) cleanedData.placeId = destinationData.placeId;
+    if (destinationData.category) cleanedData.category = destinationData.category;
+    if (typeof destinationData.rating === 'number') cleanedData.rating = destinationData.rating;
+    if (typeof destinationData.priceLevel === 'number') cleanedData.priceLevel = destinationData.priceLevel;
+    if (destinationData.photos && destinationData.photos.length > 0) cleanedData.photos = destinationData.photos;
+
     const destinationWithTimestamps = {
-      ...destinationData,
+      ...cleanedData,
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     };
     
     const docRef = await addDoc(collection(db, DESTINATIONS_COLLECTION), destinationWithTimestamps);
+    
     return docRef.id;
   } catch (error) {
     console.error('Error creating destination:', error);
+    console.error('Error details:', {
+      message: error instanceof Error ? error.message : 'Unknown error',
+      code: (error as any).code,
+    });
     throw error;
   }
 }

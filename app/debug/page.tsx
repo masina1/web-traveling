@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/auth-context';
 import { getUserTrips } from '@/lib/trip-service';
 import { Trip } from '@/types';
 import Link from 'next/link';
+import DatabaseTest from '@/components/DatabaseTest';
 
 export default function DebugPage() {
   const { user, loading } = useAuth();
@@ -201,6 +202,12 @@ export default function DebugPage() {
               ))}
             </div>
           )}
+        </div>
+
+        {/* Database Test */}
+        <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">Database Connection Test</h2>
+          <DatabaseTest />
         </div>
 
         {/* Quick Actions */}

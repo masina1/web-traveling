@@ -4,8 +4,8 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { getTrip } from '@/lib/trip-service';
-import { getTripDestinations } from '@/lib/destination-service';
-import { Trip, Destination, TripDay, getDayColor } from '@/types';
+import { getTripDestinations, createDestination } from '@/lib/destination-service';
+import { Trip, Destination, TripDay, getDayColor, CreateDestinationData } from '@/types';
 import { format, parseISO, differenceInDays, addDays } from 'date-fns';
 import Link from 'next/link';
 import TripMap from '@/components/map/TripMap';
@@ -22,6 +22,8 @@ export default function TripDetailPage() {
   const [error, setError] = useState<string | null>(null);
   const [selectedDestination, setSelectedDestination] = useState<Destination | null>(null);
   const [selectedDay, setSelectedDay] = useState<number>(1);
+  const [isAddingDestination, setIsAddingDestination] = useState(false);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -99,6 +101,121 @@ export default function TripDetailPage() {
   const handleDaySelect = (day: number) => {
     setSelectedDay(day);
     setSelectedDestination(null);
+  };
+
+  // Handle destinations change (reordering, etc.)
+  const handleDestinationsChange = (newDestinations: Destination[]) => {
+    // Update destinations state
+    setDestinations(newDestinations);
+    
+    // Update tripDays state to reflect the new order
+    const updatedTripDays = tripDays.map(day => ({
+      ...day,
+      destinations: newDestinations
+        .filter(dest => dest.day === day.day)
+        .sort((a, b) => a.orderIndex - b.orderIndex)
+    }));
+    
+    setTripDays(updatedTripDays);
+  };
+
+  // Handle adding a new destination from map
+  const handleDestinationAdd = async (destinationData: Destination) => {
+    try {
+      setIsAddingDestination(true);
+      setError(null);
+      setSuccessMessage(null);
+
+      console.log('Adding destination from map:', destinationData);
+
+      // Validate the destination data before sending to database
+      if (!destinationData.tripId || !destinationData.locationName || !destinationData.address) {
+        throw new Error('Missing required destination information');
+      }
+
+      // Create the destination data for saving to database
+      const createData: CreateDestinationData = {
+        tripId: destinationData.tripId,
+        locationName: destinationData.locationName,
+        address: destinationData.address,
+        lat: destinationData.lat,
+        lng: destinationData.lng,
+        day: destinationData.day,
+        orderIndex: destinationData.orderIndex,
+        startTime: destinationData.startTime,
+        endTime: destinationData.endTime,
+        notes: destinationData.notes,
+        placeId: destinationData.placeId,
+        category: destinationData.category,
+        rating: destinationData.rating,
+        priceLevel: destinationData.priceLevel,
+        photos: destinationData.photos,
+      };
+
+      console.log('Sending to database:', createData);
+
+      // Save to database
+      const newDestinationId = await createDestination(createData);
+      
+      console.log('Destination created with ID:', newDestinationId);
+
+      // Create the full destination object with the new ID
+      const newDestination: Destination = {
+        ...destinationData,
+        id: newDestinationId,
+        createdAt: new Date(),
+        updatedAt: new Date(),
+      };
+
+      // Update destinations state
+      setDestinations(prev => [...prev, newDestination]);
+
+      // Update tripDays state to include the new destination in the correct day
+      setTripDays(prev => prev.map(day => 
+        day.day === newDestination.day 
+          ? { 
+              ...day, 
+              destinations: [...day.destinations, newDestination]
+                .sort((a, b) => a.orderIndex - b.orderIndex)
+            }
+          : day
+      ));
+
+      // Auto-select the new destination
+      setSelectedDestination(newDestination);
+      
+      // Show success message
+      setSuccessMessage(`Added "${newDestination.locationName}" to Day ${newDestination.day}`);
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => setSuccessMessage(null), 3000);
+      
+      console.log('Destination added successfully');
+      
+    } catch (error) {
+      console.error('Error adding destination:', error);
+      
+      // Provide more specific error messages
+      let errorMessage = 'Failed to add destination. ';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('permission')) {
+          errorMessage += 'Permission denied. Please check your login status.';
+        } else if (error.message.includes('network')) {
+          errorMessage += 'Network error. Please check your internet connection.';
+        } else if (error.message.includes('required')) {
+          errorMessage += 'Missing required information from the location.';
+        } else {
+          errorMessage += error.message;
+        }
+      } else {
+        errorMessage += 'Please try again.';
+      }
+      
+      setError(errorMessage);
+    } finally {
+      setIsAddingDestination(false);
+    }
   };
 
   if (loading || isLoading) {
@@ -192,6 +309,20 @@ export default function TripDetailPage() {
 
       {/* Main Content - 45%/55% Split */}
       <div className="max-w-7xl mx-auto p-4">
+        {/* Success Message */}
+        {successMessage && (
+          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+            <p className="text-green-700 text-sm">✅ {successMessage}</p>
+          </div>
+        )}
+
+        {/* Error Message */}
+        {error && (
+          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+            <p className="text-red-700 text-sm">❌ {error}</p>
+          </div>
+        )}
+
         <div className="flex h-[calc(100vh-200px)] gap-4">
           {/* Left Panel - Itinerary (45%) */}
           <div className="w-[45%] bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
@@ -202,7 +333,7 @@ export default function TripDetailPage() {
               selectedDestination={selectedDestination}
               onDaySelect={handleDaySelect}
               onDestinationSelect={handleDestinationSelect}
-              onDestinationsChange={setDestinations}
+              onDestinationsChange={handleDestinationsChange}
             />
           </div>
 
@@ -215,9 +346,8 @@ export default function TripDetailPage() {
               selectedDestination={selectedDestination}
               selectedDay={selectedDay}
               onDestinationSelect={handleDestinationSelect}
-              onDestinationAdd={(destination) => {
-                setDestinations(prev => [...prev, destination]);
-              }}
+              onDestinationAdd={handleDestinationAdd}
+              isAddingDestination={isAddingDestination}
             />
           </div>
         </div>

@@ -12,6 +12,15 @@ const firebaseConfig = {
   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 };
 
+// Check for missing required fields
+const requiredFields = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];
+const missingFields = requiredFields.filter(field => !firebaseConfig[field as keyof typeof firebaseConfig]);
+
+if (missingFields.length > 0) {
+  console.error('Missing required Firebase configuration fields:', missingFields);
+  console.error('Please check your .env.local file and ensure all NEXT_PUBLIC_FIREBASE_* variables are set');
+}
+
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 

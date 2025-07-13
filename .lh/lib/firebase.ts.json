@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 2,
+            "activePatchIndex": 4,
             "patches": [
                 {
                     "date": 1752425498546,
@@ -16,6 +16,14 @@
                 {
                     "date": 1752436479984,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,19 +11,8 @@\n   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,\r\n   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,\r\n };\r\n \r\n-// Debug: Log the config to check if environment variables are loaded\r\n-console.log('Firebase Config:', {\r\n-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ? 'Present' : 'Missing',\r\n-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ? 'Present' : 'Missing',\r\n-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ? 'Present' : 'Missing',\r\n-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ? 'Present' : 'Missing',\r\n-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ? 'Present' : 'Missing',\r\n-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ? 'Present' : 'Missing',\r\n-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID ? 'Present' : 'Missing',\r\n-});\r\n-\r\n // Initialize Firebase\r\n const app = initializeApp(firebaseConfig);\r\n \r\n // Initialize Firebase Authentication and get a reference to the service\r\n"
+                },
+                {
+                    "date": 1752441069851,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,8 +11,28 @@\n   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,\r\n   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,\r\n };\r\n \r\n+// Debug: Check if all required environment variables are present\r\n+console.log('Firebase Config Check:', {\r\n+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ? 'Present' : 'Missing',\r\n+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ? 'Present' : 'Missing',\r\n+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ? 'Present' : 'Missing',\r\n+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ? 'Present' : 'Missing',\r\n+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ? 'Present' : 'Missing',\r\n+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ? 'Present' : 'Missing',\r\n+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID ? 'Present' : 'Missing',\r\n+});\r\n+\r\n+// Check for missing required fields\r\n+const requiredFields = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];\r\n+const missingFields = requiredFields.filter(field => !firebaseConfig[field as keyof typeof firebaseConfig]);\r\n+\r\n+if (missingFields.length > 0) {\r\n+  console.error('Missing required Firebase configuration fields:', missingFields);\r\n+  console.error('Please check your .env.local file and ensure all NEXT_PUBLIC_FIREBASE_* variables are set');\r\n+}\r\n+\r\n // Initialize Firebase\r\n const app = initializeApp(firebaseConfig);\r\n \r\n // Initialize Firebase Authentication and get a reference to the service\r\n"
+                },
+                {
+                    "date": 1752441455529,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -11,19 +11,8 @@\n   appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,\r\n   measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,\r\n };\r\n \r\n-// Debug: Check if all required environment variables are present\r\n-console.log('Firebase Config Check:', {\r\n-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY ? 'Present' : 'Missing',\r\n-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN ? 'Present' : 'Missing',\r\n-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID ? 'Present' : 'Missing',\r\n-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET ? 'Present' : 'Missing',\r\n-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID ? 'Present' : 'Missing',\r\n-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID ? 'Present' : 'Missing',\r\n-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID ? 'Present' : 'Missing',\r\n-});\r\n-\r\n // Check for missing required fields\r\n const requiredFields = ['apiKey', 'authDomain', 'projectId', 'storageBucket', 'messagingSenderId', 'appId'];\r\n const missingFields = requiredFields.filter(field => !firebaseConfig[field as keyof typeof firebaseConfig]);\r\n \r\n"
                 }
             ],
             "date": 1752425498546,
