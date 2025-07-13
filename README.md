@@ -119,17 +119,17 @@ NEXT_PUBLIC_GOOGLE_PLACES_API_KEY=your_places_api_key
 - [x] **Authentication system (login/register)** 🎉
 - [x] **Trip CRUD operations** 🎉
 - [x] **Destination management with drag & drop** 🎉
-- [ ] Location suggestions with images
-- [ ] Mobile responsiveness
+- [x] **Location search with autocomplete** 🎉
+- [x] **Mobile responsive design** 🎉
 - [ ] Trip sharing functionality
 - [ ] Deployment to Vercel
 
 ### Next Phase
 
-- Add location search and suggestions with Google Places API
-- Implement mobile-responsive design
-- Add trip sharing functionality
+- Add location suggestions with images
+- Implement trip sharing functionality
 - Deploy to production
+- Add offline support and PWA capabilities
 
 ## 🧪 Testing
 
@@ -166,7 +166,8 @@ The project includes testing utilities:
 ### ✅ **Complete Destination Management**
 
 - Add destinations with address, notes, and timing
-- **Drag & drop reordering** within days
+- **Drag & drop reordering** within days and cross-day support
+- **Location search with Google Places autocomplete**
 - Real-time database updates
 - Pin number auto-updates
 - Visual feedback during operations
@@ -174,10 +175,11 @@ The project includes testing utilities:
 ### ✅ **Complete UI/UX**
 
 - Professional design with TailwindCSS
-- 45%/55% split layout (itinerary/map)
+- 45%/55% split layout (itinerary/map) on desktop
+- **Mobile responsive design** with toggle panels
 - Expandable day sections
 - Loading states and error handling
-- Responsive design patterns
+- Keyboard navigation support
 
 ## 📝 Contributing
 
@@ -192,6 +194,17 @@ The project includes testing utilities:
 This project is licensed under the MIT License.
 
 ## Changelog
+
+### 2025-01-10
+
+- **[MAJOR]** Implemented location search with Google Places autocomplete
+- **[MAJOR]** Added mobile responsive design with toggle panels
+- **[FEATURE]** LocationSearch component with intelligent place suggestions
+- **[FEATURE]** Mobile-optimized layout with itinerary/map toggle
+- **[FEATURE]** Keyboard navigation support for location search
+- **[FEATURE]** Enhanced Places API integration with photos and ratings
+- **[IMPROVEMENT]** Better user experience on mobile devices
+- **[IMPROVEMENT]** Consistent UI across desktop and mobile platforms
 
 ### 2025-01-10
 

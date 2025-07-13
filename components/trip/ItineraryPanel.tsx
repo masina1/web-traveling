@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { Trip, Destination, TripDay } from '@/types';
 import { format, parseISO } from 'date-fns';
+import LocationSearch from './LocationSearch';
 import {
   DndContext,
   closestCenter,
@@ -36,6 +37,7 @@ interface ItineraryPanelProps {
   onDaySelect: (day: number) => void;
   onDestinationSelect: (destination: Destination) => void;
   onDestinationsChange: (destinations: Destination[]) => void;
+  onLocationSelect: (destination: Destination) => void;
 }
 
 // Droppable day container component
@@ -186,6 +188,7 @@ export default function ItineraryPanel({
   onDaySelect,
   onDestinationSelect,
   onDestinationsChange,
+  onLocationSelect,
 }: ItineraryPanelProps) {
   const [expandedDays, setExpandedDays] = useState<Set<number>>(new Set([1]));
   const [isReordering, setIsReordering] = useState(false);
@@ -476,17 +479,31 @@ export default function ItineraryPanel({
                         </div>
                       )}
                       
-                      {/* Add Destination Button */}
+                      {/* Add Destination - Location Search */}
                       <div className="p-4 border-t border-gray-200">
-                        <button
-                          onClick={() => onDaySelect(day.day)}
-                          className="w-full flex items-center justify-center space-x-2 p-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-colors"
-                        >
-                          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                          </svg>
-                          <span className="text-sm text-gray-600">Add destination</span>
-                        </button>
+                        <LocationSearch
+                          onLocationSelect={(destination) => {
+                            // Set the destination's day and order index
+                            const updatedDestination = {
+                              ...destination,
+                              day: day.day,
+                              orderIndex: day.destinations.length + 1,
+                            };
+                            onLocationSelect(updatedDestination);
+                            onDaySelect(day.day);
+                          }}
+                          selectedDay={day.day}
+                          tripId={trip.id}
+                          placeholder={`Search places for Day ${day.day}...`}
+                          className="w-full"
+                        />
+                        
+                        {/* Alternative: Click on map hint */}
+                        <div className="mt-2 text-center">
+                          <span className="text-xs text-gray-500">
+                            or click on the map to add a destination
+                          </span>
+                        </div>
                       </div>
                     </div>
                   </DroppableDay>

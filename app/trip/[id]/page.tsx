@@ -24,6 +24,10 @@ export default function TripDetailPage() {
   const [selectedDay, setSelectedDay] = useState<number>(1);
   const [isAddingDestination, setIsAddingDestination] = useState(false);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
+  
+  // Mobile responsive state
+  const [isMobileMapOpen, setIsMobileMapOpen] = useState(false);
+  const [isMobileItineraryOpen, setIsMobileItineraryOpen] = useState(true);
 
   // Redirect if not authenticated
   useEffect(() => {
@@ -323,9 +327,53 @@ export default function TripDetailPage() {
           </div>
         )}
 
-        <div className="flex h-[calc(100vh-200px)] gap-4">
-          {/* Left Panel - Itinerary (45%) */}
-          <div className="w-[45%] bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Mobile Toggle Buttons */}
+        <div className="lg:hidden flex justify-center mb-4">
+          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-1 flex">
+            <button
+              onClick={() => {
+                setIsMobileItineraryOpen(true);
+                setIsMobileMapOpen(false);
+              }}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                isMobileItineraryOpen
+                  ? 'bg-primary-600 text-white shadow-sm'
+                  : 'text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+              </svg>
+              Itinerary
+            </button>
+            <button
+              onClick={() => {
+                setIsMobileMapOpen(true);
+                setIsMobileItineraryOpen(false);
+              }}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                isMobileMapOpen
+                  ? 'bg-primary-600 text-white shadow-sm'
+                  : 'text-gray-700 hover:bg-gray-50'
+              }`}
+            >
+              <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m-6 3l6-3" />
+              </svg>
+              Map
+            </button>
+          </div>
+        </div>
+
+        {/* Desktop: Side-by-side layout | Mobile: Stacked with toggle */}
+        <div className="lg:flex lg:h-[calc(100vh-200px)] lg:gap-4">
+          {/* Left Panel - Itinerary (45% on desktop, full width on mobile) */}
+          <div className={`
+            lg:w-[45%] lg:block
+            ${isMobileItineraryOpen ? 'block' : 'hidden lg:block'}
+            bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden
+            ${isMobileItineraryOpen ? 'h-[calc(100vh-250px)]' : 'lg:h-auto'}
+          `}>
             <ItineraryPanel
               trip={trip}
               tripDays={tripDays}
@@ -334,11 +382,17 @@ export default function TripDetailPage() {
               onDaySelect={handleDaySelect}
               onDestinationSelect={handleDestinationSelect}
               onDestinationsChange={handleDestinationsChange}
+              onLocationSelect={handleDestinationAdd}
             />
           </div>
 
-          {/* Right Panel - Map (55%) */}
-          <div className="w-[55%] bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+          {/* Right Panel - Map (55% on desktop, full width on mobile) */}
+          <div className={`
+            lg:w-[55%] lg:block
+            ${isMobileMapOpen ? 'block' : 'hidden lg:block'}
+            bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden
+            ${isMobileMapOpen ? 'h-[calc(100vh-250px)]' : 'lg:h-auto'}
+          `}>
             <TripMap
               trip={trip}
               destinations={destinations}
