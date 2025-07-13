@@ -11,6 +11,11 @@ import {
   useSensor,
   useSensors,
   DragEndEvent,
+  DragOverEvent,
+  DragOverlay,
+  useDraggable,
+  useDroppable,
+  UniqueIdentifier,
 } from '@dnd-kit/core';
 import {
   SortableContext,
@@ -21,7 +26,7 @@ import {
 import {
   CSS,
 } from '@dnd-kit/utilities';
-import { reorderDestinations } from '@/lib/destination-service';
+import { reorderDestinations, moveDestinationToDay } from '@/lib/destination-service';
 
 interface ItineraryPanelProps {
   trip: Trip;
@@ -31,6 +36,30 @@ interface ItineraryPanelProps {
   onDaySelect: (day: number) => void;
   onDestinationSelect: (destination: Destination) => void;
   onDestinationsChange: (destinations: Destination[]) => void;
+}
+
+// Droppable day container component
+function DroppableDay({ 
+  day, 
+  children, 
+  isOver 
+}: { 
+  day: TripDay; 
+  children: React.ReactNode;
+  isOver: boolean;
+}) {
+  const { setNodeRef } = useDroppable({
+    id: `day-${day.day}`,
+  });
+
+  return (
+    <div 
+      ref={setNodeRef}
+      className={`transition-colors ${isOver ? 'bg-blue-50' : ''}`}
+    >
+      {children}
+    </div>
+  );
 }
 
 // Sortable destination item component
@@ -160,6 +189,8 @@ export default function ItineraryPanel({
 }: ItineraryPanelProps) {
   const [expandedDays, setExpandedDays] = useState<Set<number>>(new Set([1]));
   const [isReordering, setIsReordering] = useState(false);
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -183,64 +214,151 @@ export default function ItineraryPanel({
     onDaySelect(day);
   };
 
+  // Get all destinations for sortable context
+  const allDestinations = tripDays.flatMap(day => day.destinations);
+
+  const handleDragStart = (event: any) => {
+    setActiveId(event.active.id);
+  };
+
+  const handleDragOver = (event: DragOverEvent) => {
+    setOverId(event.over?.id || null);
+  };
+
   const handleDragEnd = async (event: DragEndEvent) => {
     const { active, over } = event;
+    
+    setActiveId(null);
+    setOverId(null);
     
     if (!over || active.id === over.id) {
       return;
     }
 
-    // Find the day that contains the dragged item
-    const draggedDestination = tripDays
-      .flatMap(day => day.destinations)
-      .find(dest => dest.id === active.id);
-    
+    const draggedDestination = allDestinations.find(dest => dest.id === active.id);
     if (!draggedDestination) return;
-
-    const day = tripDays.find(d => d.day === draggedDestination.day);
-    if (!day) return;
-
-    const oldIndex = day.destinations.findIndex(dest => dest.id === active.id);
-    const newIndex = day.destinations.findIndex(dest => dest.id === over.id);
-
-    if (oldIndex === newIndex) return;
 
     setIsReordering(true);
 
     try {
-      // Create new order array
-      const newDestinations = [...day.destinations];
-      const [movedItem] = newDestinations.splice(oldIndex, 1);
-      newDestinations.splice(newIndex, 0, movedItem);
-
-      // Update order indices
-      const reorderedDestinations = newDestinations.map((dest, index) => ({
-        ...dest,
-        orderIndex: index + 1
-      }));
-
-      // Update local state immediately for better UX
-      const updatedTripDays = tripDays.map(tripDay => {
-        if (tripDay.day === day.day) {
-          return {
-            ...tripDay,
-            destinations: reorderedDestinations
+      // Check if we're dropping on a day container or another destination
+      const isDroppedOnDay = over.id.toString().startsWith('day-');
+      
+      if (isDroppedOnDay) {
+        // Cross-day drop - move to end of target day
+        const targetDay = parseInt(over.id.toString().replace('day-', ''));
+        const targetDayData = tripDays.find(d => d.day === targetDay);
+        
+        if (targetDayData && targetDay !== draggedDestination.day) {
+          const newOrderIndex = targetDayData.destinations.length + 1;
+          
+          // Update in database
+          await moveDestinationToDay(draggedDestination.id, targetDay, newOrderIndex);
+          
+          // Update local state
+          const updatedDestination = {
+            ...draggedDestination,
+            day: targetDay,
+            orderIndex: newOrderIndex
           };
+          
+          const updatedDestinations = allDestinations.map(dest =>
+            dest.id === draggedDestination.id ? updatedDestination : dest
+          );
+          
+          onDestinationsChange(updatedDestinations);
         }
-        return tripDay;
-      });
+      } else {
+        // Same day or destination-to-destination drop
+        const targetDestination = allDestinations.find(dest => dest.id === over.id);
+        if (!targetDestination) return;
 
-      // Update destinations in parent component
-      const allDestinations = updatedTripDays.flatMap(d => d.destinations);
-      onDestinationsChange(allDestinations);
+        const sourceDay = draggedDestination.day;
+        const targetDay = targetDestination.day;
 
-      // Save to database
-      const destinationIds = reorderedDestinations.map(dest => dest.id);
-      await reorderDestinations(trip.id, day.day, destinationIds);
+        if (sourceDay === targetDay) {
+          // Same day reordering
+          const dayData = tripDays.find(d => d.day === sourceDay);
+          if (!dayData) return;
 
+          const oldIndex = dayData.destinations.findIndex(dest => dest.id === active.id);
+          const newIndex = dayData.destinations.findIndex(dest => dest.id === over.id);
+
+          if (oldIndex === newIndex) return;
+
+          // Create new order array
+          const newDestinations = [...dayData.destinations];
+          const [movedItem] = newDestinations.splice(oldIndex, 1);
+          newDestinations.splice(newIndex, 0, movedItem);
+
+          // Update order indices
+          const reorderedDestinations = newDestinations.map((dest, index) => ({
+            ...dest,
+            orderIndex: index + 1
+          }));
+
+          // Update destinations in parent component
+          const updatedAllDestinations = allDestinations.map(dest => {
+            const updated = reorderedDestinations.find(rd => rd.id === dest.id);
+            return updated || dest;
+          });
+          
+          onDestinationsChange(updatedAllDestinations);
+
+          // Save to database
+          const destinationIds = reorderedDestinations.map(dest => dest.id);
+          await reorderDestinations(trip.id, sourceDay, destinationIds);
+        } else {
+          // Cross-day drop next to specific destination
+          const targetDayData = tripDays.find(d => d.day === targetDay);
+          if (!targetDayData) return;
+
+          const targetIndex = targetDayData.destinations.findIndex(dest => dest.id === over.id);
+          const newOrderIndex = targetIndex + 1;
+
+          // Update in database
+          await moveDestinationToDay(draggedDestination.id, targetDay, newOrderIndex);
+
+          // Reorder existing destinations in target day
+          const updatedTargetDestinations = [...targetDayData.destinations];
+          updatedTargetDestinations.splice(targetIndex + 1, 0, {
+            ...draggedDestination,
+            day: targetDay,
+            orderIndex: newOrderIndex
+          });
+
+          // Update order indices for all destinations in target day
+          const reorderedTargetDestinations = updatedTargetDestinations.map((dest, index) => ({
+            ...dest,
+            orderIndex: index + 1
+          }));
+
+          // Update local state
+          const updatedDestinations = allDestinations
+            .filter(dest => dest.id !== draggedDestination.id) // Remove from source
+            .map(dest => {
+              // Update target day destinations
+              if (dest.day === targetDay) {
+                const updated = reorderedTargetDestinations.find(rd => rd.id === dest.id);
+                return updated || dest;
+              }
+              return dest;
+            })
+            .concat([{
+              ...draggedDestination,
+              day: targetDay,
+              orderIndex: newOrderIndex
+            }]);
+
+          onDestinationsChange(updatedDestinations);
+
+          // Reorder target day in database
+          const targetDayIds = reorderedTargetDestinations.map(dest => dest.id);
+          await reorderDestinations(trip.id, targetDay, targetDayIds);
+        }
+      }
     } catch (error) {
-      console.error('Error reordering destinations:', error);
-      // Optionally show error message to user
+      console.error('Error handling drag:', error);
     } finally {
       setIsReordering(false);
     }
@@ -269,106 +387,114 @@ export default function ItineraryPanel({
         </div>
       </div>
 
-      {/* Days List */}
+      {/* Days List with Cross-Day Dragging */}
       <div className="flex-1 overflow-y-auto">
-        {tripDays.map((day) => (
-          <div key={day.day} className="border-b border-gray-100 last:border-b-0">
-            {/* Day Header */}
-            <button
-              onClick={() => toggleDay(day.day)}
-              className={`w-full p-4 text-left hover:bg-gray-50 transition-colors ${
-                selectedDay === day.day ? 'bg-blue-50' : ''
-              }`}
-            >
-              <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-3">
-                  <div 
-                    className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-medium`}
-                    style={{ backgroundColor: day.color.pin }}
-                  >
-                    {day.day}
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-gray-900">
-                      Day {day.day}
-                    </h3>
-                    <p className="text-sm text-gray-600">
-                      {format(parseISO(day.date), 'MMM d, yyyy')}
-                    </p>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <span className="text-sm text-gray-500">
-                    {day.destinations.length} stops
-                  </span>
-                  <svg 
-                    className={`w-4 h-4 text-gray-400 transition-transform ${
-                      expandedDays.has(day.day) ? 'rotate-180' : ''
-                    }`}
-                    fill="none" 
-                    stroke="currentColor" 
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </div>
-              </div>
-            </button>
-
-            {/* Destinations List */}
-            {expandedDays.has(day.day) && (
-              <div className="bg-gray-50">
-                {day.destinations.length === 0 ? (
-                  <div className="p-4 text-center text-gray-500">
-                    <svg className="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                    </svg>
-                    <p className="text-sm">No destinations added yet</p>
-                    <p className="text-xs text-gray-400 mt-1">Click on the map to add destinations</p>
-                  </div>
-                ) : (
-                  <DndContext
-                    sensors={sensors}
-                    collisionDetection={closestCenter}
-                    onDragEnd={handleDragEnd}
-                  >
-                    <SortableContext 
-                      items={day.destinations.map(dest => dest.id)}
-                      strategy={verticalListSortingStrategy}
-                    >
-                      <div className="space-y-0">
-                        {day.destinations.map((destination, index) => (
-                          <SortableDestination
-                            key={destination.id}
-                            destination={destination}
-                            dayColor={day.color}
-                            selectedDestination={selectedDestination}
-                            onDestinationSelect={onDestinationSelect}
-                            isLastItem={index === day.destinations.length - 1}
-                          />
-                        ))}
+        <DndContext
+          sensors={sensors}
+          collisionDetection={closestCenter}
+          onDragStart={handleDragStart}
+          onDragOver={handleDragOver}
+          onDragEnd={handleDragEnd}
+        >
+          <SortableContext 
+            items={allDestinations.map(dest => dest.id)}
+            strategy={verticalListSortingStrategy}
+          >
+            {tripDays.map((day) => (
+              <div key={day.day} className="border-b border-gray-100 last:border-b-0">
+                {/* Day Header */}
+                <button
+                  onClick={() => toggleDay(day.day)}
+                  className={`w-full p-4 text-left hover:bg-gray-50 transition-colors ${
+                    selectedDay === day.day ? 'bg-blue-50' : ''
+                  }`}
+                >
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                      <div 
+                        className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-medium`}
+                        style={{ backgroundColor: day.color.pin }}
+                      >
+                        {day.day}
                       </div>
-                    </SortableContext>
-                  </DndContext>
-                )}
-                
-                {/* Add Destination Button */}
-                <div className="p-4 border-t border-gray-200">
-                  <button
-                    onClick={() => onDaySelect(day.day)}
-                    className="w-full flex items-center justify-center space-x-2 p-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-colors"
+                      <div>
+                        <h3 className="font-medium text-gray-900">
+                          Day {day.day}
+                        </h3>
+                        <p className="text-sm text-gray-600">
+                          {format(parseISO(day.date), 'MMM d, yyyy')}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center space-x-2">
+                      <span className="text-sm text-gray-500">
+                        {day.destinations.length} stops
+                      </span>
+                      <svg 
+                        className={`w-4 h-4 text-gray-400 transition-transform ${
+                          expandedDays.has(day.day) ? 'rotate-180' : ''
+                        }`}
+                        fill="none" 
+                        stroke="currentColor" 
+                        viewBox="0 0 24 24"
+                      >
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </div>
+                  </div>
+                </button>
+
+                {/* Day Content */}
+                {expandedDays.has(day.day) && (
+                  <DroppableDay 
+                    day={day} 
+                    isOver={overId === `day-${day.day}`}
                   >
-                    <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                    </svg>
-                    <span className="text-sm text-gray-600">Add destination</span>
-                  </button>
-                </div>
+                    <div className="bg-gray-50">
+                      {day.destinations.length === 0 ? (
+                        <div className="p-4 text-center text-gray-500">
+                          <svg className="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                          </svg>
+                          <p className="text-sm">No destinations added yet</p>
+                          <p className="text-xs text-gray-400 mt-1">Click on the map to add destinations</p>
+                          <p className="text-xs text-blue-500 mt-1">Drag destinations from other days here</p>
+                        </div>
+                      ) : (
+                        <div className="space-y-0">
+                          {day.destinations.map((destination, index) => (
+                            <SortableDestination
+                              key={destination.id}
+                              destination={destination}
+                              dayColor={day.color}
+                              selectedDestination={selectedDestination}
+                              onDestinationSelect={onDestinationSelect}
+                              isLastItem={index === day.destinations.length - 1}
+                            />
+                          ))}
+                        </div>
+                      )}
+                      
+                      {/* Add Destination Button */}
+                      <div className="p-4 border-t border-gray-200">
+                        <button
+                          onClick={() => onDaySelect(day.day)}
+                          className="w-full flex items-center justify-center space-x-2 p-3 border-2 border-dashed border-gray-300 rounded-lg hover:border-gray-400 hover:bg-gray-50 transition-colors"
+                        >
+                          <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                          </svg>
+                          <span className="text-sm text-gray-600">Add destination</span>
+                        </button>
+                      </div>
+                    </div>
+                  </DroppableDay>
+                )}
               </div>
-            )}
-          </div>
-        ))}
+            ))}
+          </SortableContext>
+        </DndContext>
       </div>
 
       {/* Footer */}
@@ -379,7 +505,7 @@ export default function ItineraryPanel({
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
             </svg>
             <span className="text-xs text-gray-500">
-              {tripDays.some(day => day.destinations.length > 0) ? 'Drag destinations to reorder • ' : ''}
+              {tripDays.some(day => day.destinations.length > 0) ? 'Drag destinations to reorder or move between days • ' : ''}
               Click on the map to add destinations
             </span>
           </div>

@@ -194,18 +194,24 @@ export default function TripMap({
       return;
     }
 
-    addDebugInfo(`Updating ${destinations.length} markers - destinations changed`);
+    addDebugInfo(`Recreating ${destinations.length} markers completely`);
 
-    // Clear existing markers completely
+    // Clear existing markers completely and forcefully
     markers.forEach(marker => {
       marker.setMap(null);
-      // Remove all event listeners
+      // Remove all event listeners to prevent memory leaks
       google.maps.event.clearInstanceListeners(marker);
     });
+    
+    // Clear markers array immediately
+    setMarkers([]);
 
-    // Small delay to ensure markers are fully cleared before creating new ones
-    setTimeout(() => {
-      // Create new markers
+    // Force a slight delay to ensure Google Maps processes the removal
+    const timeoutId = setTimeout(() => {
+      // Double-check we still have the map and destinations
+      if (!map || !destinations.length) return;
+
+      // Create completely new markers array
       const newMarkers: google.maps.Marker[] = [];
       const bounds = new google.maps.LatLngBounds();
 
@@ -215,10 +221,12 @@ export default function TripMap({
         return (a.orderIndex || 0) - (b.orderIndex || 0);
       });
 
+      addDebugInfo(`Creating markers for ${sortedDestinations.length} sorted destinations`);
+
       sortedDestinations.forEach((destination, index) => {
         const dayColor = tripDays.find(d => d.day === destination.day)?.color;
         
-        // Create completely new marker with simple icon
+        // Create completely new marker instance
         const marker = new google.maps.Marker({
           position: { lat: destination.lat, lng: destination.lng },
           map: map,
@@ -237,8 +245,10 @@ export default function TripMap({
             fontSize: '12px',
             fontWeight: 'bold',
           },
-          // Prevent any unwanted animations during creation
+          // Ensure no animations interfere during creation
           animation: null,
+          // Force marker to be draggable: false to prevent conflicts
+          draggable: false,
         });
 
         addDebugInfo(`Created marker ${destination.orderIndex} for ${destination.locationName} on day ${destination.day}`);
@@ -272,8 +282,9 @@ export default function TripMap({
         bounds.extend(marker.getPosition()!);
       });
 
+      // Update markers state
       setMarkers(newMarkers);
-      addDebugInfo(`Created ${newMarkers.length} new markers`);
+      addDebugInfo(`✅ Successfully created ${newMarkers.length} new markers`);
 
       // Fit map to show all markers
       if (newMarkers.length > 0) {
@@ -284,7 +295,12 @@ export default function TripMap({
           map.setZoom(Math.min(map.getZoom() || 15, 15));
         }
       }
-    }, 50); // Small delay to ensure proper marker recreation
+    }, 100); // 100ms delay for proper marker recreation
+
+    // Cleanup timeout on unmount or dependency change
+    return () => {
+      clearTimeout(timeoutId);
+    };
 
   }, [map, destinations, tripDays, onDestinationSelect, isLoading]);
 
