@@ -1,0 +1,22 @@
+{
+    "sourceFile": ".cursor/rules/cursor-config.mdc",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 1,
+            "patches": [
+                {
+                    "date": 1752435537216,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1752435854378,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,16 @@\n+---\n+alwaysApply: true\n+---\n+\n Project Setup Rules:\n \n - DO NOT access or read from `.env.local`\n - Instead, output full echo commands (one per line) so I can paste them manually\n - Default to Windows/PowerShell syntax for CLI commands\n - Assume no Linux tools (no `touch`, `export`, `cat`, etc.)\n+  Project Setup Rules:\n+\n+- DO NOT access or read from `.env.local`\n+- Instead, output full echo commands (one per line) so I can paste them manually\n+- Default to Windows/PowerShell syntax for CLI commands\n+- Assume no Linux tools (no `touch`, `export`, `cat`, etc.)\n"
+                }
+            ],
+            "date": 1752435537216,
+            "name": "Commit-0",
+            "content": "Project Setup Rules:\n\n- DO NOT access or read from `.env.local`\n- Instead, output full echo commands (one per line) so I can paste them manually\n- Default to Windows/PowerShell syntax for CLI commands\n- Assume no Linux tools (no `touch`, `export`, `cat`, etc.)\n"
+        }
+    ]
+}

@@ -3,11 +3,19 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 2,
             "patches": [
                 {
                     "date": 1752432589178,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1752433723701,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,8 +4,9 @@\n import { useAuth } from '@/lib/auth-context';\r\n import { getUserTrips, deleteTrip } from '@/lib/trip-service';\r\n import { Trip } from '@/types';\r\n import { format } from 'date-fns';\r\n+import Link from 'next/link';\r\n \r\n interface TripListProps {\r\n   onEditTrip?: (trip: Trip) => void;\r\n   onCreateTrip?: () => void;\r\n"
+                },
+                {
+                    "date": 1752433733107,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -161,8 +161,15 @@\n               </p>\r\n             )}\r\n             \r\n             <div className=\"flex gap-2\">\r\n+              <Link\r\n+                href={`/trip/${trip.id}`}\r\n+                className=\"flex-1 btn-primary text-sm text-center\"\r\n+              >\r\n+                View\r\n+              </Link>\r\n+              \r\n               {onEditTrip && (\r\n                 <button\r\n                   onClick={() => onEditTrip(trip)}\r\n                   className=\"flex-1 btn-secondary text-sm\"\r\n"
                 }
             ],
             "date": 1752432589178,

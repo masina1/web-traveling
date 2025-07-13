@@ -5,6 +5,7 @@ import { useAuth } from '@/lib/auth-context';
 import { getUserTrips, deleteTrip } from '@/lib/trip-service';
 import { Trip } from '@/types';
 import { format } from 'date-fns';
+import Link from 'next/link';
 
 interface TripListProps {
   onEditTrip?: (trip: Trip) => void;
@@ -161,6 +162,13 @@ export default function TripList({ onEditTrip, onCreateTrip, refreshTrigger }: T
             )}
             
             <div className="flex gap-2">
+              <Link
+                href={`/trip/${trip.id}`}
+                className="flex-1 btn-primary text-sm text-center"
+              >
+                View
+              </Link>
+              
               {onEditTrip && (
                 <button
                   onClick={() => onEditTrip(trip)}

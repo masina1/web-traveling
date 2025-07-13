@@ -13,6 +13,7 @@ import {
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { Trip, CreateTripData, UpdateTripData } from '@/types';
+import { deleteAllTripDestinations } from './destination-service';
 
 const TRIPS_COLLECTION = 'trips';
 
@@ -105,6 +106,10 @@ export async function updateTrip(tripId: string, updates: UpdateTripData): Promi
 // Delete a trip
 export async function deleteTrip(tripId: string): Promise<void> {
   try {
+    // First delete all destinations associated with this trip
+    await deleteAllTripDestinations(tripId);
+    
+    // Then delete the trip itself
     const tripRef = doc(db, TRIPS_COLLECTION, tripId);
     await deleteDoc(tripRef);
   } catch (error) {

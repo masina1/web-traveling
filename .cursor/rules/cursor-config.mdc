@@ -1,0 +1,16 @@
+---
+alwaysApply: true
+---
+
+Project Setup Rules:
+
+- DO NOT access or read from `.env.local`
+- Instead, output full echo commands (one per line) so I can paste them manually
+- Default to Windows/PowerShell syntax for CLI commands
+- Assume no Linux tools (no `touch`, `export`, `cat`, etc.)
+  Project Setup Rules:
+
+- DO NOT access or read from `.env.local`
+- Instead, output full echo commands (one per line) so I can paste them manually
+- Default to Windows/PowerShell syntax for CLI commands
+- Assume no Linux tools (no `touch`, `export`, `cat`, etc.)

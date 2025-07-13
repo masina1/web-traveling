@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 2,
+            "activePatchIndex": 4,
             "patches": [
                 {
                     "date": 1752432544787,
@@ -16,6 +16,14 @@
                 {
                     "date": 1752432767436,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -117,10 +117,10 @@\n export async function getPublicTrips(): Promise<Trip[]> {\r\n   try {\r\n     const q = query(\r\n       collection(db, TRIPS_COLLECTION),\r\n-      where('isPublic', '==', true),\r\n-      orderBy('createdAt', 'desc')\r\n+      where('isPublic', '==', true)\r\n+      // Removed orderBy to avoid composite index requirement\r\n     );\r\n     \r\n     const querySnapshot = await getDocs(q);\r\n     const trips: Trip[] = [];\r\n@@ -134,9 +134,10 @@\n         updatedAt: data.updatedAt.toDate(),\r\n       } as Trip);\r\n     });\r\n     \r\n-    return trips;\r\n+    // Sort by createdAt in descending order (newest first)\r\n+    return trips.sort((a, b) => b.createdAt.getTime() - a.createdAt.getTime());\r\n   } catch (error) {\r\n     console.error('Error fetching public trips:', error);\r\n     throw error;\r\n   }\r\n"
+                },
+                {
+                    "date": 1752433741313,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,8 +12,9 @@\n   Timestamp,\r\n } from 'firebase/firestore';\r\n import { db } from './firebase';\r\n import { Trip, CreateTripData, UpdateTripData } from '@/types';\r\n+import { deleteAllTripDestinations } from './destination-service';\r\n \r\n const TRIPS_COLLECTION = 'trips';\r\n \r\n // Create a new trip\r\n"
+                },
+                {
+                    "date": 1752433749659,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -105,8 +105,12 @@\n \r\n // Delete a trip\r\n export async function deleteTrip(tripId: string): Promise<void> {\r\n   try {\r\n+    // First delete all destinations associated with this trip\r\n+    await deleteAllTripDestinations(tripId);\r\n+    \r\n+    // Then delete the trip itself\r\n     const tripRef = doc(db, TRIPS_COLLECTION, tripId);\r\n     await deleteDoc(tripRef);\r\n   } catch (error) {\r\n     console.error('Error deleting trip:', error);\r\n"
                 }
             ],
             "date": 1752432544787,

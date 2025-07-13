@@ -1,0 +1,18 @@
+{
+    "sourceFile": "app/test-maps/page.tsx",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752437081936,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752437081936,
+            "name": "Commit-0",
+            "content": "import MapTest from '@/components/map/MapTest';\r\n\r\nexport default function TestMapsPage() {\r\n  return (\r\n    <div className=\"min-h-screen bg-gray-50\">\r\n      <div className=\"py-8\">\r\n        <MapTest />\r\n      </div>\r\n    </div>\r\n  );\r\n} "
+        }
+    ]
+}

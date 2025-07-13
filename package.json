@@ -10,7 +10,8 @@
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
-    "@googlemaps/js-api-loader": "^1.16.0",
+    "@googlemaps/js-api-loader": "^1.16.10",
+    "@types/google.maps": "^3.58.1",
     "clsx": "^2.0.0",
     "date-fns": "^2.30.0",
     "firebase": "^10.14.1",
