@@ -195,7 +195,12 @@ This project is licensed under the MIT License.
 
 ### 2025-01-10
 
-- **[BUGFIX]** Fixed pin numbers now properly move with circles during drag operations
+- **[MAJOR]** Enabled cross-day dragging - destinations can now be moved between different days
+- **[MAJOR]** Fixed map marker numbers now properly moving with circles during drag operations
+- **[FEATURE]** Restructured drag & drop with single DndContext for cross-day support
+- **[FEATURE]** Added droppable day containers for intuitive cross-day drops
+- **[FEATURE]** Enhanced drag logic to handle both same-day reordering and cross-day moves
+- **[BUGFIX]** Complete map marker recreation ensures proper number synchronization
 - **[BUGFIX]** Resolved business name selection - now saves actual business names from Places API
 - **[BUGFIX]** Improved marker recreation logic with proper event cleanup
 - **[BUGFIX]** Prevented unwanted pin animations when dragging unrelated destinations
