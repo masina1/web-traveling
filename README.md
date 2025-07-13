@@ -193,6 +193,16 @@ This project is licensed under the MIT License.
 
 ## Changelog
 
+### 2025-01-10
+
+- **[BUGFIX]** Fixed pin numbers now properly move with circles during drag operations
+- **[BUGFIX]** Resolved business name selection - now saves actual business names from Places API
+- **[BUGFIX]** Improved marker recreation logic with proper event cleanup
+- **[BUGFIX]** Prevented unwanted pin animations when dragging unrelated destinations
+- **[IMPROVEMENT]** Enhanced coordinate-based matching for selected destination highlighting
+- **[IMPROVEMENT]** Reduced debug logging noise for cleaner console output
+- **[IMPROVEMENT]** Added proper marker animation timing and cleanup
+
 ### 2025-01-07
 
 - **[MAJOR]** Added drag & drop functionality for destination reordering
