@@ -1,0 +1,18 @@
+{
+    "sourceFile": "lib/auth-context.tsx",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752425773200,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752425773200,
+            "name": "Commit-0",
+            "content": "'use client';\r\n\r\nimport React, { createContext, useContext, useEffect, useState } from 'react';\r\nimport { \r\n  User,\r\n  createUserWithEmailAndPassword,\r\n  signInWithEmailAndPassword,\r\n  signOut,\r\n  onAuthStateChanged,\r\n  updateProfile\r\n} from 'firebase/auth';\r\nimport { doc, setDoc, getDoc } from 'firebase/firestore';\r\nimport { auth, db } from './firebase';\r\n\r\ninterface AuthContextType {\r\n  user: User | null;\r\n  loading: boolean;\r\n  register: (email: string, password: string, displayName: string) => Promise<void>;\r\n  login: (email: string, password: string) => Promise<void>;\r\n  logout: () => Promise<void>;\r\n}\r\n\r\nconst AuthContext = createContext<AuthContextType | undefined>(undefined);\r\n\r\nexport function useAuth() {\r\n  const context = useContext(AuthContext);\r\n  if (context === undefined) {\r\n    throw new Error('useAuth must be used within an AuthProvider');\r\n  }\r\n  return context;\r\n}\r\n\r\nexport function AuthProvider({ children }: { children: React.ReactNode }) {\r\n  const [user, setUser] = useState<User | null>(null);\r\n  const [loading, setLoading] = useState(true);\r\n\r\n  useEffect(() => {\r\n    const unsubscribe = onAuthStateChanged(auth, (user) => {\r\n      setUser(user);\r\n      setLoading(false);\r\n    });\r\n\r\n    return unsubscribe;\r\n  }, []);\r\n\r\n  const register = async (email: string, password: string, displayName: string) => {\r\n    try {\r\n      const { user } = await createUserWithEmailAndPassword(auth, email, password);\r\n      \r\n      // Update user profile\r\n      await updateProfile(user, { displayName });\r\n      \r\n      // Create user document in Firestore\r\n      await setDoc(doc(db, 'users', user.uid), {\r\n        id: user.uid,\r\n        email: user.email,\r\n        displayName,\r\n        sharedTrips: [],\r\n        createdAt: new Date(),\r\n      });\r\n    } catch (error) {\r\n      console.error('Error registering user:', error);\r\n      throw error;\r\n    }\r\n  };\r\n\r\n  const login = async (email: string, password: string) => {\r\n    try {\r\n      await signInWithEmailAndPassword(auth, email, password);\r\n    } catch (error) {\r\n      console.error('Error logging in:', error);\r\n      throw error;\r\n    }\r\n  };\r\n\r\n  const logout = async () => {\r\n    try {\r\n      await signOut(auth);\r\n    } catch (error) {\r\n      console.error('Error logging out:', error);\r\n      throw error;\r\n    }\r\n  };\r\n\r\n  const value = {\r\n    user,\r\n    loading,\r\n    register,\r\n    login,\r\n    logout,\r\n  };\r\n\r\n  return (\r\n    <AuthContext.Provider value={value}>\r\n      {children}\r\n    </AuthContext.Provider>\r\n  );\r\n} "
+        }
+    ]
+}

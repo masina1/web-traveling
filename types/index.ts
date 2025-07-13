@@ -6,7 +6,14 @@ export type Trip = {
   startDate: string;
   endDate: string;
   isPublic: boolean;
+  description?: string;
+  coverImage?: string;
+  createdAt: Date;
+  updatedAt: Date;
 };
+
+export type CreateTripData = Omit<Trip, 'id' | 'createdAt' | 'updatedAt'>;
+export type UpdateTripData = Partial<Omit<Trip, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>;
 
 export type Destination = {
   id: string;

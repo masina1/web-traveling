@@ -1,0 +1,18 @@
+{
+    "sourceFile": "types/index.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752432530089,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752432530089,
+            "name": "Commit-0",
+            "content": "export type Trip = {\r\n  id: string;\r\n  userId: string;\r\n  name: string;\r\n  location: string;\r\n  startDate: string;\r\n  endDate: string;\r\n  isPublic: boolean;\r\n  description?: string;\r\n  coverImage?: string;\r\n  createdAt: Date;\r\n  updatedAt: Date;\r\n};\r\n\r\nexport type CreateTripData = Omit<Trip, 'id' | 'createdAt' | 'updatedAt'>;\r\nexport type UpdateTripData = Partial<Omit<Trip, 'id' | 'userId' | 'createdAt' | 'updatedAt'>>;\r\n\r\nexport type Destination = {\r\n  id: string;\r\n  tripId: string;\r\n  locationName: string;\r\n  address: string;\r\n  lat: number;\r\n  lng: number;\r\n  day: number;\r\n  startTime?: string;\r\n  endTime?: string;\r\n  notes?: string;\r\n};\r\n\r\nexport type User = {\r\n  id: string;\r\n  email: string;\r\n  displayName: string;\r\n  sharedTrips: string[];\r\n};\r\n\r\nexport type PlaceSuggestion = {\r\n  id: string;\r\n  name: string;\r\n  address: string;\r\n  lat: number;\r\n  lng: number;\r\n  category: string;\r\n  description?: string;\r\n  imageUrl?: string;\r\n  rating?: number;\r\n};\r\n\r\nexport type DayColor = {\r\n  bg: string;\r\n  text: string;\r\n  border: string;\r\n};\r\n\r\nexport type ViewMode = 'list' | 'compact'; "
+        }
+    ]
+}

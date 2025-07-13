@@ -1,0 +1,18 @@
+{
+    "sourceFile": "app/page.tsx",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752425849938,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752425849938,
+            "name": "Commit-0",
+            "content": "export default function Home() {\r\n  return (\r\n    <div className=\"min-h-screen bg-gradient-to-br from-primary-50 to-blue-50\">\r\n      <div className=\"container mx-auto px-4 py-16\">\r\n        <div className=\"text-center\">\r\n          <h1 className=\"text-5xl font-bold text-gray-900 mb-6\">\r\n            🌍 Travel Planner\r\n          </h1>\r\n          <p className=\"text-xl text-gray-600 mb-8 max-w-2xl mx-auto\">\r\n            Plan your trips with interactive maps, detailed itineraries, and smart location suggestions.\r\n            Similar to Wanderlog, but simplified and focused on what matters most.\r\n          </p>\r\n          \r\n          <div className=\"flex justify-center gap-4 mb-12\">\r\n            <a href=\"/register\" className=\"btn-primary text-lg px-8 py-3\">\r\n              Get Started\r\n            </a>\r\n            <a href=\"/login\" className=\"btn-secondary text-lg px-8 py-3\">\r\n              Sign In\r\n            </a>\r\n          </div>\r\n          \r\n          <div className=\"grid md:grid-cols-3 gap-8 max-w-4xl mx-auto\">\r\n            <div className=\"card text-center\">\r\n              <div className=\"text-4xl mb-4\">🗺️</div>\r\n              <h3 className=\"text-xl font-semibold mb-2\">Interactive Maps</h3>\r\n              <p className=\"text-gray-600\">\r\n                View destinations on color-coded maps with numbered pins for each day\r\n              </p>\r\n            </div>\r\n            \r\n            <div className=\"card text-center\">\r\n              <div className=\"text-4xl mb-4\">📅</div>\r\n              <h3 className=\"text-xl font-semibold mb-2\">Day-by-Day Planning</h3>\r\n              <p className=\"text-gray-600\">\r\n                Organize your itinerary with detailed time blocks and notes\r\n              </p>\r\n            </div>\r\n            \r\n            <div className=\"card text-center\">\r\n              <div className=\"text-4xl mb-4\">🎯</div>\r\n              <h3 className=\"text-xl font-semibold mb-2\">Smart Suggestions</h3>\r\n              <p className=\"text-gray-600\">\r\n                Get personalized recommendations based on your destinations\r\n              </p>\r\n            </div>\r\n          </div>\r\n        </div>\r\n      </div>\r\n    </div>\r\n  )\r\n} "
+        }
+    ]
+}

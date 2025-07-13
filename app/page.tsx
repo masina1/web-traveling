@@ -12,12 +12,12 @@ export default function Home() {
           </p>
           
           <div className="flex justify-center gap-4 mb-12">
-            <button className="btn-primary text-lg px-8 py-3">
+            <a href="/register" className="btn-primary text-lg px-8 py-3">
               Get Started
-            </button>
-            <button className="btn-secondary text-lg px-8 py-3">
+            </a>
+            <a href="/login" className="btn-secondary text-lg px-8 py-3">
               Sign In
-            </button>
+            </a>
           </div>
           
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">

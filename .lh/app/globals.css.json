@@ -1,0 +1,18 @@
+{
+    "sourceFile": "app/globals.css",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752432614076,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752432614076,
+            "name": "Commit-0",
+            "content": "@tailwind base;\r\n@tailwind components;\r\n@tailwind utilities;\r\n\r\n@layer base {\r\n  html {\r\n    @apply h-full;\r\n  }\r\n  \r\n  body {\r\n    @apply h-full bg-gray-50 text-gray-900 antialiased;\r\n  }\r\n}\r\n\r\n@layer components {\r\n  .btn-primary {\r\n    @apply bg-primary-600 text-white px-4 py-2 rounded-xl font-medium hover:bg-primary-700 transition-colors;\r\n  }\r\n  \r\n  .btn-secondary {\r\n    @apply bg-white text-gray-700 px-4 py-2 rounded-xl font-medium border border-gray-300 hover:bg-gray-50 transition-colors;\r\n  }\r\n  \r\n  .card {\r\n    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;\r\n  }\r\n  \r\n  .input-field {\r\n    @apply w-full px-3 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;\r\n  }\r\n  \r\n  .line-clamp-2 {\r\n    display: -webkit-box;\r\n    -webkit-line-clamp: 2;\r\n    -webkit-box-orient: vertical;\r\n    overflow: hidden;\r\n  }\r\n}\r\n\r\n/* Mapbox styles */\r\n.mapboxgl-popup {\r\n  max-width: 300px;\r\n}\r\n\r\n.mapboxgl-popup-content {\r\n  @apply rounded-xl shadow-lg;\r\n}\r\n\r\n.mapboxgl-popup-close-button {\r\n  @apply text-gray-400 hover:text-gray-600;\r\n} "
+        }
+    ]
+}
