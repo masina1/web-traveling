@@ -225,6 +225,15 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### Recent Updates
 
+**[v1.2.1] - 2025-01-15**
+
+- ✅ **Fixed**: Itinerary panel now extends to full screen height
+- ✅ **Improved**: Moved recommendations to per-day sections for better organization
+- ✅ **Enhanced**: Added collapsible recommendations with dropdown arrow
+- ✅ **Added**: Functional scroll arrows with auto-hiding for recommendation cards
+- ✅ **Improved**: Hidden scrollbars for cleaner interface
+- ✅ **Cleaned**: Removed redundant UI text and footer elements
+
 **[v1.2.0] - 2025-01-08**
 
 - ✅ **Removed**: Dark mode feature for cleaner, focused UX

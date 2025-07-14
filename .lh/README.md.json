@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 15,
+            "activePatchIndex": 16,
             "patches": [
                 {
                     "date": 1752433150539,
@@ -68,6 +68,10 @@
                 {
                     "date": 1752491061292,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -224,8 +224,24 @@\n ## 📝 Changelog\r\n \r\n ### Recent Updates\r\n \r\n+**[v1.2.0] - 2025-01-08**\r\n+\r\n+- ✅ **Removed**: Dark mode feature for cleaner, focused UX\r\n+- ✅ **Enhanced**: True full-width layout with no container constraints\r\n+- ✅ **Fixed**: Seamless edge-to-edge panel layout with no gaps or borders\r\n+- ✅ **Improved**: Left panel scrolling with proper overflow handling\r\n+- ✅ **Enhanced**: Right panel map for true full-screen experience\r\n+\r\n+**[v1.1.0] - 2025-01-08**\r\n+\r\n+- ✅ **Added**: Full-width responsive layout removing container constraints\r\n+- ✅ **Enhanced**: Teardrop-shaped pins consistent across map and itinerary\r\n+- ✅ **Fixed**: Pin renumbering after deletion (proper sequential numbering)\r\n+- ✅ **Added**: Click-to-add toggle functionality for map interactions\r\n+- ✅ **Improved**: Mobile responsive design with better height calculations\r\n+\r\n **[v1.0.0] - 2025-07-14**\r\n \r\n - ✅ **Added**: Google Places autocomplete for location search\r\n - ✅ **Added**: Mobile responsive design with collapsible panels\r\n"
+                },
+                {
+                    "date": 1752498028471,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -224,8 +224,17 @@\n ## 📝 Changelog\r\n \r\n ### Recent Updates\r\n \r\n+**[v1.2.1] - 2025-01-15**\r\n+\r\n+- ✅ **Fixed**: Itinerary panel now extends to full screen height\r\n+- ✅ **Improved**: Moved recommendations to per-day sections for better organization\r\n+- ✅ **Enhanced**: Added collapsible recommendations with dropdown arrow\r\n+- ✅ **Added**: Functional scroll arrows with auto-hiding for recommendation cards\r\n+- ✅ **Improved**: Hidden scrollbars for cleaner interface\r\n+- ✅ **Cleaned**: Removed redundant UI text and footer elements\r\n+\r\n **[v1.2.0] - 2025-01-08**\r\n \r\n - ✅ **Removed**: Dark mode feature for cleaner, focused UX\r\n - ✅ **Enhanced**: True full-width layout with no container constraints\r\n"
                 }
             ],
             "date": 1752433150539,

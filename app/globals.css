@@ -41,6 +41,10 @@
     -webkit-box-orient: vertical;
     overflow: hidden;
   }
+  
+  .no-scrollbar::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* Mapbox styles */

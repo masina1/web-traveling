@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 46,
+            "activePatchIndex": 47,
             "patches": [
                 {
                     "date": 1752433573907,
@@ -192,6 +192,10 @@
                 {
                     "date": 1752489234771,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -476,14 +476,14 @@\n           )}\r\n         </div>\r\n \r\n       {/* Full-width layout - Seamless edge-to-edge panels */}\r\n-      <div className=\"lg:flex lg:h-[calc(100vh-120px)] xl:h-[calc(100vh-120px)] 2xl:h-[calc(100vh-120px)]\">\r\n+      <div className=\"lg:flex lg:h-[calc(100vh-120px)] xl:h-[calc(100vh-120px)] 2xl:h-[calc(100vh-120px)] w-full\">\r\n         {/* Left Panel - Itinerary (45% on desktop, 40% on ultra-wide) - Scrollable */}\r\n         <div className={`\r\n           lg:w-[45%] 2xl:w-[40%] lg:block\r\n           ${isMobileItineraryOpen ? 'block' : 'hidden lg:block'}\r\n-          ${isMobileItineraryOpen ? 'h-[calc(100vh-250px)] bg-white mx-4 rounded-xl shadow-sm border border-gray-200' : 'lg:h-full'}\r\n+          ${isMobileItineraryOpen ? 'h-[calc(100vh-250px)] bg-white mx-4 rounded-xl shadow-sm border border-gray-200' : 'lg:h-full bg-white'}\r\n           overflow-y-auto\r\n         `}>\r\n           <ItineraryPanel\r\n             trip={trip}\r\n"
+                },
+                {
+                    "date": 1752494352551,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -476,14 +476,14 @@\n           )}\r\n         </div>\r\n \r\n       {/* Full-width layout - Seamless edge-to-edge panels */}\r\n-      <div className=\"lg:flex lg:h-[calc(100vh-120px)] xl:h-[calc(100vh-120px)] 2xl:h-[calc(100vh-120px)] w-full\">\r\n+      <div className=\"lg:flex lg:h-[calc(100vh-120px)] xl:h-[calc(100vh-120px)] 2xl:h-[calc(100vh-120px)]\">\r\n         {/* Left Panel - Itinerary (45% on desktop, 40% on ultra-wide) - Scrollable */}\r\n         <div className={`\r\n           lg:w-[45%] 2xl:w-[40%] lg:block\r\n           ${isMobileItineraryOpen ? 'block' : 'hidden lg:block'}\r\n-          ${isMobileItineraryOpen ? 'h-[calc(100vh-250px)] bg-white mx-4 rounded-xl shadow-sm border border-gray-200' : 'lg:h-full bg-white'}\r\n+          ${isMobileItineraryOpen ? 'h-[calc(100vh-250px)] bg-white mx-4 rounded-xl shadow-sm border border-gray-200' : 'lg:h-full'}\r\n           overflow-y-auto\r\n         `}>\r\n           <ItineraryPanel\r\n             trip={trip}\r\n"
                 }
             ],
             "date": 1752433573907,

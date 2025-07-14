@@ -477,12 +477,12 @@ export default function TripDetailPage() {
         </div>
 
       {/* Full-width layout - Seamless edge-to-edge panels */}
-      <div className="lg:flex lg:h-[calc(100vh-120px)] xl:h-[calc(100vh-120px)] 2xl:h-[calc(100vh-120px)] w-full">
+      <div className="lg:flex lg:h-[calc(100vh-120px)] xl:h-[calc(100vh-120px)] 2xl:h-[calc(100vh-120px)]">
         {/* Left Panel - Itinerary (45% on desktop, 40% on ultra-wide) - Scrollable */}
         <div className={`
           lg:w-[45%] 2xl:w-[40%] lg:block
           ${isMobileItineraryOpen ? 'block' : 'hidden lg:block'}
-          ${isMobileItineraryOpen ? 'h-[calc(100vh-250px)] bg-white mx-4 rounded-xl shadow-sm border border-gray-200' : 'lg:h-full bg-white'}
+          ${isMobileItineraryOpen ? 'h-[calc(100vh-250px)] bg-white mx-4 rounded-xl shadow-sm border border-gray-200' : 'lg:h-full'}
           overflow-y-auto
         `}>
           <ItineraryPanel
