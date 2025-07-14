@@ -222,20 +222,20 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### Recent Updates
 
-**[v1.0.0] - 2025-01-15**
+**[v1.0.0] - 2025-07-14**
 
 - ✅ **Added**: Google Places autocomplete for location search
 - ✅ **Added**: Mobile responsive design with collapsible panels
 - ✅ **Enhanced**: Map marker synchronization with itinerary
 - ✅ **Fixed**: API integration issues with Google Places
 
-**[v0.9.0] - 2025-01-10**
+**[v0.9.0] - 2025-07-14**
 
 - ✅ **Added**: Cross-day destination dragging
 - ✅ **Fixed**: Map marker synchronization issues
 - ✅ **Enhanced**: Drag & drop user experience
 
-**[v0.8.0] - 2025-01-07**
+**[v0.8.0] - 2025-07-14**
 
 - ✅ **Added**: Drag & drop functionality for destinations
 - ✅ **Fixed**: Map initialization timing issues

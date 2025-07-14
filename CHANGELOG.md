@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Collaborative trip planning
 - Export to PDF/Calendar
 
-## [1.0.0] - 2025-01-15
+## [1.0.0] - 2025-07-14
 
 ### Added
 
@@ -47,7 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[BUGFIX]** Console errors related to Places API initialization
 - **[BUGFIX]** Destination object structure compatibility with backend
 
-## [0.9.0] - 2025-01-10
+## [0.9.0] - 2025-07-14
 
 ### Added
 
@@ -72,7 +72,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[IMPROVEMENT]** Added proper marker animation timing and cleanup
 - **[IMPROVEMENT]** Better visual feedback during drag operations
 
-## [0.8.0] - 2025-01-07
+## [0.8.0] - 2025-07-14
 
 ### Added
 
@@ -95,7 +95,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[IMPROVEMENT]** Smooth animations and accessibility support via @dnd-kit
 - **[IMPROVEMENT]** Improved retry logic with better error handling
 
-## [0.7.0] - 2025-01-06
+## [0.7.0] - 2025-07-14
 
 ### Added
 
@@ -111,7 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[IMPROVEMENT]** Better error handling and retry mechanisms
 - **[IMPROVEMENT]** Improved map initialization timing and reliability
 
-## [0.6.0] - 2025-01-05
+## [0.6.0] - 2025-07-14
 
 ### Added
 
@@ -127,7 +127,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[IMPROVEMENT]** Better error handling and validation
 - **[IMPROVEMENT]** Improved user experience with loading states
 
-## [0.5.0] - 2025-01-04
+## [0.5.0] - 2025-07-14
 
 ### Added
 
@@ -143,7 +143,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[IMPROVEMENT]** User session persistence
 - **[IMPROVEMENT]** Professional authentication UI
 
-## [0.4.0] - 2025-01-03
+## [0.4.0] - 2025-07-14
 
 ### Added
 
@@ -159,7 +159,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[IMPROVEMENT]** Better error handling for database operations
 - **[IMPROVEMENT]** Improved user feedback and loading states
 
-## [0.3.0] - 2025-01-02
+## [0.3.0] - 2025-07-14
 
 ### Added
 
@@ -176,7 +176,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[IMPROVEMENT]** Responsive map sizing
 - **[IMPROVEMENT]** Better marker clustering and management
 
-## [0.2.0] - 2025-01-01
+## [0.2.0] - 2025-07-14
 
 ### Added
 
@@ -193,7 +193,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[IMPROVEMENT]** Better visual hierarchy
 - **[IMPROVEMENT]** Smooth animations and transitions
 
-## [0.1.0] - 2024-12-28
+## [0.1.0] - 2025-07-11
 
 ### Added
 
