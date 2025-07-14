@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { createTrip } from '@/lib/trip-service';
 import { CreateTripData } from '@/types';
+import CityCountrySearch from './CityCountrySearch';
 
 interface CreateTripFormProps {
   onSuccess?: (tripId: string) => void;
@@ -135,15 +136,10 @@ export default function CreateTripForm({ onSuccess, onCancel }: CreateTripFormPr
           <label htmlFor="location" className="block text-sm font-medium text-gray-700 mb-1">
             Main Location *
           </label>
-          <input
-            type="text"
-            id="location"
-            name="location"
+          <CityCountrySearch
             value={formData.location}
-            onChange={handleInputChange}
-            className="input-field"
+            onLocationSelect={(location) => setFormData(prev => ({ ...prev, location }))}
             placeholder="e.g., Paris, France"
-            required
           />
         </div>
         

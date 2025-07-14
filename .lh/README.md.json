@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 16,
+            "activePatchIndex": 19,
             "patches": [
                 {
                     "date": 1752433150539,
@@ -72,6 +72,18 @@
                 {
                     "date": 1752498028471,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -224,8 +224,17 @@\n ## 📝 Changelog\r\n \r\n ### Recent Updates\r\n \r\n+**[v1.2.1] - 2025-01-15**\r\n+\r\n+- ✅ **Fixed**: Itinerary panel now extends to full screen height\r\n+- ✅ **Improved**: Moved recommendations to per-day sections for better organization\r\n+- ✅ **Enhanced**: Added collapsible recommendations with dropdown arrow\r\n+- ✅ **Added**: Functional scroll arrows with auto-hiding for recommendation cards\r\n+- ✅ **Improved**: Hidden scrollbars for cleaner interface\r\n+- ✅ **Cleaned**: Removed redundant UI text and footer elements\r\n+\r\n **[v1.2.0] - 2025-01-08**\r\n \r\n - ✅ **Removed**: Dark mode feature for cleaner, focused UX\r\n - ✅ **Enhanced**: True full-width layout with no container constraints\r\n"
+                },
+                {
+                    "date": 1752499713570,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -224,8 +224,15 @@\n ## 📝 Changelog\r\n \r\n ### Recent Updates\r\n \r\n+**[v1.2.2] - 2025-01-15**\r\n+\r\n+- ✅ **Fixed**: Google Maps centering issue - map now centers on trip location instead of defaulting to New York\r\n+- ✅ **Improved**: Enhanced map initialization with geocoding support for trip locations\r\n+- ✅ **Added**: Automatic zoom level adjustment based on location type (country vs city)\r\n+- ✅ **Improved**: Better error handling with fallback to NYC if geocoding fails\r\n+\r\n **[v1.2.1] - 2025-01-15**\r\n \r\n - ✅ **Fixed**: Itinerary panel now extends to full screen height\r\n - ✅ **Improved**: Moved recommendations to per-day sections for better organization\r\n"
+                },
+                {
+                    "date": 1752500251033,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -224,8 +224,15 @@\n ## 📝 Changelog\r\n \r\n ### Recent Updates\r\n \r\n+**[v1.2.3] - 2025-01-15**\r\n+\r\n+- ✅ **Added**: Autocomplete for city/country search in trip creation form\r\n+- ✅ **Enhanced**: Trip creation UX with intelligent location suggestions\r\n+- ✅ **Added**: Keyboard navigation support for location autocomplete (arrow keys, Enter, Escape)\r\n+- ✅ **Improved**: CityCountrySearch component with Google Places integration\r\n+\r\n **[v1.2.2] - 2025-01-15**\r\n \r\n - ✅ **Fixed**: Google Maps centering issue - map now centers on trip location instead of defaulting to New York\r\n - ✅ **Improved**: Enhanced map initialization with geocoding support for trip locations\r\n"
+                },
+                {
+                    "date": 1752502121633,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -230,8 +230,10 @@\n - ✅ **Added**: Autocomplete for city/country search in trip creation form\r\n - ✅ **Enhanced**: Trip creation UX with intelligent location suggestions\r\n - ✅ **Added**: Keyboard navigation support for location autocomplete (arrow keys, Enter, Escape)\r\n - ✅ **Improved**: CityCountrySearch component with Google Places integration\r\n+- ✅ **Fixed**: Google Maps API deprecation warnings and autocomplete re-search bug\r\n+- ✅ **Enhanced**: Robust selection handling with proper state management to prevent duplicate searches\r\n \r\n **[v1.2.2] - 2025-01-15**\r\n \r\n - ✅ **Fixed**: Google Maps centering issue - map now centers on trip location instead of defaulting to New York\r\n"
                 }
             ],
             "date": 1752433150539,

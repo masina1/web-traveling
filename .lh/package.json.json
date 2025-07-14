@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 2,
+            "activePatchIndex": 4,
             "patches": [
                 {
                     "date": 1752482022025,
@@ -16,6 +16,14 @@
                 {
                     "date": 1752498040189,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n {\r\n   \"name\": \"travel-planning-app\",\r\n-  \"version\": \"1.2.0\",\r\n+  \"version\": \"1.2.1\",\r\n   \"private\": true,\r\n   \"scripts\": {\r\n     \"dev\": \"next dev\",\r\n     \"build\": \"next build\",\r\n"
+                },
+                {
+                    "date": 1752499717928,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n {\r\n   \"name\": \"travel-planning-app\",\r\n-  \"version\": \"1.2.1\",\r\n+  \"version\": \"1.2.2\",\r\n   \"private\": true,\r\n   \"scripts\": {\r\n     \"dev\": \"next dev\",\r\n     \"build\": \"next build\",\r\n"
+                },
+                {
+                    "date": 1752500255409,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n {\r\n   \"name\": \"travel-planning-app\",\r\n-  \"version\": \"1.2.2\",\r\n+  \"version\": \"1.2.3\",\r\n   \"private\": true,\r\n   \"scripts\": {\r\n     \"dev\": \"next dev\",\r\n     \"build\": \"next build\",\r\n"
                 }
             ],
             "date": 1752482022025,

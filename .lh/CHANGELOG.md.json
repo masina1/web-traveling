@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 2,
+            "activePatchIndex": 4,
             "patches": [
                 {
                     "date": 1752474186083,
@@ -16,6 +16,14 @@
                 {
                     "date": 1752482007009,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -17,8 +17,30 @@\n - Expense tracking\r\n - Collaborative trip planning\r\n - Export to PDF/Calendar\r\n \r\n+## [1.1.0] - 2025-07-14\r\n+\r\n+### Added\r\n+\r\n+- **[FEATURE]** Click-to-add toggle button for map destination creation\r\n+- **[FEATURE]** Teardrop-shaped pins in itinerary panel matching map markers\r\n+- **[IMPROVEMENT]** Toggle control for enabling/disabling map click-to-add functionality\r\n+- **[IMPROVEMENT]** Consistent pin styling across map and itinerary components\r\n+\r\n+### Enhanced\r\n+\r\n+- **[IMPROVEMENT]** Streamlined deletion experience without success notifications\r\n+- **[IMPROVEMENT]** Automatic pin renumbering after destination deletion\r\n+- **[IMPROVEMENT]** Enhanced user control over map interaction modes\r\n+- **[IMPROVEMENT]** Better visual consistency between map and itinerary panels\r\n+\r\n+### Fixed\r\n+\r\n+- **[BUGFIX]** Pin numbering after deletion now always shows sequential numbers (1, 2, 3...)\r\n+- **[BUGFIX]** Removed intrusive success notifications during destination deletion\r\n+- **[BUGFIX]** Fixed pin numbering gaps when destinations are deleted\r\n+\r\n ## [1.0.0] - 2025-07-14\r\n \r\n ### Added\r\n \r\n"
+                },
+                {
+                    "date": 1752499702545,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,8 +6,15 @@\n and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\r\n \r\n ## [Unreleased]\r\n \r\n+### Fixed\r\n+\r\n+- **[BUGFIX]** Fixed Google Maps centering issue - map now centers on trip location instead of defaulting to New York\r\n+- **[IMPROVEMENT]** Enhanced map initialization with geocoding support for trip locations\r\n+- **[IMPROVEMENT]** Added automatic zoom level adjustment based on location type (country vs city)\r\n+- **[IMPROVEMENT]** Improved error handling with fallback to NYC if geocoding fails\r\n+\r\n ### Planned\r\n \r\n - Trip sharing with public links\r\n - Photo upload and management\r\n"
+                },
+                {
+                    "date": 1752500241274,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,8 +6,15 @@\n and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\r\n \r\n ## [Unreleased]\r\n \r\n+### Added\r\n+\r\n+- **[FEATURE]** Added autocomplete for city/country search in trip creation form\r\n+- **[FEATURE]** CityCountrySearch component with Google Places integration\r\n+- **[IMPROVEMENT]** Enhanced trip creation UX with intelligent location suggestions\r\n+- **[IMPROVEMENT]** Keyboard navigation support for location autocomplete (arrow keys, Enter, Escape)\r\n+\r\n ### Fixed\r\n \r\n - **[BUGFIX]** Fixed Google Maps centering issue - map now centers on trip location instead of defaulting to New York\r\n - **[IMPROVEMENT]** Enhanced map initialization with geocoding support for trip locations\r\n"
                 }
             ],
             "date": 1752474186083,

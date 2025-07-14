@@ -3,11 +3,19 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 2,
             "patches": [
                 {
                     "date": 1752432565760,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1752500063056,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,8 +3,9 @@\n import React, { useState } from 'react';\r\n import { useAuth } from '@/lib/auth-context';\r\n import { createTrip } from '@/lib/trip-service';\r\n import { CreateTripData } from '@/types';\r\n+import CityCountrySearch from './CityCountrySearch';\r\n \r\n interface CreateTripFormProps {\r\n   onSuccess?: (tripId: string) => void;\r\n   onCancel?: () => void;\r\n"
+                },
+                {
+                    "date": 1752500076415,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -135,17 +135,12 @@\n         <div>\r\n           <label htmlFor=\"location\" className=\"block text-sm font-medium text-gray-700 mb-1\">\r\n             Main Location *\r\n           </label>\r\n-          <input\r\n-            type=\"text\"\r\n-            id=\"location\"\r\n-            name=\"location\"\r\n+          <CityCountrySearch\r\n             value={formData.location}\r\n-            onChange={handleInputChange}\r\n-            className=\"input-field\"\r\n+            onLocationSelect={(location) => setFormData(prev => ({ ...prev, location }))}\r\n             placeholder=\"e.g., Paris, France\"\r\n-            required\r\n           />\r\n         </div>\r\n         \r\n         <div className=\"grid grid-cols-2 gap-4\">\r\n"
                 }
             ],
             "date": 1752432565760,

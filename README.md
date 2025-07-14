@@ -225,6 +225,22 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### Recent Updates
 
+**[v1.2.3] - 2025-01-15**
+
+- ✅ **Added**: Autocomplete for city/country search in trip creation form
+- ✅ **Enhanced**: Trip creation UX with intelligent location suggestions
+- ✅ **Added**: Keyboard navigation support for location autocomplete (arrow keys, Enter, Escape)
+- ✅ **Improved**: CityCountrySearch component with Google Places integration
+- ✅ **Fixed**: Google Maps API deprecation warnings and autocomplete re-search bug
+- ✅ **Enhanced**: Robust selection handling with proper state management to prevent duplicate searches
+
+**[v1.2.2] - 2025-01-15**
+
+- ✅ **Fixed**: Google Maps centering issue - map now centers on trip location instead of defaulting to New York
+- ✅ **Improved**: Enhanced map initialization with geocoding support for trip locations
+- ✅ **Added**: Automatic zoom level adjustment based on location type (country vs city)
+- ✅ **Improved**: Better error handling with fallback to NYC if geocoding fails
+
 **[v1.2.1] - 2025-01-15**
 
 - ✅ **Fixed**: Itinerary panel now extends to full screen height

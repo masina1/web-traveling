@@ -7,6 +7,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **[FEATURE]** Added autocomplete for city/country search in trip creation form
+- **[FEATURE]** CityCountrySearch component with Google Places integration
+- **[IMPROVEMENT]** Enhanced trip creation UX with intelligent location suggestions
+- **[IMPROVEMENT]** Keyboard navigation support for location autocomplete (arrow keys, Enter, Escape)
+
+### Fixed
+
+- **[BUGFIX]** Fixed Google Maps centering issue - map now centers on trip location instead of defaulting to New York
+- **[IMPROVEMENT]** Enhanced map initialization with geocoding support for trip locations
+- **[IMPROVEMENT]** Added automatic zoom level adjustment based on location type (country vs city)
+- **[IMPROVEMENT]** Improved error handling with fallback to NYC if geocoding fails
+
 ### Planned
 
 - Trip sharing with public links

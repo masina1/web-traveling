@@ -50,6 +50,71 @@ export default function TripMap({
     };
   }, []);
 
+  // Geocode trip location to get coordinates
+  const geocodeTripLocation = async (location: string): Promise<{ lat: number; lng: number; zoom?: number }> => {
+    const defaultCenter = { lat: 40.7128, lng: -74.0060, zoom: 10 }; // NYC fallback
+    
+    if (!location || !location.trim()) {
+      addDebugInfo('No location provided, using default center (NYC)');
+      return defaultCenter;
+    }
+
+    // Check if Google Maps is loaded
+    if (!window.google?.maps?.Geocoder) {
+      addDebugInfo('Google Maps Geocoder not available, using default center (NYC)');
+      return defaultCenter;
+    }
+
+    try {
+      addDebugInfo(`Geocoding location: "${location}"`);
+      
+      const geocoder = new google.maps.Geocoder();
+      const result = await new Promise<google.maps.GeocoderResult[]>((resolve, reject) => {
+        geocoder.geocode({ address: location }, (results, status) => {
+          if (status === google.maps.GeocoderStatus.OK && results) {
+            resolve(results);
+          } else {
+            reject(new Error(`Geocoding failed: ${status}`));
+          }
+        });
+      });
+
+      if (result && result[0]) {
+        const coords = result[0].geometry.location;
+        const addressComponents = result[0].address_components;
+        
+        // Determine zoom level based on location type
+        let zoom = 10; // Default city zoom
+        
+        // Check if it's a country (lower zoom) or city (higher zoom)
+        const hasCountry = addressComponents.some(comp => comp.types.includes('country'));
+        const hasCity = addressComponents.some(comp => 
+          comp.types.includes('locality') || comp.types.includes('administrative_area_level_1')
+        );
+        
+        if (hasCountry && !hasCity) {
+          zoom = 5; // Country level
+        } else if (hasCity) {
+          zoom = 11; // City level
+        }
+
+        const center = {
+          lat: coords.lat(),
+          lng: coords.lng(),
+          zoom: zoom
+        };
+
+        addDebugInfo(`✅ Geocoded "${location}" to: ${center.lat}, ${center.lng} (zoom: ${center.zoom})`);
+        return center;
+      }
+    } catch (error) {
+      addDebugInfo(`❌ Geocoding failed for "${location}": ${error instanceof Error ? error.message : 'Unknown error'}`);
+    }
+
+    addDebugInfo('Falling back to default center (NYC)');
+    return defaultCenter;
+  };
+
   // Initialize Google Maps
   useEffect(() => {
     if (!isMounted) {
@@ -134,11 +199,15 @@ export default function TripMap({
           addDebugInfo('Google Maps already loaded');
         }
 
+        // Get trip location coordinates (after Google Maps is loaded)
+        addDebugInfo(`Getting coordinates for trip location: "${trip.location}"`);
+        const tripCenter = await geocodeTripLocation(trip.location);
+        
         // Create map instance
-        addDebugInfo('Creating map instance...');
+        addDebugInfo(`Creating map instance centered on: ${tripCenter.lat}, ${tripCenter.lng}`);
         const mapInstance = new google.maps.Map(container, {
-          center: { lat: 40.7128, lng: -74.0060 },
-          zoom: 10,
+          center: tripCenter,
+          zoom: tripCenter.zoom || 10,
           disableDefaultUI: false,
           zoomControl: true,
           streetViewControl: true,
