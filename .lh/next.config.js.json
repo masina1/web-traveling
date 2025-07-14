@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1752433004299,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1752479744595,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,8 +16,32 @@\n         hostname: 'maps.googleapis.com',\r\n         port: '',\r\n         pathname: '/**',\r\n       },\r\n+      {\r\n+        protocol: 'https',\r\n+        hostname: 'places.googleapis.com',\r\n+        port: '',\r\n+        pathname: '/**',\r\n+      },\r\n+      {\r\n+        protocol: 'https',\r\n+        hostname: 'lh3.googleusercontent.com',\r\n+        port: '',\r\n+        pathname: '/**',\r\n+      },\r\n+      {\r\n+        protocol: 'https',\r\n+        hostname: 'lh4.googleusercontent.com',\r\n+        port: '',\r\n+        pathname: '/**',\r\n+      },\r\n+      {\r\n+        protocol: 'https',\r\n+        hostname: 'lh5.googleusercontent.com',\r\n+        port: '',\r\n+        pathname: '/**',\r\n+      },\r\n     ],\r\n   },\r\n }\r\n \r\n"
                 }
             ],
             "date": 1752433004299,

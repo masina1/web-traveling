@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { getTrip } from '@/lib/trip-service';
-import { getTripDestinations, createDestination } from '@/lib/destination-service';
+import { getTripDestinations, createDestination, deleteDestination } from '@/lib/destination-service';
 import { Trip, Destination, TripDay, getDayColor, CreateDestinationData } from '@/types';
 import { format, parseISO, differenceInDays, addDays } from 'date-fns';
 import Link from 'next/link';
@@ -222,6 +222,99 @@ export default function TripDetailPage() {
     }
   };
 
+  // Helper function to renumber destinations sequentially within specified days
+  const renumberDestinationsInDays = (destinations: Destination[], daysToRenumber: number[]): Destination[] => {
+    return destinations.map(dest => {
+      if (daysToRenumber.includes(dest.day)) {
+        // Get all destinations for this day and sort by current order
+        const dayDestinations = destinations
+          .filter(d => d.day === dest.day)
+          .sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+        
+        // Find the new sequential index
+        const newIndex = dayDestinations.findIndex(d => d.id === dest.id) + 1;
+        
+        return {
+          ...dest,
+          orderIndex: newIndex
+        };
+      }
+      return dest;
+    });
+  };
+
+  const handleDestinationDelete = async (destinationId: string) => {
+    try {
+      setError(null);
+      
+      // Find the destination to delete
+      const destinationToDelete = destinations.find(d => d.id === destinationId);
+      if (!destinationToDelete) {
+        setError('Destination not found');
+        return;
+      }
+
+      // Show confirmation dialog
+      const isConfirmed = window.confirm(
+        `Are you sure you want to delete "${destinationToDelete.locationName}"? This action cannot be undone.`
+      );
+      
+      if (!isConfirmed) {
+        return;
+      }
+
+      // Delete from database
+      await deleteDestination(destinationId);
+
+      // Update destinations state and renumber
+      const updatedDestinations = destinations.filter(d => d.id !== destinationId);
+      const finalDestinations = renumberDestinationsInDays(updatedDestinations, [destinationToDelete.day]);
+      
+      setDestinations(finalDestinations);
+
+      // Update tripDays state to remove the destination and renumber remaining ones
+      setTripDays(prev => prev.map(day => {
+        if (day.day === destinationToDelete.day) {
+          const dayDestinations = finalDestinations
+            .filter(d => d.day === day.day)
+            .sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+          
+          return {
+            ...day,
+            destinations: dayDestinations
+          };
+        }
+        return day;
+      }));
+
+      // Clear selected destination if it was the deleted one
+      if (selectedDestination?.id === destinationId) {
+        setSelectedDestination(null);
+      }
+      
+      console.log('Destination deleted successfully');
+      
+    } catch (error) {
+      console.error('Error deleting destination:', error);
+      
+      let errorMessage = 'Failed to delete destination. ';
+      
+      if (error instanceof Error) {
+        if (error.message.includes('permission')) {
+          errorMessage += 'Permission denied. Please check your login status.';
+        } else if (error.message.includes('network')) {
+          errorMessage += 'Network error. Please check your internet connection.';
+        } else {
+          errorMessage += error.message;
+        }
+      } else {
+        errorMessage += 'Please try again.';
+      }
+      
+      setError(errorMessage);
+    }
+  };
+
   if (loading || isLoading) {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
@@ -312,7 +405,7 @@ export default function TripDetailPage() {
       </div>
 
       {/* Main Content - 45%/55% Split */}
-      <div className="max-w-7xl mx-auto p-4">
+      <div className="max-w-full xl:max-w-7xl 2xl:max-w-8xl mx-auto p-4">
         {/* Success Message */}
         {successMessage && (
           <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
@@ -366,10 +459,10 @@ export default function TripDetailPage() {
         </div>
 
         {/* Desktop: Side-by-side layout | Mobile: Stacked with toggle */}
-        <div className="lg:flex lg:h-[calc(100vh-200px)] lg:gap-4">
-          {/* Left Panel - Itinerary (45% on desktop, full width on mobile) */}
+        <div className="lg:flex lg:h-[calc(100vh-200px)] xl:h-[calc(100vh-180px)] 2xl:h-[calc(100vh-160px)] lg:gap-4 xl:gap-6">
+          {/* Left Panel - Itinerary (45% on desktop, 40% on ultra-wide) */}
           <div className={`
-            lg:w-[45%] lg:block
+            lg:w-[45%] 2xl:w-[40%] lg:block
             ${isMobileItineraryOpen ? 'block' : 'hidden lg:block'}
             bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden
             ${isMobileItineraryOpen ? 'h-[calc(100vh-250px)]' : 'lg:h-auto'}
@@ -383,12 +476,13 @@ export default function TripDetailPage() {
               onDestinationSelect={handleDestinationSelect}
               onDestinationsChange={handleDestinationsChange}
               onLocationSelect={handleDestinationAdd}
+              onDestinationDelete={handleDestinationDelete}
             />
           </div>
 
-          {/* Right Panel - Map (55% on desktop, full width on mobile) */}
+          {/* Right Panel - Map (55% on desktop, 60% on ultra-wide) */}
           <div className={`
-            lg:w-[55%] lg:block
+            lg:w-[55%] 2xl:w-[60%] lg:block
             ${isMobileMapOpen ? 'block' : 'hidden lg:block'}
             bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden
             ${isMobileMapOpen ? 'h-[calc(100vh-250px)]' : 'lg:h-auto'}

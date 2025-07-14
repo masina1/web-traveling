@@ -38,6 +38,7 @@ interface ItineraryPanelProps {
   onDestinationSelect: (destination: Destination) => void;
   onDestinationsChange: (destinations: Destination[]) => void;
   onLocationSelect: (destination: Destination) => void;
+  onDestinationDelete: (destinationId: string) => void;
 }
 
 // Droppable day container component
@@ -70,12 +71,14 @@ function SortableDestination({
   dayColor, 
   selectedDestination,
   onDestinationSelect,
+  onDestinationDelete,
   isLastItem 
 }: {
   destination: Destination;
   dayColor: any;
   selectedDestination: Destination | null;
   onDestinationSelect: (destination: Destination) => void;
+  onDestinationDelete: (destinationId: string) => void;
   isLastItem: boolean;
 }) {
   const {
@@ -108,7 +111,7 @@ function SortableDestination({
     <div ref={setNodeRef} style={style} className={isDragging ? 'opacity-50' : ''}>
       <button
         onClick={() => onDestinationSelect(destination)}
-        className={`w-full p-4 text-left hover:bg-gray-100 transition-colors ${
+        className={`w-full p-4 text-left hover:bg-gray-100 transition-colors group ${
           selectedDestination?.id === destination.id ? 'bg-blue-100' : ''
         }`}
       >
@@ -124,12 +127,30 @@ function SortableDestination({
             </svg>
           </div>
 
-          {/* Pin Number */}
-          <div 
-            className="w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-medium flex-shrink-0 mt-0.5"
-            style={{ backgroundColor: dayColor.pin }}
-          >
-            {destination.orderIndex}
+          {/* Pin Number - Teardrop shape matching map */}
+          <div className="flex-shrink-0 mt-0.5">
+            <svg 
+              width="24" 
+              height="24" 
+              viewBox="0 0 24 24" 
+              className="w-6 h-6"
+            >
+              <path 
+                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+                fill={dayColor.pin}
+                stroke="#FFFFFF"
+                strokeWidth="2"
+              />
+              <text 
+                x="12" 
+                y="13" 
+                textAnchor="middle" 
+                className="text-white text-xs font-medium fill-current"
+                style={{ fontSize: '12px' }}
+              >
+                {destination.orderIndex}
+              </text>
+            </svg>
           </div>
           
           <div className="flex-1 min-w-0">
@@ -137,11 +158,25 @@ function SortableDestination({
               <h4 className="font-medium text-gray-900 truncate">
                 {destination.locationName}
               </h4>
-              {destination.startTime && (
-                <span className="text-sm text-gray-500 flex-shrink-0 ml-2">
-                  {formatTime(destination.startTime)}
-                </span>
-              )}
+              <div className="flex items-center space-x-2">
+                {destination.startTime && (
+                  <span className="text-sm text-gray-500 flex-shrink-0">
+                    {formatTime(destination.startTime)}
+                  </span>
+                )}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onDestinationDelete(destination.id);
+                  }}
+                  className="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg p-1 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0"
+                  title="Delete destination"
+                >
+                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                  </svg>
+                </button>
+              </div>
             </div>
             <p className="text-sm text-gray-600 truncate">
               {destination.address}
@@ -151,6 +186,21 @@ function SortableDestination({
                 {destination.notes}
               </p>
             )}
+            
+            {/* Photo display */}
+            {destination.photos && destination.photos.length > 0 && (
+              <div className="mt-2">
+                <img 
+                  src={destination.photos[0]} 
+                  alt={destination.locationName}
+                  className="w-full h-24 object-cover rounded-lg"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = 'none';
+                  }}
+                />
+              </div>
+            )}
+            
             <div className="flex items-center space-x-4 mt-2">
               {destination.category && (
                 <span className="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-gray-100 text-gray-700">
@@ -189,6 +239,7 @@ export default function ItineraryPanel({
   onDestinationSelect,
   onDestinationsChange,
   onLocationSelect,
+  onDestinationDelete,
 }: ItineraryPanelProps) {
   const [expandedDays, setExpandedDays] = useState<Set<number>>(new Set([1]));
   const [isReordering, setIsReordering] = useState(false);
@@ -253,23 +304,28 @@ export default function ItineraryPanel({
         const targetDayData = tripDays.find(d => d.day === targetDay);
         
         if (targetDayData && targetDay !== draggedDestination.day) {
+          // Calculate proper sequential order index
           const newOrderIndex = targetDayData.destinations.length + 1;
           
           // Update in database
           await moveDestinationToDay(draggedDestination.id, targetDay, newOrderIndex);
           
-          // Update local state
-          const updatedDestination = {
-            ...draggedDestination,
-            day: targetDay,
-            orderIndex: newOrderIndex
-          };
+          // Create updated destinations with proper renumbering
+          const updatedDestinations = allDestinations.map(dest => {
+            if (dest.id === draggedDestination.id) {
+              return {
+                ...dest,
+                day: targetDay,
+                orderIndex: newOrderIndex
+              };
+            }
+            return dest;
+          });
+
+          // Renumber all destinations in both source and target days
+          const finalDestinations = renumberDestinationsInDays(updatedDestinations, [draggedDestination.day, targetDay]);
           
-          const updatedDestinations = allDestinations.map(dest =>
-            dest.id === draggedDestination.id ? updatedDestination : dest
-          );
-          
-          onDestinationsChange(updatedDestinations);
+          onDestinationsChange(finalDestinations);
         }
       } else {
         // Same day or destination-to-destination drop
@@ -294,7 +350,7 @@ export default function ItineraryPanel({
           const [movedItem] = newDestinations.splice(oldIndex, 1);
           newDestinations.splice(newIndex, 0, movedItem);
 
-          // Update order indices
+          // Update order indices sequentially
           const reorderedDestinations = newDestinations.map((dest, index) => ({
             ...dest,
             orderIndex: index + 1
@@ -317,32 +373,25 @@ export default function ItineraryPanel({
           if (!targetDayData) return;
 
           const targetIndex = targetDayData.destinations.findIndex(dest => dest.id === over.id);
-          const newOrderIndex = targetIndex + 1;
-
-          // Update in database
-          await moveDestinationToDay(draggedDestination.id, targetDay, newOrderIndex);
-
-          // Reorder existing destinations in target day
+          
+          // Insert the destination at the target position
           const updatedTargetDestinations = [...targetDayData.destinations];
           updatedTargetDestinations.splice(targetIndex + 1, 0, {
             ...draggedDestination,
             day: targetDay,
-            orderIndex: newOrderIndex
+            orderIndex: targetIndex + 2 // Temporary index, will be renumbered
           });
 
-          // Update order indices for all destinations in target day
-          const reorderedTargetDestinations = updatedTargetDestinations.map((dest, index) => ({
-            ...dest,
-            orderIndex: index + 1
-          }));
+          // Update in database with proper order index
+          await moveDestinationToDay(draggedDestination.id, targetDay, targetIndex + 2);
 
-          // Update local state
+          // Create updated destinations array
           const updatedDestinations = allDestinations
             .filter(dest => dest.id !== draggedDestination.id) // Remove from source
             .map(dest => {
               // Update target day destinations
               if (dest.day === targetDay) {
-                const updated = reorderedTargetDestinations.find(rd => rd.id === dest.id);
+                const updated = updatedTargetDestinations.find(rd => rd.id === dest.id);
                 return updated || dest;
               }
               return dest;
@@ -350,13 +399,19 @@ export default function ItineraryPanel({
             .concat([{
               ...draggedDestination,
               day: targetDay,
-              orderIndex: newOrderIndex
+              orderIndex: targetIndex + 2 // Temporary, will be renumbered
             }]);
 
-          onDestinationsChange(updatedDestinations);
+          // Renumber all destinations in both affected days
+          const finalDestinations = renumberDestinationsInDays(updatedDestinations, [sourceDay, targetDay]);
+          
+          onDestinationsChange(finalDestinations);
 
-          // Reorder target day in database
-          const targetDayIds = reorderedTargetDestinations.map(dest => dest.id);
+          // Reorder target day in database with proper sequential IDs
+          const targetDayDestinations = finalDestinations.filter(dest => dest.day === targetDay);
+          const targetDayIds = targetDayDestinations
+            .sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0))
+            .map(dest => dest.id);
           await reorderDestinations(trip.id, targetDay, targetDayIds);
         }
       }
@@ -365,6 +420,27 @@ export default function ItineraryPanel({
     } finally {
       setIsReordering(false);
     }
+  };
+
+  // Helper function to renumber destinations sequentially within specified days
+  const renumberDestinationsInDays = (destinations: Destination[], daysToRenumber: number[]): Destination[] => {
+    return destinations.map(dest => {
+      if (daysToRenumber.includes(dest.day)) {
+        // Get all destinations for this day and sort by current order
+        const dayDestinations = destinations
+          .filter(d => d.day === dest.day)
+          .sort((a, b) => (a.orderIndex || 0) - (b.orderIndex || 0));
+        
+        // Find the new sequential index
+        const newIndex = dayDestinations.findIndex(d => d.id === dest.id) + 1;
+        
+        return {
+          ...dest,
+          orderIndex: newIndex
+        };
+      }
+      return dest;
+    });
   };
 
   return (
@@ -413,13 +489,31 @@ export default function ItineraryPanel({
                   }`}
                 >
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-3">
-                      <div 
-                        className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-medium`}
-                        style={{ backgroundColor: day.color.pin }}
+                                      <div className="flex items-center space-x-3">
+                    <div>
+                      <svg 
+                        width="24" 
+                        height="24" 
+                        viewBox="0 0 24 24" 
+                        className="w-6 h-6"
                       >
-                        {day.day}
-                      </div>
+                        <path 
+                          d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+                          fill={day.color.pin}
+                          stroke="#FFFFFF"
+                          strokeWidth="2"
+                        />
+                        <text 
+                          x="12" 
+                          y="13" 
+                          textAnchor="middle" 
+                          className="text-white text-sm font-medium fill-current"
+                          style={{ fontSize: '14px' }}
+                        >
+                          {day.day}
+                        </text>
+                      </svg>
+                    </div>
                       <div>
                         <h3 className="font-medium text-gray-900">
                           Day {day.day}
@@ -473,6 +567,7 @@ export default function ItineraryPanel({
                               dayColor={day.color}
                               selectedDestination={selectedDestination}
                               onDestinationSelect={onDestinationSelect}
+                              onDestinationDelete={onDestinationDelete}
                               isLastItem={index === day.destinations.length - 1}
                             />
                           ))}

@@ -5,13 +5,16 @@ A clean, responsive travel planning application similar to Wanderlog, built with
 ## ✨ Features
 
 - 🔐 **User Authentication** - Secure email/password login with Firebase
-- 🗺️ **Interactive Maps** - Color-coded pins by day with numbered markers
+- 🗺️ **Interactive Maps** - Color-coded teardrop pins by day with numbered markers
 - 📍 **Location Search** - Google Places autocomplete with intelligent suggestions
 - 📅 **Multi-day Trip Planning** - Organize destinations by day with drag & drop
 - 🎯 **Smart Suggestions** - Location recommendations with ratings and photos
 - 📱 **Mobile Responsive** - Seamless experience across all devices
 - 🔗 **Trip Sharing** - Share your itineraries with friends and family
 - 💾 **Real-time Sync** - Changes saved instantly to Firebase
+- 🎮 **Click-to-Add Control** - Toggle map click functionality on/off
+- 📍 **Consistent Pin Design** - Teardrop-shaped pins across map and itinerary
+- 🔄 **Smart Renumbering** - Automatic sequential pin numbering after changes
 
 ## 🚀 Quick Start
 

@@ -21,6 +21,10 @@ module.exports = {
           900: '#0c4a6e',
         },
       },
+      maxWidth: {
+        '8xl': '90rem',
+        '9xl': '100rem',
+      },
       animation: {
         'fade-in': 'fadeIn 0.5s ease-in-out',
         'slide-up': 'slideUp 0.3s ease-out',

@@ -1,0 +1,18 @@
+{
+    "sourceFile": "package.json",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752482022025,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752482022025,
+            "name": "Commit-0",
+            "content": "{\r\n  \"name\": \"travel-planning-app\",\r\n  \"version\": \"1.1.0\",\r\n  \"private\": true,\r\n  \"scripts\": {\r\n    \"dev\": \"next dev\",\r\n    \"build\": \"next build\",\r\n    \"start\": \"next start\",\r\n    \"lint\": \"next lint\",\r\n    \"type-check\": \"tsc --noEmit\"\r\n  },\r\n  \"dependencies\": {\r\n    \"@dnd-kit/core\": \"^6.3.1\",\r\n    \"@dnd-kit/sortable\": \"^10.0.0\",\r\n    \"@dnd-kit/utilities\": \"^3.2.2\",\r\n    \"@googlemaps/js-api-loader\": \"^1.16.10\",\r\n    \"@types/google.maps\": \"^3.58.1\",\r\n    \"clsx\": \"^2.0.0\",\r\n    \"date-fns\": \"^2.30.0\",\r\n    \"firebase\": \"^10.14.1\",\r\n    \"mapbox-gl\": \"^3.0.0\",\r\n    \"next\": \"^14.0.0\",\r\n    \"react\": \"^18.2.0\",\r\n    \"react-dom\": \"^18.2.0\",\r\n    \"react-map-gl\": \"^7.1.0\"\r\n  },\r\n  \"devDependencies\": {\r\n    \"@types/mapbox-gl\": \"^2.7.0\",\r\n    \"@types/node\": \"^20.0.0\",\r\n    \"@types/react\": \"^18.2.0\",\r\n    \"@types/react-dom\": \"^18.2.0\",\r\n    \"autoprefixer\": \"^10.4.0\",\r\n    \"eslint\": \"^8.45.0\",\r\n    \"eslint-config-next\": \"^14.0.0\",\r\n    \"postcss\": \"^8.4.0\",\r\n    \"tailwindcss\": \"^3.3.0\",\r\n    \"typescript\": \"^5.0.0\"\r\n  },\r\n  \"engines\": {\r\n    \"node\": \">=18.0.0\"\r\n  }\r\n}\r\n"
+        }
+    ]
+}

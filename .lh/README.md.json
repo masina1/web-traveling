@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 12,
+            "activePatchIndex": 14,
             "patches": [
                 {
                     "date": 1752433150539,
@@ -56,6 +56,14 @@
                 {
                     "date": 1752474205525,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -219,25 +219,31 @@\n ---\r\n \r\n ## 📝 Changelog\r\n \r\n-### [2025-01-15] Major Feature Update\r\n+### Recent Updates\r\n \r\n-- **Added**: Google Places autocomplete for location search\r\n-- **Added**: Mobile responsive design with collapsible panels\r\n-- **Enhanced**: Map marker synchronization with itinerary\r\n-- **Improved**: User experience with keyboard navigation\r\n-- **Fixed**: API integration issues with Google Places\r\n-- **Updated**: TypeScript types and error handling\r\n+**[v1.0.0] - 2025-01-15**\r\n \r\n-### [2025-01-14] Initial Release\r\n+- ✅ **Added**: Google Places autocomplete for location search\r\n+- ✅ **Added**: Mobile responsive design with collapsible panels\r\n+- ✅ **Enhanced**: Map marker synchronization with itinerary\r\n+- ✅ **Fixed**: API integration issues with Google Places\r\n \r\n-- **Added**: Core trip planning functionality\r\n-- **Added**: Interactive map with color-coded pins\r\n-- **Added**: Firebase authentication and data storage\r\n-- **Added**: Drag & drop destination management\r\n-- **Added**: Multi-day itinerary organization\r\n+**[v0.9.0] - 2025-01-10**\r\n \r\n+- ✅ **Added**: Cross-day destination dragging\r\n+- ✅ **Fixed**: Map marker synchronization issues\r\n+- ✅ **Enhanced**: Drag & drop user experience\r\n+\r\n+**[v0.8.0] - 2025-01-07**\r\n+\r\n+- ✅ **Added**: Drag & drop functionality for destinations\r\n+- ✅ **Fixed**: Map initialization timing issues\r\n+- ✅ **Enhanced**: Loading states and error handling\r\n+\r\n+For complete changelog with detailed history, see [CHANGELOG.md](CHANGELOG.md).\r\n+\r\n ## 🌟 Demo\r\n \r\n Visit the live demo: [https://web-traveling.vercel.app](https://web-traveling.vercel.app)\r\n \r\n"
+                },
+                {
+                    "date": 1752477229622,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -221,22 +221,22 @@\n ## 📝 Changelog\r\n \r\n ### Recent Updates\r\n \r\n-**[v1.0.0] - 2025-01-15**\r\n+**[v1.0.0] - 2025-07-14**\r\n \r\n - ✅ **Added**: Google Places autocomplete for location search\r\n - ✅ **Added**: Mobile responsive design with collapsible panels\r\n - ✅ **Enhanced**: Map marker synchronization with itinerary\r\n - ✅ **Fixed**: API integration issues with Google Places\r\n \r\n-**[v0.9.0] - 2025-01-10**\r\n+**[v0.9.0] - 2025-07-14**\r\n \r\n - ✅ **Added**: Cross-day destination dragging\r\n - ✅ **Fixed**: Map marker synchronization issues\r\n - ✅ **Enhanced**: Drag & drop user experience\r\n \r\n-**[v0.8.0] - 2025-01-07**\r\n+**[v0.8.0] - 2025-07-14**\r\n \r\n - ✅ **Added**: Drag & drop functionality for destinations\r\n - ✅ **Fixed**: Map initialization timing issues\r\n - ✅ **Enhanced**: Loading states and error handling\r\n"
+                },
+                {
+                    "date": 1752482015552,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,15 +4,18 @@\n \r\n ## ✨ Features\r\n \r\n - 🔐 **User Authentication** - Secure email/password login with Firebase\r\n-- 🗺️ **Interactive Maps** - Color-coded pins by day with numbered markers\r\n+- 🗺️ **Interactive Maps** - Color-coded teardrop pins by day with numbered markers\r\n - 📍 **Location Search** - Google Places autocomplete with intelligent suggestions\r\n - 📅 **Multi-day Trip Planning** - Organize destinations by day with drag & drop\r\n - 🎯 **Smart Suggestions** - Location recommendations with ratings and photos\r\n - 📱 **Mobile Responsive** - Seamless experience across all devices\r\n - 🔗 **Trip Sharing** - Share your itineraries with friends and family\r\n - 💾 **Real-time Sync** - Changes saved instantly to Firebase\r\n+- 🎮 **Click-to-Add Control** - Toggle map click functionality on/off\r\n+- 📍 **Consistent Pin Design** - Teardrop-shaped pins across map and itinerary\r\n+- 🔄 **Smart Renumbering** - Automatic sequential pin numbering after changes\r\n \r\n ## 🚀 Quick Start\r\n \r\n ### Prerequisites\r\n"
                 }
             ],
             "date": 1752433150539,

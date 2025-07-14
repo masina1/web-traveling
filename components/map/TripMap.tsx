@@ -32,6 +32,7 @@ export default function TripMap({
   const [debugInfo, setDebugInfo] = useState<string[]>([]);
   const [mapInitialized, setMapInitialized] = useState(false);
   const [isMounted, setIsMounted] = useState(false);
+  const [isClickToAddEnabled, setIsClickToAddEnabled] = useState(false);
 
   // Debug function
   const addDebugInfo = (info: string) => {
@@ -215,59 +216,89 @@ export default function TripMap({
       const newMarkers: google.maps.Marker[] = [];
       const bounds = new google.maps.LatLngBounds();
 
-      // Sort destinations by day and order index to ensure proper numbering
-      const sortedDestinations = [...destinations].sort((a, b) => {
-        if (a.day !== b.day) return a.day - b.day;
-        return (a.orderIndex || 0) - (b.orderIndex || 0);
+          // Sort destinations by day and order index to ensure proper numbering
+    const sortedDestinations = [...destinations].sort((a, b) => {
+      if (a.day !== b.day) return a.day - b.day;
+      return (a.orderIndex || 0) - (b.orderIndex || 0);
+    });
+
+    addDebugInfo(`Creating markers for ${sortedDestinations.length} sorted destinations`);
+
+    // Create a map of day -> sequential pin numbers
+    const dayCounters = new Map<number, number>();
+    sortedDestinations.forEach(destination => {
+      const dayCount = dayCounters.get(destination.day) || 0;
+      dayCounters.set(destination.day, dayCount + 1);
+    });
+
+    sortedDestinations.forEach((destination, index) => {
+      const dayColor = tripDays.find(d => d.day === destination.day)?.color;
+      
+      // Calculate proper sequential pin number within the day
+      const destinationsInDay = sortedDestinations.filter(d => d.day === destination.day);
+      const pinNumber = destinationsInDay.findIndex(d => d.id === destination.id) + 1;
+      
+      // Create completely new marker instance
+      const marker = new google.maps.Marker({
+        position: { lat: destination.lat, lng: destination.lng },
+        map: map,
+        title: destination.locationName,
+        icon: {
+          path: 'M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z',
+          fillColor: dayColor?.pin || '#6B7280',
+          fillOpacity: 1,
+          strokeColor: '#FFFFFF',
+          strokeWeight: 2,
+          scale: 1.5,
+          anchor: new google.maps.Point(12, 22),
+          labelOrigin: new google.maps.Point(12, 9),
+        },
+        label: {
+          text: pinNumber.toString(),
+          color: '#FFFFFF',
+          fontSize: '12px',
+          fontWeight: 'bold',
+        },
+        // Ensure no animations interfere during creation
+        animation: null,
+        // Force marker to be draggable: false to prevent conflicts
+        draggable: false,
       });
 
-      addDebugInfo(`Creating markers for ${sortedDestinations.length} sorted destinations`);
-
-      sortedDestinations.forEach((destination, index) => {
-        const dayColor = tripDays.find(d => d.day === destination.day)?.color;
-        
-        // Create completely new marker instance
-        const marker = new google.maps.Marker({
-          position: { lat: destination.lat, lng: destination.lng },
-          map: map,
-          title: destination.locationName,
-          icon: {
-            path: google.maps.SymbolPath.CIRCLE,
-            scale: 12,
-            fillColor: dayColor?.pin || '#6B7280',
-            fillOpacity: 1,
-            strokeColor: '#FFFFFF',
-            strokeWeight: 2,
-          },
-          label: {
-            text: destination.orderIndex?.toString() || (index + 1).toString(),
-            color: '#FFFFFF',
-            fontSize: '12px',
-            fontWeight: 'bold',
-          },
-          // Ensure no animations interfere during creation
-          animation: null,
-          // Force marker to be draggable: false to prevent conflicts
-          draggable: false,
-        });
-
-        addDebugInfo(`Created marker ${destination.orderIndex} for ${destination.locationName} on day ${destination.day}`);
+      addDebugInfo(`Created marker ${pinNumber} for ${destination.locationName} on day ${destination.day} (orderIndex: ${destination.orderIndex})`);
 
         // Add click listener
         marker.addListener('click', () => {
           onDestinationSelect(destination);
         });
 
-        // Create info window
+        // Create info window with photos
         const infoWindow = new google.maps.InfoWindow({
           content: `
-            <div style="padding: 12px; max-width: 250px;">
+            <div style="padding: 12px; max-width: 300px;">
+              ${destination.photos && destination.photos.length > 0 ? `
+                <div style="margin-bottom: 8px;">
+                  <img 
+                    src="${destination.photos[0]}" 
+                    alt="${destination.locationName}"
+                    style="width: 100%; height: 120px; object-fit: cover; border-radius: 8px;"
+                    onerror="this.style.display='none'"
+                  />
+                </div>
+              ` : ''}
               <h3 style="font-weight: 600; color: #1F2937; margin-bottom: 4px;">${destination.locationName}</h3>
               <p style="font-size: 14px; color: #6B7280; margin-bottom: 8px;">${destination.address}</p>
-              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #9CA3AF;">
+              <div style="display: flex; align-items: center; justify-content: space-between; font-size: 12px; color: #9CA3AF; margin-bottom: 8px;">
                 <span>Day ${destination.day}</span>
                 ${destination.startTime ? `<span>${destination.startTime}</span>` : ''}
               </div>
+              ${destination.rating ? `
+                <div style="display: flex; align-items: center; margin-bottom: 8px;">
+                  <span style="color: #F59E0B; font-size: 14px;">★</span>
+                  <span style="font-size: 12px; color: #6B7280; margin-left: 4px;">${destination.rating}</span>
+                  ${destination.category ? `<span style="font-size: 12px; color: #9CA3AF; margin-left: 8px;">${destination.category}</span>` : ''}
+                </div>
+              ` : ''}
               ${destination.notes ? `<p style="font-size: 14px; color: #374151; margin-top: 8px;">${destination.notes}</p>` : ''}
             </div>
           `,
@@ -306,7 +337,7 @@ export default function TripMap({
 
   // Handle map click to add new destination
   const handleMapClick = (event: google.maps.MapMouseEvent) => {
-    if (!event.latLng || isAddingDestination) return;
+    if (!event.latLng || isAddingDestination || !isClickToAddEnabled) return;
 
     const lat = event.latLng.lat();
     const lng = event.latLng.lng();
@@ -518,7 +549,7 @@ export default function TripMap({
     return () => {
       google.maps.event.removeListener(listener);
     };
-  }, [map, selectedDay, trip.id, tripDays, onDestinationAdd, isAddingDestination]);
+  }, [map, selectedDay, trip.id, tripDays, onDestinationAdd, isAddingDestination, isClickToAddEnabled]);
 
   const handleRetry = () => {
     addDebugInfo('Retry button clicked');
@@ -533,8 +564,8 @@ export default function TripMap({
       {/* Map Container - Always rendered */}
       <div 
         ref={mapRef}
-        className="w-full bg-gray-100 rounded-lg"
-        style={{ height: '600px', minHeight: '400px' }}
+        className="w-full h-full bg-gray-100 rounded-lg"
+        style={{ minHeight: '400px' }}
       />
       
       {/* Loading Overlay */}
@@ -606,20 +637,37 @@ export default function TripMap({
       
       {/* Map Controls */}
       {!isLoading && !error && (
-        <div className="absolute top-4 left-4 bg-white rounded-lg shadow-md p-2">
-          <div className="flex items-center space-x-2 text-sm">
-            <span className="text-gray-600">Day {selectedDay}</span>
-            <div 
-              className="w-4 h-4 rounded-full"
-              style={{ backgroundColor: tripDays.find(d => d.day === selectedDay)?.color.pin }}
-            />
+        <div className="absolute top-4 left-4 bg-white rounded-lg shadow-md p-3">
+          <div className="flex items-center space-x-3 text-sm">
+            <div className="flex items-center space-x-2">
+              <span className="text-gray-600">Day {selectedDay}</span>
+              <div 
+                className="w-4 h-4 rounded-full"
+                style={{ backgroundColor: tripDays.find(d => d.day === selectedDay)?.color.pin }}
+              />
+            </div>
+            
             {isAddingDestination ? (
               <div className="flex items-center space-x-2">
                 <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-primary-600"></div>
                 <span className="text-gray-600">Adding destination...</span>
               </div>
             ) : (
-              <span className="text-gray-600">Click to add destination</span>
+              <div className="flex items-center space-x-2">
+                <button
+                  onClick={() => setIsClickToAddEnabled(!isClickToAddEnabled)}
+                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                    isClickToAddEnabled 
+                      ? 'bg-primary-600 text-white hover:bg-primary-700' 
+                      : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                  }`}
+                >
+                  {isClickToAddEnabled ? 'Click to Add ON' : 'Click to Add OFF'}
+                </button>
+                <span className="text-gray-500 text-xs">
+                  {isClickToAddEnabled ? 'Click map to add destination' : 'Enable to add destinations by clicking'}
+                </span>
+              </div>
             )}
           </div>
         </div>

@@ -18,6 +18,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Collaborative trip planning
 - Export to PDF/Calendar
 
+## [1.1.0] - 2025-07-14
+
+### Added
+
+- **[FEATURE]** Click-to-add toggle button for map destination creation
+- **[FEATURE]** Teardrop-shaped pins in itinerary panel matching map markers
+- **[IMPROVEMENT]** Toggle control for enabling/disabling map click-to-add functionality
+- **[IMPROVEMENT]** Consistent pin styling across map and itinerary components
+
+### Enhanced
+
+- **[IMPROVEMENT]** Streamlined deletion experience without success notifications
+- **[IMPROVEMENT]** Automatic pin renumbering after destination deletion
+- **[IMPROVEMENT]** Enhanced user control over map interaction modes
+- **[IMPROVEMENT]** Better visual consistency between map and itinerary panels
+
+### Fixed
+
+- **[BUGFIX]** Pin numbering after deletion now always shows sequential numbers (1, 2, 3...)
+- **[BUGFIX]** Removed intrusive success notifications during destination deletion
+- **[BUGFIX]** Fixed pin numbering gaps when destinations are deleted
+
 ## [1.0.0] - 2025-07-14
 
 ### Added

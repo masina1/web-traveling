@@ -1,0 +1,18 @@
+{
+    "sourceFile": "tailwind.config.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752479814631,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752479814631,
+            "name": "Commit-0",
+            "content": "/** @type {import('tailwindcss').Config} */\r\nmodule.exports = {\r\n  content: [\r\n    './pages/**/*.{js,ts,jsx,tsx,mdx}',\r\n    './components/**/*.{js,ts,jsx,tsx,mdx}',\r\n    './app/**/*.{js,ts,jsx,tsx,mdx}',\r\n  ],\r\n  theme: {\r\n    extend: {\r\n      colors: {\r\n        primary: {\r\n          50: '#f0f9ff',\r\n          100: '#e0f2fe',\r\n          200: '#bae6fd',\r\n          300: '#7dd3fc',\r\n          400: '#38bdf8',\r\n          500: '#0ea5e9',\r\n          600: '#0284c7',\r\n          700: '#0369a1',\r\n          800: '#075985',\r\n          900: '#0c4a6e',\r\n        },\r\n      },\r\n      maxWidth: {\r\n        '8xl': '90rem',\r\n        '9xl': '100rem',\r\n      },\r\n      animation: {\r\n        'fade-in': 'fadeIn 0.5s ease-in-out',\r\n        'slide-up': 'slideUp 0.3s ease-out',\r\n      },\r\n      keyframes: {\r\n        fadeIn: {\r\n          '0%': { opacity: '0' },\r\n          '100%': { opacity: '1' },\r\n        },\r\n        slideUp: {\r\n          '0%': { transform: 'translateY(20px)', opacity: '0' },\r\n          '100%': { transform: 'translateY(0)', opacity: '1' },\r\n        },\r\n      },\r\n    },\r\n  },\r\n  plugins: [],\r\n} "
+        }
+    ]
+}
