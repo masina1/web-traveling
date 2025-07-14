@@ -3,11 +3,31 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 5,
             "patches": [
                 {
                     "date": 1752425783933,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1752486098752,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,27 +1,27 @@\n-import type { Metadata } from 'next'\r\n-import { Inter } from 'next/font/google'\r\n-import './globals.css'\r\n-import { AuthProvider } from '@/lib/auth-context'\r\n-\r\n-const inter = Inter({ subsets: ['latin'] })\r\n-\r\n-export const metadata: Metadata = {\r\n-  title: 'Travel Planner',\r\n-  description: 'Plan your trips with interactive maps and detailed itineraries',\r\n-}\r\n-\r\n-export default function RootLayout({\r\n-  children,\r\n-}: {\r\n-  children: React.ReactNode\r\n-}) {\r\n-  return (\r\n-    <html lang=\"en\">\r\n-      <body className={inter.className}>\r\n-        <AuthProvider>\r\n-          {children}\r\n-        </AuthProvider>\r\n-      </body>\r\n-    </html>\r\n-  )\r\n+import type { Metadata } from 'next'\n+import { Inter } from 'next/font/google'\n+import './globals.css'\n+import { AuthProvider } from '@/lib/auth-context'\n+\n+const inter = Inter({ subsets: ['latin'] })\n+\n+export const metadata: Metadata = {\n+  title: 'Travel Planner',\n+  description: 'Plan your trips with interactive maps and detailed itineraries',\n+}\n+\n+export default function RootLayout({\n+  children,\n+}: {\n+  children: React.ReactNode\n+}) {\n+  return (\n+    <html lang=\"en\">\n+      <body className={inter.className}>\n+        <AuthProvider>\n+        {children}\n+        </AuthProvider>\n+      </body>\n+    </html>\n+  )\n } \n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1752487245281,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,8 +1,9 @@\n import type { Metadata } from 'next'\n import { Inter } from 'next/font/google'\n import './globals.css'\n import { AuthProvider } from '@/lib/auth-context'\n+import { ThemeProvider } from '@/lib/theme-context'\n \n const inter = Inter({ subsets: ['latin'] })\n \n export const metadata: Metadata = {\n"
+                },
+                {
+                    "date": 1752487252203,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -18,11 +18,13 @@\n }) {\n   return (\n     <html lang=\"en\">\n       <body className={inter.className}>\n-        <AuthProvider>\n-        {children}\n-        </AuthProvider>\n+        <ThemeProvider>\n+          <AuthProvider>\n+            {children}\n+          </AuthProvider>\n+        </ThemeProvider>\n       </body>\n     </html>\n   )\n } \n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1752488377669,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,9 +1,7 @@\n import type { Metadata } from 'next'\n import { Inter } from 'next/font/google'\n import './globals.css'\n-import { AuthProvider } from '@/lib/auth-context'\n-import { ThemeProvider } from '@/lib/theme-context'\n \n const inter = Inter({ subsets: ['latin'] })\n \n export const metadata: Metadata = {\n@@ -18,13 +16,9 @@\n }) {\n   return (\n     <html lang=\"en\">\n       <body className={inter.className}>\n-        <ThemeProvider>\n-          <AuthProvider>\n-            {children}\n-          </AuthProvider>\n-        </ThemeProvider>\n+        {children}\n       </body>\n     </html>\n   )\n } \n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1752488392123,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,8 @@\n import type { Metadata } from 'next'\n import { Inter } from 'next/font/google'\n import './globals.css'\n+import { AuthProvider } from '@/lib/auth-context'\n \n const inter = Inter({ subsets: ['latin'] })\n \n export const metadata: Metadata = {\n@@ -16,9 +17,11 @@\n }) {\n   return (\n     <html lang=\"en\">\n       <body className={inter.className}>\n-        {children}\n+        <AuthProvider>\n+          {children}\n+        </AuthProvider>\n       </body>\n     </html>\n   )\n } \n\\ No newline at end of file\n"
                 }
             ],
             "date": 1752425783933,

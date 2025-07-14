@@ -225,6 +225,22 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ### Recent Updates
 
+**[v1.2.0] - 2025-01-08**
+
+- ✅ **Removed**: Dark mode feature for cleaner, focused UX
+- ✅ **Enhanced**: True full-width layout with no container constraints
+- ✅ **Fixed**: Seamless edge-to-edge panel layout with no gaps or borders
+- ✅ **Improved**: Left panel scrolling with proper overflow handling
+- ✅ **Enhanced**: Right panel map for true full-screen experience
+
+**[v1.1.0] - 2025-01-08**
+
+- ✅ **Added**: Full-width responsive layout removing container constraints
+- ✅ **Enhanced**: Teardrop-shaped pins consistent across map and itinerary
+- ✅ **Fixed**: Pin renumbering after deletion (proper sequential numbering)
+- ✅ **Added**: Click-to-add toggle functionality for map interactions
+- ✅ **Improved**: Mobile responsive design with better height calculations
+
 **[v1.0.0] - 2025-07-14**
 
 - ✅ **Added**: Google Places autocomplete for location search

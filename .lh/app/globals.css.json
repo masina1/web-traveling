@@ -3,11 +3,27 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 4,
             "patches": [
                 {
                     "date": 1752432614076,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1752487259523,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,9 +7,9 @@\n     @apply h-full;\r\n   }\r\n   \r\n   body {\r\n-    @apply h-full bg-gray-50 text-gray-900 antialiased;\r\n+    @apply h-full bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased;\r\n   }\r\n }\r\n \r\n @layer components {\r\n"
+                },
+                {
+                    "date": 1752487272495,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,21 +13,21 @@\n }\r\n \r\n @layer components {\r\n   .btn-primary {\r\n-    @apply bg-primary-600 text-white px-4 py-2 rounded-xl font-medium hover:bg-primary-700 transition-colors;\r\n+    @apply bg-primary-600 dark:bg-primary-700 text-white px-4 py-2 rounded-xl font-medium hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors;\r\n   }\r\n   \r\n   .btn-secondary {\r\n-    @apply bg-white text-gray-700 px-4 py-2 rounded-xl font-medium border border-gray-300 hover:bg-gray-50 transition-colors;\r\n+    @apply bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-xl font-medium border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors;\r\n   }\r\n   \r\n   .card {\r\n-    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;\r\n+    @apply bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6;\r\n   }\r\n   \r\n   .input-field {\r\n-    @apply w-full px-3 py-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent;\r\n+    @apply w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-500 dark:placeholder-gray-400;\r\n   }\r\n   \r\n   .line-clamp-2 {\r\n     display: -webkit-box;\r\n"
+                },
+                {
+                    "date": 1752488532429,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -7,27 +7,27 @@\n     @apply h-full;\r\n   }\r\n   \r\n   body {\r\n-    @apply h-full bg-gray-50 dark:bg-gray-900 text-gray-900 dark:text-gray-100 antialiased;\r\n+    @apply h-full bg-gray-50 text-gray-900 antialiased;\r\n   }\r\n }\r\n \r\n @layer components {\r\n   .btn-primary {\r\n-    @apply bg-primary-600 dark:bg-primary-700 text-white px-4 py-2 rounded-xl font-medium hover:bg-primary-700 dark:hover:bg-primary-600 transition-colors;\r\n+    @apply bg-primary-600 text-white px-4 py-2 rounded-xl font-medium hover:bg-primary-700 transition-colors;\r\n   }\r\n   \r\n   .btn-secondary {\r\n-    @apply bg-white dark:bg-gray-700 text-gray-700 dark:text-gray-200 px-4 py-2 rounded-xl font-medium border border-gray-300 dark:border-gray-600 hover:bg-gray-50 dark:hover:bg-gray-600 transition-colors;\r\n+    @apply bg-white text-gray-700 px-4 py-2 rounded-xl font-medium border border-gray-300 hover:bg-gray-50 transition-colors;\r\n   }\r\n   \r\n   .card {\r\n-    @apply bg-white dark:bg-gray-800 rounded-xl shadow-sm border border-gray-200 dark:border-gray-700 p-6;\r\n+    @apply bg-white rounded-xl shadow-sm border border-gray-200 p-6;\r\n   }\r\n   \r\n   .input-field {\r\n-    @apply w-full px-3 py-2 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-500 dark:placeholder-gray-400;\r\n+    @apply w-full px-3 py-2 rounded-xl border border-gray-300 bg-white text-gray-900 focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent placeholder-gray-500;\r\n   }\r\n   \r\n   .line-clamp-2 {\r\n     display: -webkit-box;\r\n"
+                },
+                {
+                    "date": 1752489214870,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,9 +8,15 @@\n   }\r\n   \r\n   body {\r\n     @apply h-full bg-gray-50 text-gray-900 antialiased;\r\n+    margin: 0;\r\n+    padding: 0;\r\n   }\r\n+  \r\n+  * {\r\n+    box-sizing: border-box;\r\n+  }\r\n }\r\n \r\n @layer components {\r\n   .btn-primary {\r\n"
                 }
             ],
             "date": 1752432614076,

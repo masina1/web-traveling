@@ -345,10 +345,10 @@ export default function TripDetailPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 w-full">
       {/* Header */}
-      <div className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-4 py-4">
+      <div className="bg-white shadow-sm border-b border-gray-200 w-full">
+        <div className="px-6 py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Link 
@@ -404,100 +404,117 @@ export default function TripDetailPage() {
         </div>
       </div>
 
-      {/* Main Content - 45%/55% Split */}
-      <div className="max-w-full xl:max-w-7xl 2xl:max-w-8xl mx-auto p-4">
-        {/* Success Message */}
-        {successMessage && (
-          <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
-            <p className="text-green-700 text-sm">✅ {successMessage}</p>
-          </div>
-        )}
+      {/* Success/Error Messages - Only show on mobile or when constrained */}
+      <div className="lg:hidden px-4">
+          {/* Success Message */}
+          {successMessage && (
+            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg">
+              <p className="text-green-700 text-sm">✅ {successMessage}</p>
+            </div>
+          )}
 
-        {/* Error Message */}
-        {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
-            <p className="text-red-700 text-sm">❌ {error}</p>
-          </div>
-        )}
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg">
+              <p className="text-red-700 text-sm">❌ {error}</p>
+            </div>
+          )}
 
-        {/* Mobile Toggle Buttons */}
-        <div className="lg:hidden flex justify-center mb-4">
-          <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-1 flex">
-            <button
-              onClick={() => {
-                setIsMobileItineraryOpen(true);
-                setIsMobileMapOpen(false);
-              }}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                isMobileItineraryOpen
-                  ? 'bg-primary-600 text-white shadow-sm'
-                  : 'text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-              </svg>
-              Itinerary
-            </button>
-            <button
-              onClick={() => {
-                setIsMobileMapOpen(true);
-                setIsMobileItineraryOpen(false);
-              }}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
-                isMobileMapOpen
-                  ? 'bg-primary-600 text-white shadow-sm'
-                  : 'text-gray-700 hover:bg-gray-50'
-              }`}
-            >
-              <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m-6 3l6-3" />
-              </svg>
-              Map
-            </button>
+          {/* Mobile Toggle Buttons */}
+          <div className="flex justify-center mb-4">
+            <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-1 flex">
+              <button
+                onClick={() => {
+                  setIsMobileItineraryOpen(true);
+                  setIsMobileMapOpen(false);
+                }}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  isMobileItineraryOpen
+                    ? 'bg-primary-600 text-white shadow-sm'
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+                </svg>
+                Itinerary
+              </button>
+              <button
+                onClick={() => {
+                  setIsMobileMapOpen(true);
+                  setIsMobileItineraryOpen(false);
+                }}
+                className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                  isMobileMapOpen
+                    ? 'bg-primary-600 text-white shadow-sm'
+                    : 'text-gray-700 hover:bg-gray-50'
+                }`}
+              >
+                <svg className="w-4 h-4 mr-2 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-1.447-.894L15 4m0 13V4m-6 3l6-3" />
+                </svg>
+                Map
+              </button>
+            </div>
           </div>
         </div>
 
-        {/* Desktop: Side-by-side layout | Mobile: Stacked with toggle */}
-        <div className="lg:flex lg:h-[calc(100vh-200px)] xl:h-[calc(100vh-180px)] 2xl:h-[calc(100vh-160px)] lg:gap-4 xl:gap-6">
-          {/* Left Panel - Itinerary (45% on desktop, 40% on ultra-wide) */}
-          <div className={`
-            lg:w-[45%] 2xl:w-[40%] lg:block
-            ${isMobileItineraryOpen ? 'block' : 'hidden lg:block'}
-            bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden
-            ${isMobileItineraryOpen ? 'h-[calc(100vh-250px)]' : 'lg:h-auto'}
-          `}>
-            <ItineraryPanel
-              trip={trip}
-              tripDays={tripDays}
-              selectedDay={selectedDay}
-              selectedDestination={selectedDestination}
-              onDaySelect={handleDaySelect}
-              onDestinationSelect={handleDestinationSelect}
-              onDestinationsChange={handleDestinationsChange}
-              onLocationSelect={handleDestinationAdd}
-              onDestinationDelete={handleDestinationDelete}
-            />
-          </div>
+        {/* Desktop: Success/Error Messages - Fixed position overlay */}
+        <div className="hidden lg:block fixed top-20 left-1/2 transform -translate-x-1/2 z-50 w-96">
+          {/* Success Message */}
+          {successMessage && (
+            <div className="mb-4 p-3 bg-green-50 border border-green-200 rounded-lg shadow-lg">
+              <p className="text-green-700 text-sm">✅ {successMessage}</p>
+            </div>
+          )}
 
-          {/* Right Panel - Map (55% on desktop, 60% on ultra-wide) */}
-          <div className={`
-            lg:w-[55%] 2xl:w-[60%] lg:block
-            ${isMobileMapOpen ? 'block' : 'hidden lg:block'}
-            bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden
-            ${isMobileMapOpen ? 'h-[calc(100vh-250px)]' : 'lg:h-auto'}
-          `}>
-            <TripMap
-              trip={trip}
-              destinations={destinations}
-              tripDays={tripDays}
-              selectedDestination={selectedDestination}
-              selectedDay={selectedDay}
-              onDestinationSelect={handleDestinationSelect}
-              onDestinationAdd={handleDestinationAdd}
-              isAddingDestination={isAddingDestination}
-            />
-          </div>
+          {/* Error Message */}
+          {error && (
+            <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg shadow-lg">
+              <p className="text-red-700 text-sm">❌ {error}</p>
+            </div>
+          )}
+        </div>
+
+      {/* Full-width layout - Seamless edge-to-edge panels */}
+      <div className="lg:flex lg:h-[calc(100vh-120px)] xl:h-[calc(100vh-120px)] 2xl:h-[calc(100vh-120px)] w-full">
+        {/* Left Panel - Itinerary (45% on desktop, 40% on ultra-wide) - Scrollable */}
+        <div className={`
+          lg:w-[45%] 2xl:w-[40%] lg:block
+          ${isMobileItineraryOpen ? 'block' : 'hidden lg:block'}
+          ${isMobileItineraryOpen ? 'h-[calc(100vh-250px)] bg-white mx-4 rounded-xl shadow-sm border border-gray-200' : 'lg:h-full bg-white'}
+          overflow-y-auto
+        `}>
+          <ItineraryPanel
+            trip={trip}
+            tripDays={tripDays}
+            selectedDay={selectedDay}
+            selectedDestination={selectedDestination}
+            onDaySelect={handleDaySelect}
+            onDestinationSelect={handleDestinationSelect}
+            onDestinationsChange={handleDestinationsChange}
+            onLocationSelect={handleDestinationAdd}
+            onDestinationDelete={handleDestinationDelete}
+          />
+        </div>
+
+        {/* Right Panel - Map (55% on desktop, 60% on ultra-wide) - True Full Screen */}
+        <div className={`
+          lg:w-[55%] 2xl:w-[60%] lg:block
+          ${isMobileMapOpen ? 'block' : 'hidden lg:block'}
+          ${isMobileMapOpen ? 'h-[calc(100vh-250px)] bg-white mx-4 rounded-xl shadow-sm border border-gray-200' : 'lg:h-full'}
+          overflow-hidden
+        `}>
+          <TripMap
+            trip={trip}
+            destinations={destinations}
+            tripDays={tripDays}
+            selectedDestination={selectedDestination}
+            selectedDay={selectedDay}
+            onDestinationSelect={handleDestinationSelect}
+            onDestinationAdd={handleDestinationAdd}
+            isAddingDestination={isAddingDestination}
+          />
         </div>
       </div>
     </div>

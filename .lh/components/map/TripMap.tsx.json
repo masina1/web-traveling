@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 36,
+            "activePatchIndex": 38,
             "patches": [
                 {
                     "date": 1752433617930,
@@ -152,6 +152,14 @@
                 {
                     "date": 1752481046705,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -548,9 +548,9 @@\n     const listener = map.addListener('click', handleMapClick);\r\n     return () => {\r\n       google.maps.event.removeListener(listener);\r\n     };\r\n-  }, [map, selectedDay, trip.id, tripDays, onDestinationAdd, isAddingDestination]);\r\n+  }, [map, selectedDay, trip.id, tripDays, onDestinationAdd, isAddingDestination, isClickToAddEnabled]);\r\n \r\n   const handleRetry = () => {\r\n     addDebugInfo('Retry button clicked');\r\n     setMapInitialized(false);\r\n"
+                },
+                {
+                    "date": 1752488980333,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -563,15 +563,15 @@\n     <div className=\"h-full relative\">\r\n       {/* Map Container - Always rendered */}\r\n       <div \r\n         ref={mapRef}\r\n-        className=\"w-full h-full bg-gray-100 rounded-lg\"\r\n+        className=\"w-full h-full bg-gray-100\"\r\n         style={{ minHeight: '400px' }}\r\n       />\r\n       \r\n       {/* Loading Overlay */}\r\n       {isLoading && (\r\n-        <div className=\"absolute inset-0 flex flex-col items-center justify-center bg-gray-50 bg-opacity-95 rounded-lg\">\r\n+        <div className=\"absolute inset-0 flex flex-col items-center justify-center bg-gray-50 bg-opacity-95\">\r\n           <div className=\"text-center mb-4\">\r\n             <div className=\"animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-2\"></div>\r\n             <p className=\"text-sm text-gray-600\">Loading map...</p>\r\n           </div>\r\n"
+                },
+                {
+                    "date": 1752488990375,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -595,9 +595,9 @@\n       )}\r\n \r\n       {/* Error Overlay */}\r\n       {error && (\r\n-        <div className=\"absolute inset-0 flex items-center justify-center bg-gray-50 bg-opacity-95 rounded-lg\">\r\n+        <div className=\"absolute inset-0 flex items-center justify-center bg-gray-50 bg-opacity-95\">\r\n           <div className=\"text-center max-w-md\">\r\n             <div className=\"text-red-500 mb-4\">\r\n               <svg className=\"w-12 h-12 mx-auto\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\r\n                 <path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z\" />\r\n"
                 }
             ],
             "date": 1752433617930,

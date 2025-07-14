@@ -564,13 +564,13 @@ export default function TripMap({
       {/* Map Container - Always rendered */}
       <div 
         ref={mapRef}
-        className="w-full h-full bg-gray-100 rounded-lg"
+        className="w-full h-full bg-gray-100"
         style={{ minHeight: '400px' }}
       />
       
       {/* Loading Overlay */}
       {isLoading && (
-        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 bg-opacity-95 rounded-lg">
+        <div className="absolute inset-0 flex flex-col items-center justify-center bg-gray-50 bg-opacity-95">
           <div className="text-center mb-4">
             <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary-600 mx-auto mb-2"></div>
             <p className="text-sm text-gray-600">Loading map...</p>
@@ -596,7 +596,7 @@ export default function TripMap({
 
       {/* Error Overlay */}
       {error && (
-        <div className="absolute inset-0 flex items-center justify-center bg-gray-50 bg-opacity-95 rounded-lg">
+        <div className="absolute inset-0 flex items-center justify-center bg-gray-50 bg-opacity-95">
           <div className="text-center max-w-md">
             <div className="text-red-500 mb-4">
               <svg className="w-12 h-12 mx-auto" fill="none" stroke="currentColor" viewBox="0 0 24 24">

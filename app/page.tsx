@@ -23,15 +23,15 @@ export default function Home() {
           <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
             <div className="card text-center">
               <div className="text-4xl mb-4">🗺️</div>
-              <h3 className="text-xl font-semibold mb-2">Interactive Maps</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900">Interactive Maps</h3>
               <p className="text-gray-600">
-                View destinations on color-coded maps with numbered pins for each day
+                View destinations on color-coded teardrop pins with numbered markers for each day
               </p>
             </div>
             
             <div className="card text-center">
               <div className="text-4xl mb-4">📅</div>
-              <h3 className="text-xl font-semibold mb-2">Day-by-Day Planning</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900">Day-by-Day Planning</h3>
               <p className="text-gray-600">
                 Organize your itinerary with detailed time blocks and notes
               </p>
@@ -39,7 +39,7 @@ export default function Home() {
             
             <div className="card text-center">
               <div className="text-4xl mb-4">🎯</div>
-              <h3 className="text-xl font-semibold mb-2">Smart Suggestions</h3>
+              <h3 className="text-xl font-semibold mb-2 text-gray-900">Smart Suggestions</h3>
               <p className="text-gray-600">
                 Get personalized recommendations based on your destinations
               </p>

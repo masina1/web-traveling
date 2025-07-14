@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 14,
+            "activePatchIndex": 15,
             "patches": [
                 {
                     "date": 1752433150539,
@@ -64,6 +64,10 @@
                 {
                     "date": 1752482015552,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,15 +4,18 @@\n \r\n ## ✨ Features\r\n \r\n - 🔐 **User Authentication** - Secure email/password login with Firebase\r\n-- 🗺️ **Interactive Maps** - Color-coded pins by day with numbered markers\r\n+- 🗺️ **Interactive Maps** - Color-coded teardrop pins by day with numbered markers\r\n - 📍 **Location Search** - Google Places autocomplete with intelligent suggestions\r\n - 📅 **Multi-day Trip Planning** - Organize destinations by day with drag & drop\r\n - 🎯 **Smart Suggestions** - Location recommendations with ratings and photos\r\n - 📱 **Mobile Responsive** - Seamless experience across all devices\r\n - 🔗 **Trip Sharing** - Share your itineraries with friends and family\r\n - 💾 **Real-time Sync** - Changes saved instantly to Firebase\r\n+- 🎮 **Click-to-Add Control** - Toggle map click functionality on/off\r\n+- 📍 **Consistent Pin Design** - Teardrop-shaped pins across map and itinerary\r\n+- 🔄 **Smart Renumbering** - Automatic sequential pin numbering after changes\r\n \r\n ## 🚀 Quick Start\r\n \r\n ### Prerequisites\r\n"
+                },
+                {
+                    "date": 1752491061292,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -224,8 +224,24 @@\n ## 📝 Changelog\r\n \r\n ### Recent Updates\r\n \r\n+**[v1.2.0] - 2025-01-08**\r\n+\r\n+- ✅ **Removed**: Dark mode feature for cleaner, focused UX\r\n+- ✅ **Enhanced**: True full-width layout with no container constraints\r\n+- ✅ **Fixed**: Seamless edge-to-edge panel layout with no gaps or borders\r\n+- ✅ **Improved**: Left panel scrolling with proper overflow handling\r\n+- ✅ **Enhanced**: Right panel map for true full-screen experience\r\n+\r\n+**[v1.1.0] - 2025-01-08**\r\n+\r\n+- ✅ **Added**: Full-width responsive layout removing container constraints\r\n+- ✅ **Enhanced**: Teardrop-shaped pins consistent across map and itinerary\r\n+- ✅ **Fixed**: Pin renumbering after deletion (proper sequential numbering)\r\n+- ✅ **Added**: Click-to-add toggle functionality for map interactions\r\n+- ✅ **Improved**: Mobile responsive design with better height calculations\r\n+\r\n **[v1.0.0] - 2025-07-14**\r\n \r\n - ✅ **Added**: Google Places autocomplete for location search\r\n - ✅ **Added**: Mobile responsive design with collapsible panels\r\n"
                 }
             ],
             "date": 1752433150539,

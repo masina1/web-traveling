@@ -3,11 +3,15 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 0,
+            "activePatchIndex": 1,
             "patches": [
                 {
                     "date": 1752482022025,
                     "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1752491073554,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n {\r\n   \"name\": \"travel-planning-app\",\r\n-  \"version\": \"1.1.0\",\r\n+  \"version\": \"1.2.0\",\r\n   \"private\": true,\r\n   \"scripts\": {\r\n     \"dev\": \"next dev\",\r\n     \"build\": \"next build\",\r\n"
                 }
             ],
             "date": 1752482022025,
