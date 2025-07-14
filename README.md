@@ -220,22 +220,28 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📝 Changelog
 
-### [2025-01-15] Major Feature Update
+### Recent Updates
 
-- **Added**: Google Places autocomplete for location search
-- **Added**: Mobile responsive design with collapsible panels
-- **Enhanced**: Map marker synchronization with itinerary
-- **Improved**: User experience with keyboard navigation
-- **Fixed**: API integration issues with Google Places
-- **Updated**: TypeScript types and error handling
+**[v1.0.0] - 2025-01-15**
 
-### [2025-01-14] Initial Release
+- ✅ **Added**: Google Places autocomplete for location search
+- ✅ **Added**: Mobile responsive design with collapsible panels
+- ✅ **Enhanced**: Map marker synchronization with itinerary
+- ✅ **Fixed**: API integration issues with Google Places
 
-- **Added**: Core trip planning functionality
-- **Added**: Interactive map with color-coded pins
-- **Added**: Firebase authentication and data storage
-- **Added**: Drag & drop destination management
-- **Added**: Multi-day itinerary organization
+**[v0.9.0] - 2025-01-10**
+
+- ✅ **Added**: Cross-day destination dragging
+- ✅ **Fixed**: Map marker synchronization issues
+- ✅ **Enhanced**: Drag & drop user experience
+
+**[v0.8.0] - 2025-01-07**
+
+- ✅ **Added**: Drag & drop functionality for destinations
+- ✅ **Fixed**: Map initialization timing issues
+- ✅ **Enhanced**: Loading states and error handling
+
+For complete changelog with detailed history, see [CHANGELOG.md](CHANGELOG.md).
 
 ## 🌟 Demo
 
