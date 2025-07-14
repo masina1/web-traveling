@@ -314,11 +314,11 @@ export default function TripMap({
     // Use Places API first, then fall back to reverse geocoding
     const placesService = new google.maps.places.PlacesService(map!);
     
-    // Try to find nearby places first
+    // Try to find nearby places first with a larger radius
     placesService.nearbySearch(
       {
         location: { lat, lng },
-        radius: 50, // 50 meters
+        radius: 100, // Increased to 100 meters
         type: 'establishment' as any, // Cast to any to avoid TypeScript issues
       },
       (results, status) => {
@@ -348,61 +348,103 @@ export default function TripMap({
           addDebugInfo(`Creating destination with business name: ${locationName}`);
           onDestinationAdd(newDestination);
         } else {
-          // Fall back to reverse geocoding
-          addDebugInfo('No business found, falling back to reverse geocoding');
+          // Try findPlaceFromQuery as a second attempt
+          addDebugInfo('No nearby business found, trying findPlaceFromQuery');
+          
           const geocoder = new google.maps.Geocoder();
-          geocoder.geocode({ location: { lat, lng } }, (results, status) => {
-            if (status === 'OK' && results?.[0]) {
-              const address = results[0].formatted_address;
+          geocoder.geocode({ location: { lat, lng } }, (geocodeResults, geocodeStatus) => {
+            if (geocodeStatus === 'OK' && geocodeResults?.[0]) {
+              const address = geocodeResults[0].formatted_address;
               
-              // Try to extract a meaningful name from the address components
-              let locationName = address;
-              const components = results[0].address_components;
-              
-              if (components && components.length > 0) {
-                // Look for business name, route name, or neighborhood
-                const businessComponent = components.find(c => 
-                  c.types.includes('establishment') || 
-                  c.types.includes('point_of_interest') ||
-                  c.types.includes('premise')
-                );
-                
-                if (businessComponent) {
-                  locationName = businessComponent.long_name;
-                } else {
-                  // Use street number + route if available
-                  const streetNumber = components.find(c => c.types.includes('street_number'))?.long_name;
-                  const route = components.find(c => c.types.includes('route'))?.long_name;
-                  
-                  if (streetNumber && route) {
-                    locationName = `${streetNumber} ${route}`;
-                  } else if (route) {
-                    locationName = route;
-                  } else {
-                    // Use first component as fallback
-                    locationName = components[0].long_name;
-                  }
-                }
-              }
-
-              addDebugInfo(`Using geocoded name: ${locationName}`);
-
-              // Create new destination object
-              const selectedDayData = tripDays.find(d => d.day === selectedDay);
-              const newDestination: Destination = {
-                id: '', // Will be set by server
-                tripId: trip.id,
-                locationName,
-                address,
-                lat,
-                lng,
-                day: selectedDay,
-                orderIndex: (selectedDayData?.destinations.length || 0) + 1,
-                createdAt: new Date(),
-                updatedAt: new Date(),
+              // Try to search for a place using the address
+              const request = {
+                query: address,
+                fields: ['name', 'formatted_address', 'place_id', 'geometry'],
+                locationBias: new google.maps.Circle({
+                  center: { lat, lng },
+                  radius: 100
+                })
               };
+              
+              placesService.findPlaceFromQuery(request, (queryResults, queryStatus) => {
+                if (queryStatus === google.maps.places.PlacesServiceStatus.OK && queryResults && queryResults[0]) {
+                  const place = queryResults[0];
+                  const locationName = place.name || 'Unknown Place';
+                  const placeAddress = place.formatted_address || address;
+                  
+                  addDebugInfo(`Found place from query: ${locationName} at ${placeAddress}`);
+                  
+                  // Create new destination object
+                  const selectedDayData = tripDays.find(d => d.day === selectedDay);
+                  const newDestination: Destination = {
+                    id: '', // Will be set by server
+                    tripId: trip.id,
+                    locationName, // Use the business name from Places API
+                    address: placeAddress,
+                    lat,
+                    lng,
+                    day: selectedDay,
+                    orderIndex: (selectedDayData?.destinations.length || 0) + 1,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                  };
 
-              onDestinationAdd(newDestination);
+                  addDebugInfo(`Creating destination with query result: ${locationName}`);
+                  onDestinationAdd(newDestination);
+                } else {
+                  // Fall back to reverse geocoding with improved name extraction
+                  addDebugInfo('No place found from query, falling back to reverse geocoding');
+                  
+                  // Try to extract a meaningful name from the address components
+                  let locationName = address;
+                  const components = geocodeResults[0].address_components;
+                  
+                  if (components && components.length > 0) {
+                    // Look for business name, route name, or neighborhood
+                    const businessComponent = components.find(c => 
+                      c.types.includes('establishment') || 
+                      c.types.includes('point_of_interest') ||
+                      c.types.includes('premise')
+                    );
+                    
+                    if (businessComponent) {
+                      locationName = businessComponent.long_name;
+                    } else {
+                      // Use street number + route if available
+                      const streetNumber = components.find(c => c.types.includes('street_number'))?.long_name;
+                      const route = components.find(c => c.types.includes('route'))?.long_name;
+                      
+                      if (streetNumber && route) {
+                        locationName = `${streetNumber} ${route}`;
+                      } else if (route) {
+                        locationName = route;
+                      } else {
+                        // Use first component as fallback
+                        locationName = components[0].long_name;
+                      }
+                    }
+                  }
+
+                  addDebugInfo(`Using geocoded name: ${locationName}`);
+
+                  // Create new destination object
+                  const selectedDayData = tripDays.find(d => d.day === selectedDay);
+                  const newDestination: Destination = {
+                    id: '', // Will be set by server
+                    tripId: trip.id,
+                    locationName,
+                    address,
+                    lat,
+                    lng,
+                    day: selectedDay,
+                    orderIndex: (selectedDayData?.destinations.length || 0) + 1,
+                    createdAt: new Date(),
+                    updatedAt: new Date(),
+                  };
+
+                  onDestinationAdd(newDestination);
+                }
+              });
             }
           });
         }
@@ -431,12 +473,35 @@ export default function TripMap({
         ) {
           // Only animate if this marker corresponds to the selected destination
           addDebugInfo(`Animating selected marker: ${selectedDestination.locationName} (ID: ${selectedDestination.id})`);
-          marker.setAnimation(google.maps.Animation.BOUNCE);
-          setTimeout(() => {
-            if (marker.getMap()) { // Check if marker still exists
-              marker.setAnimation(null);
+          
+          // Create a custom animation that keeps icon and label synchronized
+          let animationFrame = 0;
+          const animationDuration = 1500; // 1.5 seconds
+          const originalPosition = marker.getPosition();
+          
+          if (!originalPosition) return;
+          
+          const animationInterval = setInterval(() => {
+            animationFrame += 50; // 50ms intervals
+            
+            if (animationFrame >= animationDuration) {
+              clearInterval(animationInterval);
+              // Reset to original position
+              marker.setPosition(originalPosition);
+              return;
             }
-          }, 1500);
+            
+            // Calculate bounce effect (sine wave for smooth animation)
+            const bounceHeight = Math.abs(Math.sin(animationFrame / 150)) * 0.0001; // Small lat/lng offset
+            
+            // Move the entire marker (icon + label) slightly up and down
+            const newPosition = new google.maps.LatLng(
+              originalPosition.lat() + bounceHeight,
+              originalPosition.lng()
+            );
+            
+            marker.setPosition(newPosition);
+          }, 50);
           
           // Center map on selected destination
           map?.panTo(position);

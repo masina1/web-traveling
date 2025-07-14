@@ -32,10 +32,17 @@ export default function LocationSearch({
   // Initialize Google Places services
   useEffect(() => {
     const initializeServices = async () => {
+      // Check if Google Maps is already loaded
       if (!window.google?.maps?.places) {
         // Load Google Maps if not already loaded
-        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
-        if (!apiKey) return;
+        const apiKey = process.env.NEXT_PUBLIC_GOOGLE_PLACES_API_KEY || process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY;
+        if (!apiKey) {
+          console.error('❌ Google Places API key not found. Please set NEXT_PUBLIC_GOOGLE_PLACES_API_KEY in your .env.local file');
+          return;
+        }
+
+        console.log('🔑 Using API key:', apiKey.substring(0, 20) + '...');
+        console.log('📍 Loading Google Maps with Places API...');
 
         const script = document.createElement('script');
         script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=places`;
@@ -43,68 +50,117 @@ export default function LocationSearch({
         script.defer = true;
         
         script.onload = () => {
+          console.log('✅ Google Maps API loaded successfully');
           initializeServices();
+        };
+        
+        script.onerror = () => {
+          console.error('❌ Failed to load Google Maps API.');
+          console.error('🔧 Make sure you have enabled both:');
+          console.error('1. Places API (legacy) - for JavaScript library');
+          console.error('2. Places API (New) - for new features');
+          console.error('3. Maps JavaScript API - for maps');
         };
         
         document.head.appendChild(script);
         return;
       }
 
-      autocompleteService.current = new google.maps.places.AutocompleteService();
-      
-      // Create a hidden div for PlacesService
-      const mapDiv = document.createElement('div');
-      mapDiv.style.display = 'none';
-      document.body.appendChild(mapDiv);
-      
-      const map = new google.maps.Map(mapDiv, {
-        center: { lat: 0, lng: 0 },
-        zoom: 1
-      });
-      
-      placesService.current = new google.maps.places.PlacesService(map);
+      // Initialize services
+      try {
+        autocompleteService.current = new google.maps.places.AutocompleteService();
+        
+        // Create a hidden div for PlacesService
+        const mapDiv = document.createElement('div');
+        mapDiv.style.display = 'none';
+        document.body.appendChild(mapDiv);
+        
+        const map = new google.maps.Map(mapDiv, {
+          center: { lat: 0, lng: 0 },
+          zoom: 1
+        });
+        
+        placesService.current = new google.maps.places.PlacesService(map);
+        console.log('✅ Google Places services initialized successfully');
+      } catch (error) {
+        console.error('❌ Error initializing Google Places services:', error);
+      }
     };
 
     initializeServices();
   }, []);
 
-  // Handle search input
-  const handleSearch = async (value: string) => {
+  // Debounced search function
+  const searchTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Handle search input with debouncing
+  const handleSearch = (value: string) => {
     setSearchValue(value);
     setSelectedIndex(-1);
     
-    if (!value.trim() || !autocompleteService.current) {
+    // Clear previous timeout
+    if (searchTimeoutRef.current) {
+      clearTimeout(searchTimeoutRef.current);
+    }
+    
+    if (!value.trim()) {
       setPredictions([]);
       setShowSuggestions(false);
+      setIsLoading(false);
+      return;
+    }
+
+    // Check if services are ready
+    if (!autocompleteService.current) {
+      console.warn('AutocompleteService not initialized yet');
       return;
     }
 
     setIsLoading(true);
 
-    try {
-      const request: google.maps.places.AutocompletionRequest = {
-        input: value,
-        types: ['establishment', 'geocode'],
-        componentRestrictions: { country: [] }, // Allow all countries
-      };
+    // Debounce the search by 300ms
+    searchTimeoutRef.current = setTimeout(async () => {
+      try {
+        const request: google.maps.places.AutocompletionRequest = {
+          input: value,
+          types: ['establishment', 'geocode'],
+          componentRestrictions: { country: [] }, // Allow all countries
+        };
 
-      autocompleteService.current.getPlacePredictions(request, (predictions, status) => {
+        autocompleteService.current!.getPlacePredictions(request, (predictions, status) => {
+          setIsLoading(false);
+          
+          if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
+            setPredictions(predictions.slice(0, 5)); // Limit to 5 suggestions
+            setShowSuggestions(true);
+            console.log('✅ Found', predictions.length, 'predictions');
+          } else {
+            setPredictions([]);
+            setShowSuggestions(false);
+            
+            // Enhanced error logging
+            console.error('❌ Places API error:', {
+              status: status,
+              statusText: google.maps.places.PlacesServiceStatus[status],
+              input: value
+            });
+            
+            if (status === google.maps.places.PlacesServiceStatus.REQUEST_DENIED) {
+              console.error('🔧 To fix REQUEST_DENIED:');
+              console.error('1. Enable "Places API" (legacy) in Google Cloud Console');
+              console.error('2. Enable billing for your project');
+              console.error('3. Check API key restrictions');
+              console.error('4. Restart your dev server');
+            }
+          }
+        });
+      } catch (error) {
+        console.error('❌ Error fetching predictions:', error);
         setIsLoading(false);
-        
-        if (status === google.maps.places.PlacesServiceStatus.OK && predictions) {
-          setPredictions(predictions.slice(0, 5)); // Limit to 5 suggestions
-          setShowSuggestions(true);
-        } else {
-          setPredictions([]);
-          setShowSuggestions(false);
-        }
-      });
-    } catch (error) {
-      console.error('Error fetching predictions:', error);
-      setIsLoading(false);
-      setPredictions([]);
-      setShowSuggestions(false);
-    }
+        setPredictions([]);
+        setShowSuggestions(false);
+      }
+    }, 300);
   };
 
   // Handle place selection
@@ -134,32 +190,42 @@ export default function LocationSearch({
         setIsLoading(false);
         
         if (status === google.maps.places.PlacesServiceStatus.OK && place) {
-          const destination: Destination = {
-            id: '', // Will be set by server
-            tripId,
+          // Create destination object
+          const newDestination: Destination = {
+            id: crypto.randomUUID(),
+            tripId: tripId,
             locationName: place.name || description,
-            address: place.formatted_address || description,
+            address: place.formatted_address || '',
             lat: place.geometry?.location?.lat() || 0,
             lng: place.geometry?.location?.lng() || 0,
             day: selectedDay,
+            notes: '',
             orderIndex: 1, // Will be adjusted by parent component
             placeId: place.place_id,
+            category: place.types?.[0] || 'place',
             rating: place.rating,
             priceLevel: place.price_level,
-            category: place.types?.[0] || 'place',
             photos: place.photos?.slice(0, 3).map(photo => 
               photo.getUrl({ maxWidth: 400, maxHeight: 300 })
             ) || [],
             createdAt: new Date(),
             updatedAt: new Date(),
           };
-
-          onLocationSelect(destination);
-          setSearchValue(''); // Clear search after selection
+          
+          console.log('✅ Selected place:', newDestination);
+          onLocationSelect(newDestination);
+          setSearchValue('');
+          setShowSuggestions(false);
+        } else {
+          console.error('❌ Place details error:', status);
+          setSearchValue('');
+          setShowSuggestions(false);
         }
       });
     } catch (error) {
-      console.error('Error fetching place details:', error);
+      console.error('❌ Error selecting place:', error);
+      setSearchValue('');
+      setShowSuggestions(false);
       setIsLoading(false);
     }
   };
@@ -209,6 +275,15 @@ export default function LocationSearch({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  // Cleanup timeout on unmount
+  useEffect(() => {
+    return () => {
+      if (searchTimeoutRef.current) {
+        clearTimeout(searchTimeoutRef.current);
+      }
+    };
+  }, []);
+
   return (
     <div className={`relative ${className}`}>
       <div className="relative">
@@ -216,16 +291,23 @@ export default function LocationSearch({
           ref={inputRef}
           type="text"
           value={searchValue}
-          onChange={(e) => handleSearch(e.target.value)}
+          onChange={(e) => {
+            e.preventDefault();
+            handleSearch(e.target.value);
+          }}
           onKeyDown={handleKeyDown}
           onFocus={() => {
             if (predictions.length > 0) {
               setShowSuggestions(true);
+            } else if (searchValue.trim() && autocompleteService.current) {
+              // Trigger search if there's a value but no predictions
+              handleSearch(searchValue);
             }
           }}
           placeholder={placeholder}
           className="input-field pr-10"
-          disabled={isLoading}
+          disabled={false}
+          autoComplete="off"
         />
         
         {/* Search Icon */}
@@ -241,12 +323,25 @@ export default function LocationSearch({
       </div>
 
       {/* Suggestions Dropdown */}
-      {showSuggestions && predictions.length > 0 && (
+      {showSuggestions && (
         <div
           ref={suggestionsRef}
           className="absolute top-full left-0 right-0 bg-white rounded-lg shadow-lg border border-gray-200 mt-1 max-h-64 overflow-y-auto z-50"
         >
-          {predictions.map((prediction, index) => (
+          {isLoading && (
+            <div className="px-4 py-3 text-center text-gray-500">
+              <div className="animate-spin rounded-full h-4 w-4 border-2 border-primary-600 border-t-transparent mx-auto mb-2"></div>
+              <span className="text-sm">Searching...</span>
+            </div>
+          )}
+          
+          {!isLoading && predictions.length === 0 && searchValue.trim() && (
+            <div className="px-4 py-3 text-center text-gray-500">
+              <span className="text-sm">No places found</span>
+            </div>
+          )}
+          
+          {!isLoading && predictions.length > 0 && predictions.map((prediction, index) => (
             <button
               key={prediction.place_id}
               onClick={() => handlePlaceSelect(prediction.place_id, prediction.description)}
@@ -263,10 +358,10 @@ export default function LocationSearch({
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="font-medium text-gray-900 truncate">
-                    {prediction.structured_formatting.main_text}
+                    {prediction.structured_formatting?.main_text || prediction.description}
                   </div>
                   <div className="text-sm text-gray-500 truncate">
-                    {prediction.structured_formatting.secondary_text}
+                    {prediction.structured_formatting?.secondary_text || ''}
                   </div>
                 </div>
               </div>
