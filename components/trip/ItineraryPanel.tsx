@@ -29,6 +29,7 @@ import {
   CSS,
 } from '@dnd-kit/utilities';
 import { reorderDestinations, moveDestinationToDay } from '@/lib/destination-service';
+import { PhotoIcon, Bars3Icon } from '@heroicons/react/24/outline';
 
 interface ItineraryPanelProps {
   trip: Trip;
@@ -96,151 +97,284 @@ function SortableDestination({
     transition,
   };
 
-  const formatTime = (time: string) => {
-    if (!time) return '';
-    try {
-      const [hours, minutes] = time.split(':');
-      const date = new Date();
-      date.setHours(parseInt(hours), parseInt(minutes));
-      return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
-    } catch {
-      return time;
-    }
-  };
-
   const isSelected = selectedDestination?.id === destination.id;
 
   return (
-    <div ref={setNodeRef} style={style} className={isDragging ? 'opacity-50' : ''}>
-      <button
-        onClick={() => onDestinationSelect(destination)}
-        className={`w-full p-4 text-left hover:bg-gray-100 transition-colors group relative ${
-          isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : ''
-        }`}
+    <div ref={setNodeRef} style={style} className={`w-full ${isDragging ? 'opacity-50' : ''}`}> 
+      <div
+        className="flex items-center group mb-2 cursor-grab"
+        ref={setNodeRef}
+        style={style}
+        {...attributes}
+        {...listeners}
       >
-        <div className="flex items-start space-x-3"
-          {...attributes}
-          {...listeners}
+        {/* Drag handle on the far left (outside gray box) */}
+        <button
+          className="flex-shrink-0 mr-2 cursor-grab active:cursor-grabbing p-1 rounded hover:bg-gray-200 opacity-0 group-hover:opacity-100 transition-opacity"
+          aria-label="Drag to reorder"
+          type="button"
+          onClick={e => e.stopPropagation()}
         >
-          {/* Drag Handle Icon (optional, now just visual) */}
-          <div className="flex-shrink-0 mt-1 cursor-grab active:cursor-grabbing">
-            <svg className="w-4 h-4 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
-            </svg>
-          </div>
-
+          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+          </svg>
+        </button>
+        {/* Gray box with pin, name, right drag handle */}
+        <div className="relative flex items-center space-x-3 bg-gray-100 rounded-lg px-3 py-2 flex-1 min-w-0">
           {/* Pin Number - Teardrop shape matching map */}
-          <div className="flex-shrink-0 mt-0.5">
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10">
             <svg 
-              width="24" 
-              height="24" 
-              viewBox="0 0 24 24" 
+              width="39" 
+              height="51" 
+              viewBox="0 0 39 51" 
               className="w-6 h-6"
             >
               <path 
-                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7z"
+                d="M19.5 51C19.5 51 39 32.179 39 19.5C39 8.618 30.382 0 19.5 0C8.618 0 0 8.618 0 19.5C0 32.179 19.5 51 19.5 51Z"
                 fill={isSelected ? '#3B82F6' : dayColor.pin}
                 stroke="#FFFFFF"
                 strokeWidth="2"
               />
-              <text 
-                x="12" 
-                y="13" 
-                textAnchor="middle" 
-                className="text-white text-xs font-medium fill-current"
-                style={{ fontSize: '12px' }}
+              <text
+                x="19.5"
+                y={destination.orderIndex.toString().length > 1 ? "23" : "21"}
+                textAnchor="middle"
+                fill="white"
+                fontWeight="bold"
+                fontSize={destination.orderIndex.toString().length > 1 ? "17px" : "20px"}
+                alignmentBaseline="middle"
               >
                 {destination.orderIndex}
               </text>
             </svg>
           </div>
-          
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center space-x-2 min-w-0">
-                <h4 className="font-medium text-gray-900 truncate">
-                  {destination.locationName}
-                </h4>
-                {/* Compact photo for selected destinations */}
-                {isSelected && destination.photos && destination.photos.length > 0 && (
-                  <img 
-                    src={destination.photos[0]} 
-                    alt={destination.locationName}
-                    className="w-8 h-8 object-cover rounded-lg flex-shrink-0"
-                    onError={(e) => {
-                      (e.target as HTMLImageElement).style.display = 'none';
-                    }}
-                  />
-                )}
-              </div>
-              <div className="flex items-center space-x-2">
-                {destination.startTime && (
-                  <span className="text-sm text-gray-500 flex-shrink-0">
-                    {formatTime(destination.startTime)}
-                  </span>
-                )}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDestinationDelete(destination.id);
-                  }}
-                  className="text-red-500 hover:text-red-700 hover:bg-red-50 rounded-lg p-1 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0"
-                  title="Delete destination"
-                >
-                  <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                  </svg>
-                </button>
-              </div>
+          <div className="flex-1 min-w-0 ml-6">
+            <h4 className="font-medium text-gray-900 truncate">
+              {destination.locationName}
+            </h4>
+          </div>
+          {/* Drag handle on the right inside the gray box */}
+          <button
+            className="flex-shrink-0 ml-2 cursor-grab active:cursor-grabbing p-1 rounded hover:bg-gray-200 opacity-0 group-hover:opacity-100 transition-opacity"
+            aria-label="Drag to reorder"
+            type="button"
+            onClick={e => e.stopPropagation()}
+          >
+            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+            </svg>
+          </button>
+        </div>
+        {/* Trash can (delete button) outside the gray box, right-aligned, visible on group hover */}
+        <button
+          onClick={e => {
+            e.stopPropagation();
+            onDestinationDelete(destination.id);
+          }}
+          className="mx-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg p-1 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0"
+          title="Delete destination"
+          type="button"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Refactor SortableDestinationPicture to match Compact View structure, only adding extra info
+function SortableDestinationPicture({
+  destination,
+  dayColor,
+  selectedDestination,
+  onDestinationSelect,
+  onDestinationDelete,
+  isLastItem
+}: {
+  destination: Destination;
+  dayColor: any;
+  selectedDestination: Destination | null;
+  onDestinationSelect: (destination: Destination) => void;
+  onDestinationDelete: (destinationId: string) => void;
+  isLastItem: boolean;
+}) {
+  const {
+    setNodeRef,
+    transform,
+    transition,
+    isDragging,
+    attributes,
+    listeners,
+  } = useSortable({ id: destination.id });
+
+  const style = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+  };
+
+  const isSelected = selectedDestination?.id === destination.id;
+  const imageUrl = destination.photos && destination.photos[0] ? destination.photos[0] : '/default-location.jpg';
+  const [imgError, setImgError] = useState(false);
+
+  return (
+    <div
+      ref={setNodeRef}
+      style={style}
+      className={`w-full ${isDragging ? 'opacity-50' : ''}`}
+    >
+      <div
+        className="flex items-center group mb-2 cursor-grab"
+        {...attributes}
+        {...listeners}
+      >
+        {/* Drag handle on the far left (outside gray box) */}
+        <button
+          className="flex-shrink-0 mr-2 cursor-grab active:cursor-grabbing p-1 rounded hover:bg-gray-200 opacity-0 group-hover:opacity-100 transition-opacity"
+          aria-label="Drag to reorder"
+          type="button"
+          onClick={e => e.stopPropagation()}
+        >
+          <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+          </svg>
+        </button>
+        {/* Gray box with pin, name, right drag handle, and extra info */}
+        <div className="relative flex items-center space-x-3 bg-gray-100 rounded-lg px-3 py-2 flex-1 min-w-0">
+          {/* Pin Number - Teardrop shape matching map */}
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-1/2 z-10">
+            <svg 
+              width="39" 
+              height="51" 
+              viewBox="0 0 39 51" 
+              className="w-6 h-6"
+            >
+              <path 
+                d="M19.5 51C19.5 51 39 32.179 39 19.5C39 8.618 30.382 0 19.5 0C8.618 0 0 8.618 0 19.5C0 32.179 19.5 51 19.5 51Z"
+                fill={isSelected ? '#3B82F6' : dayColor.pin}
+                stroke="#FFFFFF"
+                strokeWidth="2"
+              />
+              <text
+                x="19.5"
+                y={destination.orderIndex.toString().length > 1 ? "21" : "19"}
+                textAnchor="middle"
+                fill="white"
+                fontWeight="bold"
+                fontSize={destination.orderIndex.toString().length > 1 ? "17px" : "20px"}
+                alignmentBaseline="middle"
+              >
+                {destination.orderIndex}
+              </text>
+            </svg>
+          </div>
+          <div className="flex-1 min-w-0 ml-6">
+            <div className="flex items-center">
+              <h4 className="font-medium text-gray-900 truncate">
+                {destination.locationName}
+              </h4>
+              {/* Time (if present) */}
+              {destination.startTime && (
+                <span className="ml-2 text-sm text-gray-500 flex-shrink-0">
+                  {destination.startTime}
+                </span>
+              )}
             </div>
-            <p className="text-sm text-gray-600 truncate">
-              {destination.address}
-            </p>
-            {destination.notes && (
-              <p className="text-sm text-gray-500 mt-1 line-clamp-2">
-                {destination.notes}
-              </p>
+            {/* Address, description, tags, etc. only in Picture View */}
+            {destination.address && (
+              <div className="text-xs text-gray-500 truncate mt-1">{destination.address}</div>
             )}
-            
-            {/* Compact details for selected destinations */}
-            {isSelected && (
-              <div className="flex items-center space-x-4 mt-2 text-xs">
-                {destination.category && (
-                  <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
-                    {destination.category}
-                  </span>
-                )}
-                {destination.rating && (
-                  <div className="flex items-center space-x-1">
-                    <svg className="w-3 h-3 text-yellow-400" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-                    </svg>
-                    <span className="text-gray-600">{destination.rating}</span>
-                  </div>
-                )}
-                {/* Close button for selected destinations */}
-                <button
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    onDestinationSelect(null as any);
-                  }}
-                  className="text-gray-400 hover:text-gray-600 transition-colors"
-                  title="Clear selection"
-                >
-                  <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                  </svg>
-                </button>
+            {destination.notes && (
+              <div className="text-xs text-gray-600 mt-1 line-clamp-2">{destination.notes}</div>
+            )}
+            {/* Category/Tag */}
+            {destination.category && (
+              <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800 mt-1">
+                {destination.category}
+              </span>
+            )}
+          </div>
+          {/* Image (right side, only in Picture View) */}
+          <div className="flex-shrink-0 flex items-center group">
+            {!imgError ? (
+              <img
+                src={imageUrl}
+                alt={destination.locationName}
+                className="w-28 h-20 object-cover rounded-lg flex-shrink-0 border border-gray-200"
+                onError={() => setImgError(true)}
+              />
+            ) : (
+              <div className="w-28 h-20 flex items-center justify-center bg-gray-200 border border-gray-200 rounded-lg text-gray-400 text-xs">
+                No Image
               </div>
             )}
           </div>
+          {/* Drag handle on the right inside the gray box */}
+          <button
+            className="flex-shrink-0 ml-2 cursor-grab active:cursor-grabbing p-1 rounded hover:bg-gray-200 opacity-0 group-hover:opacity-100 transition-opacity"
+            aria-label="Drag to reorder"
+            type="button"
+            onClick={e => e.stopPropagation()}
+          >
+            <svg className="w-4 h-4 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
+            </svg>
+          </button>
         </div>
+        {/* Trash can (delete button) outside the gray box, right-aligned, visible on group hover */}
+        <button
+          onClick={e => {
+            e.stopPropagation();
+            onDestinationDelete(destination.id);
+          }}
+          className="mx-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-lg p-1 transition-colors opacity-0 group-hover:opacity-100 flex-shrink-0"
+          title="Delete destination"
+          type="button"
+        >
+          <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  );
+}
+
+// Helper: PlusButtonWithMenu
+function PlusButtonWithMenu({ onAddPlace, onAddNote }: { onAddPlace: () => void; onAddNote: () => void }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <div className="relative flex flex-col items-center z-10 h-12 justify-center w-8">
+      {/* Continuous vertical dotted line */}
+      <div className="absolute left-1/2 top-0 -translate-x-1/2 h-full w-0.5 border-l-2 border-dotted border-gray-300 pointer-events-none" />
+      {/* + button overlays the line, invisible by default, appears on hover */}
+      <button
+        className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center transition bg-gray-100 opacity-0 hover:opacity-100 focus:opacity-100 group"
+        style={{ boxShadow: '0 0 0 0 transparent', zIndex: 2 }}
+        onClick={() => setOpen((v) => !v)}
+        aria-label="Add"
+        type="button"
+      >
+        <span className="text-lg text-gray-500">+</span>
       </button>
-      
-      {/* Connector line */}
-      {!isLastItem && (
-        <div className="flex justify-start ml-11">
-          <div className="w-0.5 h-4 bg-gray-300"></div>
+      {/* Popover menu */}
+      {open && (
+        <div className="absolute top-8 left-1/2 -translate-x-1/2 bg-white border border-gray-200 rounded-lg shadow-lg py-2 px-3 flex flex-col space-y-1 min-w-[120px] z-20">
+          <button
+            className="text-sm text-gray-700 hover:bg-gray-100 rounded px-2 py-1 text-left"
+            onClick={() => { setOpen(false); onAddPlace(); }}
+            type="button"
+          >
+            Add a Place
+          </button>
+          <button
+            className="text-sm text-gray-700 hover:bg-gray-100 rounded px-2 py-1 text-left"
+            onClick={() => { setOpen(false); onAddNote(); }}
+            type="button"
+          >
+            Add a Note
+          </button>
         </div>
       )}
     </div>
@@ -262,6 +396,7 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
   const [isReordering, setIsReordering] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
+  const [viewMode, setViewMode] = useState<'picture' | 'compact'>('compact');
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -462,156 +597,177 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
 
   const scrollRef = useRef<HTMLDivElement>(null);
   useImperativeHandle(ref, () => scrollRef.current as HTMLDivElement);
+  // View toggle buttons
+  const renderViewToggle = () => (
+    <div className="flex gap-2 items-center ml-auto">
+      <button
+        className={`p-2 rounded-full hover:bg-gray-100 transition ${viewMode === 'picture' ? 'bg-primary-100 text-primary-600' : 'text-gray-400'}`}
+        onClick={() => setViewMode('picture')}
+        title="Picture View"
+        aria-label="Picture View"
+        type="button"
+      >
+        <PhotoIcon className="w-5 h-5" />
+      </button>
+      <button
+        className={`p-2 rounded-full hover:bg-gray-100 transition ${viewMode === 'compact' ? 'bg-primary-100 text-primary-600' : 'text-gray-400'}`}
+        onClick={() => setViewMode('compact')}
+        title="Compact View"
+        aria-label="Compact View"
+        type="button"
+      >
+        <Bars3Icon className="w-5 h-5" />
+      </button>
+    </div>
+  );
   return (
     <div className="h-full flex flex-col min-h-0 bg-white">
       {/* Header */}
-      <div className="p-4 border-b border-gray-200">
-        <div className="flex items-center justify-between">
-          <div>
-            <h2 className="text-lg font-semibold text-gray-900">Itinerary</h2>
-            <p className="text-sm text-gray-600">
-              {tripDays.length} days • {tripDays.reduce((acc, day) => acc + day.destinations.length, 0)} destinations
-            </p>
-          </div>
-          {isReordering && (
-            <div className="flex items-center text-sm text-gray-500">
-              <svg className="animate-spin -ml-1 mr-2 h-4 w-4" fill="none" viewBox="0 0 24 24">
-                <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-              </svg>
-              Updating...
-            </div>
-          )}
-        </div>
+      <div className="p-4 border-b border-gray-200 flex items-center">
+        <h2 className="text-lg font-semibold text-gray-900">Itinerary</h2>
+        {renderViewToggle()}
       </div>
-
-      {/* Days List with Cross-Day Dragging */}
+      {/* Days and Destinations */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto hide-native-scrollbar">
-        <DndContext
-          sensors={sensors}
-          collisionDetection={closestCenter}
-          onDragStart={handleDragStart}
-          onDragOver={handleDragOver}
-          onDragEnd={handleDragEnd}
-        >
-          <SortableContext 
-            items={allDestinations.map(dest => dest.id)}
-            strategy={verticalListSortingStrategy}
-          >
-            {tripDays.map((day) => (
-              <DroppableDay
-                key={day.day}
-                day={day}
-                isOver={overId === `day-${day.day}`}
-              >
-                <div className="border-b border-gray-100 last:border-b-0">
-                  {/* Day Header */}
-                  <button
-                    onClick={() => toggleDay(day.day)}
-                    className={`w-full p-4 text-left hover:bg-gray-50 transition-colors ${
-                      selectedDay === day.day ? 'bg-blue-50' : ''
-                    }`}
+        {tripDays.map((day) => (
+          <div key={day.day} className="border-b border-gray-100">
+            {/* Day Header */}
+            <button
+              onClick={() => toggleDay(day.day)}
+              className={`w-full p-4 text-left hover:bg-gray-50 transition-colors ${
+                selectedDay === day.day ? 'bg-blue-50' : ''
+              }`}
+            >
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  <div 
+                    className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-medium`}
+                    style={{ backgroundColor: day.color.pin }}
                   >
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center space-x-3">
-                        <div 
-                          className={`w-6 h-6 rounded-full flex items-center justify-center text-white text-sm font-medium`}
-                          style={{ backgroundColor: day.color.pin }}
-                        >
-                          {day.day}
-                        </div>
-                        <div>
-                          <h3 className="font-medium text-gray-900">
-                            Day {day.day}
-                          </h3>
-                          <p className="text-sm text-gray-600">
-                            {format(parseISO(day.date), 'MMM d, yyyy')}
-                          </p>
-                        </div>
-                      </div>
-                      <div className="flex items-center space-x-2">
-                        <span className="text-sm text-gray-500">
-                          {day.destinations.length} stops
-                        </span>
-                        <svg 
-                          className={`w-4 h-4 text-gray-400 transition-transform ${
-                            expandedDays.has(day.day) ? 'rotate-180' : ''
-                          }`}
-                          fill="none" 
-                          stroke="currentColor" 
-                          viewBox="0 0 24 24"
-                        >
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                      </div>
-                    </div>
-                  </button>
+                    {day.day}
+                  </div>
+                  <div>
+                    <h3 className="font-medium text-gray-900">
+                      Day {day.day}
+                    </h3>
+                    <p className="text-sm text-gray-600">
+                      {format(parseISO(day.date), 'MMM d, yyyy')}
+                    </p>
+                  </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-gray-500">
+                    {day.destinations.length} stops
+                  </span>
+                  <svg 
+                    className={`w-4 h-4 text-gray-400 transition-transform ${
+                      expandedDays.has(day.day) ? 'rotate-180' : ''
+                    }`}
+                    fill="none" 
+                    stroke="currentColor" 
+                    viewBox="0 0 24 24"
+                  >
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </div>
+              </div>
+            </button>
 
-                  {/* Destinations List */}
-                  {expandedDays.has(day.day) && (
-                    <div className="bg-gray-50">
-                      {day.destinations.length === 0 ? (
-                        <div className="p-4 text-center text-gray-500">
-                          <svg className="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                          </svg>
-                          <p className="text-sm">No destinations added yet</p>
-                          <p className="text-xs text-gray-400 mt-1">Click on the map to add destinations</p>
-                        </div>
-                      ) : (
-                        <div className="space-y-0">
-                          {day.destinations.map((destination, index) => (
+            {/* Destinations List */}
+            {expandedDays.has(day.day) && (
+              <div className="bg-gray-50">
+                {day.destinations.length === 0 ? (
+                  <div className="p-4 text-center text-gray-500">
+                    <svg className="w-12 h-12 mx-auto mb-2 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                    </svg>
+                    <p className="text-sm">No destinations added yet</p>
+                    <p className="text-xs text-gray-400 mt-1">Click on the map to add destinations</p>
+                  </div>
+                ) : (
+                  <DndContext
+                    sensors={sensors}
+                    collisionDetection={closestCenter}
+                    onDragEnd={handleDragEnd}
+                  >
+                    <SortableContext
+                      items={day.destinations.map((d) => d.id)}
+                      strategy={verticalListSortingStrategy}
+                    >
+                      {day.destinations.map((destination, idx) => (
+                        <div key={destination.id}>
+                          {viewMode === 'compact' ? (
                             <SortableDestination
-                              key={destination.id}
                               destination={destination}
                               dayColor={day.color}
                               selectedDestination={selectedDestination}
                               onDestinationSelect={onDestinationSelect}
                               onDestinationDelete={onDestinationDelete}
-                              isLastItem={index === day.destinations.length - 1}
+                              isLastItem={idx === day.destinations.length - 1}
                             />
-                          ))}
+                          ) : (
+                            <SortableDestinationPicture
+                              destination={destination}
+                              dayColor={day.color}
+                              selectedDestination={selectedDestination}
+                              onDestinationSelect={onDestinationSelect}
+                              onDestinationDelete={onDestinationDelete}
+                              isLastItem={idx === day.destinations.length - 1}
+                            />
+                          )}
+                          {/* Only render between-pins area between two gray containers, not after the last pin, and align with pin center */}
+                          {idx < day.destinations.length - 1 && (
+                            <div className="flex justify-start relative z-10" style={{ height: '48px', alignItems: 'center', marginLeft: '19.5px' }}>
+                              <PlusButtonWithMenu onAddPlace={() => {}} onAddNote={() => {}} />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                      {/* After the last pin, if there are any destinations */}
+                      {day.destinations.length > 0 && (
+                        <div className="flex justify-start ml-11 relative z-10" style={{ marginTop: '-18px', marginBottom: '6px' }}>
+                          <PlusButtonWithMenu onAddPlace={() => {}} onAddNote={() => {}} />
                         </div>
                       )}
-                      
-                      {/* Add Destination - Location Search */}
-                      <div className="p-4 border-t border-gray-200">
-                        <LocationSearch
-                          onLocationSelect={(destination) => {
-                            // Set the destination's day and order index
-                            const updatedDestination = {
-                              ...destination,
-                              day: day.day,
-                              orderIndex: day.destinations.length + 1,
-                            };
-                            onLocationSelect(updatedDestination);
-                            onDaySelect(day.day);
-                          }}
-                          selectedDay={day.day}
-                          tripId={trip.id}
-                          placeholder={`Search places for Day ${day.day}...`}
-                          className="w-full"
-                        />
-                        
+                    </SortableContext>
+                  </DndContext>
+                )}
+                
+                {/* Add Destination - Location Search */}
+                <div className="p-4 border-t border-gray-200">
+                  <LocationSearch
+                    onLocationSelect={(destination) => {
+                      // Set the destination's day and order index
+                      const updatedDestination = {
+                        ...destination,
+                        day: day.day,
+                        orderIndex: day.destinations.length + 1,
+                      };
+                      onLocationSelect(updatedDestination);
+                      onDaySelect(day.day);
+                    }}
+                    selectedDay={day.day}
+                    tripId={trip.id}
+                    placeholder={`Search places for Day ${day.day}...`}
+                    className="w-full"
+                  />
+                  
 
-                      </div>
-                      
-                      {/* Smart Recommendations for this day */}
-                      <SmartRecommendations
-                        trip={trip}
-                        tripDays={tripDays}
-                        selectedDay={day.day}
-                        onDestinationAdd={onLocationSelect}
-                        existingDestinations={tripDays.flatMap(d => d.destinations)}
-                      />
-                    </div>
-                  )}
                 </div>
-              </DroppableDay>
-            ))}
-          </SortableContext>
-        </DndContext>
+                
+                {/* Smart Recommendations for this day */}
+                <SmartRecommendations
+                  trip={trip}
+                  tripDays={tripDays}
+                  selectedDay={day.day}
+                  onDestinationAdd={onLocationSelect}
+                  existingDestinations={tripDays.flatMap(d => d.destinations)}
+                />
+              </div>
+            )}
+          </div>
+        ))}
       </div>
     </div>
   );

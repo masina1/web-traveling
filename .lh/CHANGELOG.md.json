@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 6,
+            "activePatchIndex": 7,
             "patches": [
                 {
                     "date": 1752474186083,
@@ -32,6 +32,10 @@
                 {
                     "date": 1752580816983,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -13,8 +13,11 @@\n - **[FEATURE]** CityCountrySearch component with Google Places integration\r\n - **[IMPROVEMENT]** Enhanced trip creation UX with intelligent location suggestions\r\n - **[IMPROVEMENT]** Keyboard navigation support for location autocomplete (arrow keys, Enter, Escape)\r\n - **[IMPROVEMENT]** City/country autocomplete now only suggests cities and countries (no states/regions)\r\n+- **[IMPROVEMENT]** Itinerary and map panels now use a true 50/50 split with no container wall.\r\n+- **[IMPROVEMENT]** Native itinerary scrollbar is hidden and replaced with a custom scrollbar at the far right edge, synced with itinerary scroll.\r\n+- **[IMPROVEMENT]** Custom scrollbar is more visible for better usability.\r\n \r\n ### Fixed\r\n \r\n - **[BUGFIX]** Fixed Google Maps centering issue - map now centers on trip location instead of defaulting to New York\r\n"
+                },
+                {
+                    "date": 1752589337580,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -16,8 +16,12 @@\n - **[IMPROVEMENT]** City/country autocomplete now only suggests cities and countries (no states/regions)\r\n - **[IMPROVEMENT]** Itinerary and map panels now use a true 50/50 split with no container wall.\r\n - **[IMPROVEMENT]** Native itinerary scrollbar is hidden and replaced with a custom scrollbar at the far right edge, synced with itinerary scroll.\r\n - **[IMPROVEMENT]** Custom scrollbar is more visible for better usability.\r\n+- **[FEATURE]** Between-pins + button for adding places/notes, perfectly centered and overlays a continuous vertical dotted line\r\n+- **[IMPROVEMENT]** Continuous vertical dotted line now runs only between itinerary items, not from the pin SVG\r\n+- **[IMPROVEMENT]** Pin SVGs are now half-overlapping the left edge of the gray container for a modern look\r\n+- **[IMPROVEMENT]** No extra dots or + button after the last pin in a day; connector line is always perfectly flush with gray containers\r\n \r\n ### Fixed\r\n \r\n - **[BUGFIX]** Fixed Google Maps centering issue - map now centers on trip location instead of defaulting to New York\r\n"
                 }
             ],
             "date": 1752474186083,

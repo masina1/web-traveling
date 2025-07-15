@@ -243,3 +243,9 @@ Mobile Behavior Notes
 - A toggle button allows opening/closing the itinerary view.
 - The map is not persistently visible but can be opened as a full-screen overlay.
 - Design must prioritize tap accuracy and simplified navigation.
+
+---
+
+[2025-07-14] Layout and Scrollbar Update:
+- The itinerary and map panels now use a true 50/50 split (left: itinerary, right: map) on desktop, with no container wall or margin between them.
+- The itinerary panel uses a custom scrollbar at the far right edge of the screen, synced with its scroll position, and the native scrollbar is hidden for a seamless look.

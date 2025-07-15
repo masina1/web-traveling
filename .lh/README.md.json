@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 21,
+            "activePatchIndex": 22,
             "patches": [
                 {
                     "date": 1752433150539,
@@ -92,6 +92,10 @@
                 {
                     "date": 1752580825715,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -286,8 +286,14 @@\n - ✅ **Enhanced**: Loading states and error handling\r\n \r\n **[2025-07-14] - City/country autocomplete now only suggests cities and countries (no states/regions).**\r\n \r\n+**[2025-07-14] - Itinerary and map panels now use a true 50/50 split with no container wall.**\r\n+\r\n+**[2025-07-14] - Native itinerary scrollbar is hidden and replaced with a custom scrollbar at the far right edge, synced with itinerary scroll.**\r\n+\r\n+**[2025-07-14] - Custom scrollbar is more visible for better usability.**\r\n+\r\n For complete changelog with detailed history, see [CHANGELOG.md](CHANGELOG.md).\r\n \r\n ## 🌟 Demo\r\n \r\n"
+                },
+                {
+                    "date": 1752589355531,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -100,8 +100,15 @@\n ```\r\n \r\n ## 🎯 Key Features Explained\r\n \r\n+### 📝 Modern Itinerary UI/UX (2025-07)\r\n+- **Continuous vertical dotted line** between itinerary items for clear visual flow\r\n+- **+ button overlay** between items for adding places/notes, perfectly centered and only between items\r\n+- **Pin SVGs** are half-overlapping the left edge of the gray container for a modern, timeline-like look\r\n+- **No extra dots or + after the last pin**—the connector line is always flush with the gray containers\r\n+- **Improved drag-and-drop**: whole card is draggable, with clear hand cursor and hover effects\r\n+\r\n ### 🗺️ Interactive Map\r\n \r\n - **Color-coded pins** by day (Day 1: Red, Day 2: Blue, Day 3: Green, etc.)\r\n - **Numbered markers** showing visit order within each day\r\n"
                 }
             ],
             "date": 1752433150539,

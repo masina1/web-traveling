@@ -101,6 +101,14 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 
 ## 🎯 Key Features Explained
 
+### 📝 Modern Itinerary UI/UX (2025-07)
+
+- **Continuous vertical dotted line** between itinerary items for clear visual flow
+- **+ button overlay** between items for adding places/notes, perfectly centered and only between items
+- **Pin SVGs** are half-overlapping the left edge of the gray container for a modern, timeline-like look
+- **No extra dots or + after the last pin**—the connector line is always flush with the gray containers
+- **Improved drag-and-drop**: whole card is draggable, with clear hand cursor and hover effects
+
 ### 🗺️ Interactive Map
 
 - **Color-coded pins** by day (Day 1: Red, Day 2: Blue, Day 3: Green, etc.)

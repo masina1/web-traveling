@@ -725,17 +725,19 @@ export default function TripMap({
               <div className="flex items-center space-x-2">
                 <button
                   onClick={() => setIsClickToAddEnabled(!isClickToAddEnabled)}
-                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${
+                  className={`px-2 py-0.5 rounded-md text-xs font-normal transition-colors ${
                     isClickToAddEnabled 
                       ? 'bg-primary-600 text-white hover:bg-primary-700' 
                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
                   }`}
                 >
-                  {isClickToAddEnabled ? 'Click to Add ON' : 'Click to Add OFF'}
+                  {isClickToAddEnabled ? 'Disable Manual Add via Map Click' : 'Enable Manual Add via Map Click'}
                 </button>
-                <span className="text-gray-500 text-xs">
-                  {isClickToAddEnabled ? 'Click map to add destination' : 'Enable to add destinations by clicking'}
-                </span>
+                {isClickToAddEnabled && (
+                  <span className="text-gray-400 text-xs ml-1">
+                    Click the map to add a location to your itinerary
+                  </span>
+                )}
               </div>
             )}
           </div>

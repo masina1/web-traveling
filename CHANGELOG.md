@@ -17,6 +17,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[IMPROVEMENT]** Itinerary and map panels now use a true 50/50 split with no container wall.
 - **[IMPROVEMENT]** Native itinerary scrollbar is hidden and replaced with a custom scrollbar at the far right edge, synced with itinerary scroll.
 - **[IMPROVEMENT]** Custom scrollbar is more visible for better usability.
+- **[FEATURE]** Between-pins + button for adding places/notes, perfectly centered and overlays a continuous vertical dotted line
+- **[IMPROVEMENT]** Continuous vertical dotted line now runs only between itinerary items, not from the pin SVG
+- **[IMPROVEMENT]** Pin SVGs are now half-overlapping the left edge of the gray container for a modern look
+- **[IMPROVEMENT]** No extra dots or + button after the last pin in a day; connector line is always perfectly flush with gray containers
 
 ### Fixed
 

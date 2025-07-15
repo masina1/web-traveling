@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 35,
+            "activePatchIndex": 36,
             "patches": [
                 {
                     "date": 1752491349546,
@@ -148,6 +148,10 @@
                 {
                     "date": 1752497754217,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -420,13 +420,13 @@\n       {/* Collapsible Header */}\n       <div className=\"px-3 py-2 border-b border-gray-100\">\n         <button\n           onClick={() => setIsExpanded(!isExpanded)}\n-          className=\"flex items-center justify-between w-full text-left hover:bg-gray-50 transition-colors rounded-md p-1 -m-1\"\n+          className=\"flex items-center w-full text-left hover:bg-gray-50 transition-colors rounded-md p-1 -m-1\"\n         >\n           <h3 className=\"text-sm font-medium text-gray-700\">Recommended places</h3>\n           <svg \n-            className={`w-4 h-4 text-gray-500 transition-transform duration-200 ${isExpanded ? 'rotate-180' : ''}`}\n+            className={`w-4 h-4 text-gray-500 transition-transform duration-200 ml-2 ${isExpanded ? 'rotate-180' : ''}`}\n             fill=\"none\" \n             stroke=\"currentColor\" \n             viewBox=\"0 0 24 24\"\n           >\n"
+                },
+                {
+                    "date": 1752584902653,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -288,8 +288,11 @@\n \n   const handleAddRecommendation = (rec: RecommendationItem) => {\n     const selectedDayData = tripDays.find(d => d.day === selectedDay);\n     \n+    const photos = (rec.photos && rec.photos.length > 0)\n+      ? rec.photos\n+      : (rec.photo ? [rec.photo] : []);\n     const newDestination: Destination = {\n       id: crypto.randomUUID(),\n       tripId: trip.id,\n       locationName: rec.name,\n@@ -302,9 +305,9 @@\n       placeId: rec.placeId,\n       category: rec.category,\n       rating: rec.rating,\n       priceLevel: rec.priceLevel,\n-      photos: rec.photos || [],\n+      photos,\n       createdAt: new Date(),\n       updatedAt: new Date(),\n     };\n     \n"
                 }
             ],
             "date": 1752491349546,

@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 42,
+            "activePatchIndex": 44,
             "patches": [
                 {
                     "date": 1752433617930,
@@ -176,6 +176,14 @@
                 {
                     "date": 1752499554675,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -58,8 +58,14 @@\n       addDebugInfo('No location provided, using default center (NYC)');\r\n       return defaultCenter;\r\n     }\r\n \r\n+    // Check if Google Maps is loaded\r\n+    if (!window.google?.maps?.Geocoder) {\r\n+      addDebugInfo('Google Maps Geocoder not available, using default center (NYC)');\r\n+      return defaultCenter;\r\n+    }\r\n+\r\n     try {\r\n       addDebugInfo(`Geocoding location: \"${location}\"`);\r\n       \r\n       const geocoder = new google.maps.Geocoder();\r\n"
+                },
+                {
+                    "date": 1752581138890,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -724,17 +724,17 @@\n             ) : (\r\n               <div className=\"flex items-center space-x-2\">\r\n                 <button\r\n                   onClick={() => setIsClickToAddEnabled(!isClickToAddEnabled)}\r\n-                  className={`px-3 py-1 rounded-lg text-xs font-medium transition-colors ${\r\n+                  className={`px-2 py-0.5 rounded-md text-xs font-normal transition-colors ${\r\n                     isClickToAddEnabled \r\n                       ? 'bg-primary-600 text-white hover:bg-primary-700' \r\n                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'\r\n                   }`}\r\n                 >\r\n                   {isClickToAddEnabled ? 'Click to Add ON' : 'Click to Add OFF'}\r\n                 </button>\r\n-                <span className=\"text-gray-500 text-xs\">\r\n+                <span className=\"text-gray-500 text-xs ml-1\">\r\n                   {isClickToAddEnabled ? 'Click map to add destination' : 'Enable to add destinations by clicking'}\r\n                 </span>\r\n               </div>\r\n             )}\r\n"
+                },
+                {
+                    "date": 1752581972542,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -730,13 +730,15 @@\n                       ? 'bg-primary-600 text-white hover:bg-primary-700' \r\n                       : 'bg-gray-100 text-gray-600 hover:bg-gray-200'\r\n                   }`}\r\n                 >\r\n-                  {isClickToAddEnabled ? 'Click to Add ON' : 'Click to Add OFF'}\r\n+                  {isClickToAddEnabled ? 'Disable Manual Add via Map Click' : 'Enable Manual Add via Map Click'}\r\n                 </button>\r\n-                <span className=\"text-gray-500 text-xs ml-1\">\r\n-                  {isClickToAddEnabled ? 'Click map to add destination' : 'Enable to add destinations by clicking'}\r\n-                </span>\r\n+                {isClickToAddEnabled && (\r\n+                  <span className=\"text-gray-400 text-xs ml-1\">\r\n+                    Click the map to add a location to your itinerary\r\n+                  </span>\r\n+                )}\r\n               </div>\r\n             )}\r\n           </div>\r\n         </div>\r\n"
                 }
             ],
             "date": 1752433617930,

@@ -1,0 +1,18 @@
+{
+    "sourceFile": "public/default-location.jpg",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1752583735845,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1752583735845,
+            "name": "Commit-0",
+            "content": "<binary content: royalty-free placeholder image for default location> "
+        }
+    ]
+}

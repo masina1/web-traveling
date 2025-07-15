@@ -289,6 +289,9 @@ export default function SmartRecommendations({
   const handleAddRecommendation = (rec: RecommendationItem) => {
     const selectedDayData = tripDays.find(d => d.day === selectedDay);
     
+    const photos = (rec.photos && rec.photos.length > 0)
+      ? rec.photos
+      : (rec.photo ? [rec.photo] : []);
     const newDestination: Destination = {
       id: crypto.randomUUID(),
       tripId: trip.id,
@@ -303,7 +306,7 @@ export default function SmartRecommendations({
       category: rec.category,
       rating: rec.rating,
       priceLevel: rec.priceLevel,
-      photos: rec.photos || [],
+      photos,
       createdAt: new Date(),
       updatedAt: new Date(),
     };
