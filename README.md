@@ -137,6 +137,12 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 - **Offline support** with cached data
 - **Conflict resolution** for concurrent edits
 
+### 🕹️ Undo/Redo for Itinerary Changes
+
+- **Permanent Undo/Redo buttons** in the itinerary panel header
+- **Revert or reapply** any change to your itinerary: add, delete, move, copy, or drag destinations
+- **Modern UI**: Buttons are always visible, disabled when not available, and use Heroicons for clarity
+
 ## 🎨 Design Guidelines
 
 - **Modern UI** with rounded corners (`rounded-xl`)
@@ -241,6 +247,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - ✅ **Improved**: CityCountrySearch component with Google Places integration
 - ✅ **Fixed**: Google Maps API deprecation warnings and autocomplete re-search bug
 - ✅ **Enhanced**: Robust selection handling with proper state management to prevent duplicate searches
+- ✅ **Added**: Undo/Redo support for itinerary changes with permanent buttons in the itinerary panel header
 
 **[v1.2.2] - 2025-01-15**
 

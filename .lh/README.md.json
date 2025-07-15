@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 22,
+            "activePatchIndex": 23,
             "patches": [
                 {
                     "date": 1752433150539,
@@ -96,6 +96,10 @@
                 {
                     "date": 1752589355531,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -100,8 +100,15 @@\n ```\r\n \r\n ## 🎯 Key Features Explained\r\n \r\n+### 📝 Modern Itinerary UI/UX (2025-07)\r\n+- **Continuous vertical dotted line** between itinerary items for clear visual flow\r\n+- **+ button overlay** between items for adding places/notes, perfectly centered and only between items\r\n+- **Pin SVGs** are half-overlapping the left edge of the gray container for a modern, timeline-like look\r\n+- **No extra dots or + after the last pin**—the connector line is always flush with the gray containers\r\n+- **Improved drag-and-drop**: whole card is draggable, with clear hand cursor and hover effects\r\n+\r\n ### 🗺️ Interactive Map\r\n \r\n - **Color-coded pins** by day (Day 1: Red, Day 2: Blue, Day 3: Green, etc.)\r\n - **Numbered markers** showing visit order within each day\r\n"
+                },
+                {
+                    "date": 1752594223595,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -136,8 +136,14 @@\n - **Instant sync** across multiple devices\r\n - **Offline support** with cached data\r\n - **Conflict resolution** for concurrent edits\r\n \r\n+### 🕹️ Undo/Redo for Itinerary Changes\r\n+\r\n+- **Permanent Undo/Redo buttons** in the itinerary panel header\r\n+- **Revert or reapply** any change to your itinerary: add, delete, move, copy, or drag destinations\r\n+- **Modern UI**: Buttons are always visible, disabled when not available, and use Heroicons for clarity\r\n+\r\n ## 🎨 Design Guidelines\r\n \r\n - **Modern UI** with rounded corners (`rounded-xl`)\r\n - **Consistent spacing** and typography\r\n@@ -240,8 +246,9 @@\n - ✅ **Added**: Keyboard navigation support for location autocomplete (arrow keys, Enter, Escape)\r\n - ✅ **Improved**: CityCountrySearch component with Google Places integration\r\n - ✅ **Fixed**: Google Maps API deprecation warnings and autocomplete re-search bug\r\n - ✅ **Enhanced**: Robust selection handling with proper state management to prevent duplicate searches\r\n+- ✅ **Added**: Undo/Redo support for itinerary changes with permanent buttons in the itinerary panel header\r\n \r\n **[v1.2.2] - 2025-01-15**\r\n \r\n - ✅ **Fixed**: Google Maps centering issue - map now centers on trip location instead of defaulting to New York\r\n"
                 }
             ],
             "date": 1752433150539,

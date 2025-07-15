@@ -29,7 +29,7 @@ import {
   CSS,
 } from '@dnd-kit/utilities';
 import { reorderDestinations, moveDestinationToDay } from '@/lib/destination-service';
-import { PhotoIcon, Bars3Icon } from '@heroicons/react/24/outline';
+import { PhotoIcon, Bars3Icon, ArrowUturnLeftIcon, ArrowUturnRightIcon } from '@heroicons/react/24/outline';
 
 interface ItineraryPanelProps {
   trip: Trip;
@@ -74,7 +74,9 @@ function SortableDestination({
   selectedDestination,
   onDestinationSelect,
   onDestinationDelete,
-  isLastItem 
+  isLastItem, 
+  selectedPinIds,
+  handleCheckboxChange
 }: {
   destination: Destination;
   dayColor: any;
@@ -82,6 +84,8 @@ function SortableDestination({
   onDestinationSelect: (destination: Destination) => void;
   onDestinationDelete: (destinationId: string) => void;
   isLastItem: boolean;
+  selectedPinIds: string[];
+  handleCheckboxChange: (id: string, checked: boolean) => void;
 }) {
   const {
     attributes,
@@ -108,6 +112,13 @@ function SortableDestination({
         {...attributes}
         {...listeners}
       >
+        {/* Checkbox */}
+        <input
+          type="checkbox"
+          className="mr-2 ml-4"
+          checked={selectedPinIds.includes(destination.id)}
+          onChange={e => handleCheckboxChange(destination.id, e.target.checked)}
+        />
         {/* Drag handle on the far left (outside gray box) */}
         <button
           className="flex-shrink-0 mr-2 cursor-grab active:cursor-grabbing p-1 rounded hover:bg-gray-200 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -191,7 +202,9 @@ function SortableDestinationPicture({
   selectedDestination,
   onDestinationSelect,
   onDestinationDelete,
-  isLastItem
+  isLastItem,
+  selectedPinIds,
+  handleCheckboxChange
 }: {
   destination: Destination;
   dayColor: any;
@@ -199,6 +212,8 @@ function SortableDestinationPicture({
   onDestinationSelect: (destination: Destination) => void;
   onDestinationDelete: (destinationId: string) => void;
   isLastItem: boolean;
+  selectedPinIds: string[];
+  handleCheckboxChange: (id: string, checked: boolean) => void;
 }) {
   const {
     setNodeRef,
@@ -229,6 +244,13 @@ function SortableDestinationPicture({
         {...attributes}
         {...listeners}
       >
+        {/* Checkbox */}
+        <input
+          type="checkbox"
+          className="mr-2 ml-4"
+          checked={selectedPinIds.includes(destination.id)}
+          onChange={e => handleCheckboxChange(destination.id, e.target.checked)}
+        />
         {/* Drag handle on the far left (outside gray box) */}
         <button
           className="flex-shrink-0 mr-2 cursor-grab active:cursor-grabbing p-1 rounded hover:bg-gray-200 opacity-0 group-hover:opacity-100 transition-opacity"
@@ -345,9 +367,13 @@ function SortableDestinationPicture({
 function PlusButtonWithMenu({ onAddPlace, onAddNote }: { onAddPlace: () => void; onAddNote: () => void }) {
   const [open, setOpen] = useState(false);
   return (
-    <div className="relative flex flex-col items-center z-10 h-12 justify-center w-8">
+    <div className="relative flex flex-col items-center justify-center z-10 h-full w-8 overflow-visible">
       {/* Continuous vertical dotted line */}
       <div className="absolute left-1/2 top-0 -translate-x-1/2 h-full w-0.5 border-l-2 border-dotted border-gray-300 pointer-events-none" />
+      {/* White overlay to hide the last dot but keep the space */}
+      {/* Remove the white overlay div at the bottom of the vertical dotted line */}
+      {/* 50px invisible space at the bottom */}
+      <div className="w-full h-[50px] invisible" />
       {/* + button overlays the line, invisible by default, appears on hover */}
       <button
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-8 rounded-full flex items-center justify-center transition bg-gray-100 opacity-0 hover:opacity-100 focus:opacity-100 group"
@@ -397,6 +423,42 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
   const [activeId, setActiveId] = useState<string | null>(null);
   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);
   const [viewMode, setViewMode] = useState<'picture' | 'compact'>('compact');
+  // 1. Add state to track selected pins
+  const [selectedPinIds, setSelectedPinIds] = useState<string[]>([]);
+  // In ItineraryPanel, add state for which dropdown is open
+  const [bulkDropdown, setBulkDropdown] = useState<'copy' | 'move' | null>(null);
+  // Undo/Redo stacks
+  const [undoStack, setUndoStack] = useState<Destination[][]>([]);
+  const [redoStack, setRedoStack] = useState<Destination[][]>([]);
+
+  // Helper to push current state to undo stack
+  const pushToUndo = (current: Destination[]) => {
+    setUndoStack((prev) => [...prev, current.map(d => ({ ...d }))]);
+    setRedoStack([]); // Clear redo on new action
+  };
+
+  // Wrap onDestinationsChange to support undo
+  const handleDestinationsChange = (newDestinations: Destination[], pushUndo = true) => {
+    if (pushUndo) pushToUndo(allDestinations);
+    onDestinationsChange(newDestinations);
+  };
+
+  // Undo handler
+  const handleUndo = () => {
+    if (undoStack.length === 0) return;
+    setRedoStack((prev) => [allDestinations.map(d => ({ ...d })), ...prev]);
+    const prevState = undoStack[undoStack.length - 1];
+    setUndoStack((prev) => prev.slice(0, -1));
+    onDestinationsChange(prevState);
+  };
+  // Redo handler
+  const handleRedo = () => {
+    if (redoStack.length === 0) return;
+    setUndoStack((prev) => [...prev, allDestinations.map(d => ({ ...d }))]);
+    const nextState = redoStack[0];
+    setRedoStack((prev) => prev.slice(1));
+    onDestinationsChange(nextState);
+  };
 
   const sensors = useSensors(
     useSensor(PointerSensor, {
@@ -418,6 +480,49 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
     }
     setExpandedDays(newExpanded);
     onDaySelect(day);
+  };
+
+  // 2. Add a checkbox to the left of each pin in both SortableDestination and SortableDestinationPicture
+  // 3. Checkbox is checked if the pin's id is in selectedPinIds
+  // 4. On change, add/remove the pin's id from selectedPinIds
+  const handleCheckboxChange = (id: string, checked: boolean) => {
+    setSelectedPinIds((prev) =>
+      checked ? [...prev, id] : prev.filter((pid) => pid !== id)
+    );
+  };
+
+  // Add logic for Copy to, Move to, and Delete actions
+  const handleBulkCopyTo = (dayNum: number) => {
+    const toCopy = allDestinations.filter(dest => selectedPinIds.includes(dest.id));
+    const maxOrder = Math.max(0, ...tripDays.find(d => d.day === dayNum)?.destinations.map(d => d.orderIndex) || []);
+    const copied = toCopy.map((dest, i) => ({
+      ...dest,
+      id: `${dest.id}-copy-${Date.now()}-${i}`,
+      day: dayNum,
+      orderIndex: maxOrder + i + 1
+    }));
+    handleDestinationsChange([...allDestinations, ...copied]);
+    setSelectedPinIds([]);
+    setBulkDropdown(null);
+  };
+  const handleBulkMoveTo = (dayNum: number) => {
+    const toMove = allDestinations.filter(dest => selectedPinIds.includes(dest.id));
+    const notMoved = allDestinations.filter(dest => !selectedPinIds.includes(dest.id));
+    const maxOrder = Math.max(0, ...tripDays.find(d => d.day === dayNum)?.destinations.map(d => d.orderIndex) || []);
+    const moved = toMove.map((dest, i) => ({
+      ...dest,
+      day: dayNum,
+      orderIndex: maxOrder + i + 1
+    }));
+    handleDestinationsChange([...notMoved, ...moved]);
+    setSelectedPinIds([]);
+    setBulkDropdown(null);
+  };
+  const handleBulkDelete = () => {
+    const remaining = allDestinations.filter(dest => !selectedPinIds.includes(dest.id));
+    handleDestinationsChange(remaining);
+    setSelectedPinIds([]);
+    setBulkDropdown(null);
   };
 
   // Get all destinations for sortable context
@@ -477,7 +582,7 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
           // Renumber all destinations in both source and target days
           const finalDestinations = renumberDestinationsInDays(updatedDestinations, [draggedDestination.day, targetDay]);
           
-          onDestinationsChange(finalDestinations);
+          handleDestinationsChange(finalDestinations);
         }
       } else {
         // Same day or destination-to-destination drop
@@ -514,7 +619,7 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
             return updated || dest;
           });
           
-          onDestinationsChange(updatedAllDestinations);
+          handleDestinationsChange(updatedAllDestinations);
 
           // Save to database
           const destinationIds = reorderedDestinations.map(dest => dest.id);
@@ -557,7 +662,7 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
           // Renumber all destinations in both affected days
           const finalDestinations = renumberDestinationsInDays(updatedDestinations, [sourceDay, targetDay]);
           
-          onDestinationsChange(finalDestinations);
+          handleDestinationsChange(finalDestinations);
 
           // Reorder target day in database with proper sequential IDs
           const targetDayDestinations = finalDestinations.filter(dest => dest.day === targetDay);
@@ -625,8 +730,66 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
       {/* Header */}
       <div className="p-4 border-b border-gray-200 flex items-center">
         <h2 className="text-lg font-semibold text-gray-900">Itinerary</h2>
-        {renderViewToggle()}
+        <div className="flex items-center gap-2 ml-auto">
+          <button
+            className={`p-2 rounded-full hover:bg-gray-100 transition ${undoStack.length === 0 ? 'opacity-50 cursor-not-allowed' : 'text-gray-400'}`}
+            onClick={handleUndo}
+            disabled={undoStack.length === 0}
+            title="Undo"
+            aria-label="Undo"
+            type="button"
+          >
+            <ArrowUturnLeftIcon className="w-5 h-5" />
+          </button>
+          <button
+            className={`p-2 rounded-full hover:bg-gray-100 transition ${redoStack.length === 0 ? 'opacity-50 cursor-not-allowed' : 'text-gray-400'}`}
+            onClick={handleRedo}
+            disabled={redoStack.length === 0}
+            title="Redo"
+            aria-label="Redo"
+            type="button"
+          >
+            <ArrowUturnRightIcon className="w-5 h-5" />
+          </button>
+          {renderViewToggle()}
+        </div>
       </div>
+      {/* In ItineraryPanel, render a gray overlay above the title if selectedPinIds.length > 0 */}
+      {/* Place this just before the header/title */}
+      {selectedPinIds.length > 0 && (
+        <div className="absolute left-0 top-0 w-full flex flex-col items-center z-30">
+          <div className="ml-6 mt-0 bg-gray-200/80 border-b border-gray-300 py-3 px-4 flex items-center justify-between shadow-md rounded-b-xl" style={{ maxWidth: '700px', width: '100%' }}>
+            <div className="flex items-center gap-4 relative">
+              <div className="relative">
+                <button className="text-gray-700 text-base font-medium hover:underline hover:text-primary-600 transition" onClick={() => setBulkDropdown(bulkDropdown === 'copy' ? null : 'copy')}>Copy to</button>
+                {bulkDropdown === 'copy' && (
+                  <div className="absolute left-0 mt-2 bg-white border border-gray-300 rounded shadow z-40 min-w-[120px]">
+                    {tripDays.map(day => (
+                      <button key={day.day} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => handleBulkCopyTo(day.day)}>
+                        Day {day.day}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <div className="relative">
+                <button className="text-gray-700 text-base font-medium hover:underline hover:text-primary-600 transition" onClick={() => setBulkDropdown(bulkDropdown === 'move' ? null : 'move')}>Move to</button>
+                {bulkDropdown === 'move' && (
+                  <div className="absolute left-0 mt-2 bg-white border border-gray-300 rounded shadow z-40 min-w-[120px]">
+                    {tripDays.map(day => (
+                      <button key={day.day} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => handleBulkMoveTo(day.day)}>
+                        Day {day.day}
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+              <button className="text-red-500 text-base font-medium hover:underline hover:text-red-700 transition" onClick={handleBulkDelete}>Delete</button>
+            </div>
+            <button className="text-gray-400 hover:text-gray-700 text-2xl font-bold px-2" onClick={() => setSelectedPinIds([])} title="Clear selection">×</button>
+          </div>
+        </div>
+      )}
       {/* Days and Destinations */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto hide-native-scrollbar">
         {tripDays.map((day) => (
@@ -705,6 +868,8 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
                               onDestinationSelect={onDestinationSelect}
                               onDestinationDelete={onDestinationDelete}
                               isLastItem={idx === day.destinations.length - 1}
+                              selectedPinIds={selectedPinIds}
+                              handleCheckboxChange={handleCheckboxChange}
                             />
                           ) : (
                             <SortableDestinationPicture
@@ -714,22 +879,18 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
                               onDestinationSelect={onDestinationSelect}
                               onDestinationDelete={onDestinationDelete}
                               isLastItem={idx === day.destinations.length - 1}
+                              selectedPinIds={selectedPinIds}
+                              handleCheckboxChange={handleCheckboxChange}
                             />
                           )}
-                          {/* Only render between-pins area between two gray containers, not after the last pin, and align with pin center */}
+                          {/* Only render between-pins area between two gray containers, not after the last pin */}
                           {idx < day.destinations.length - 1 && (
-                            <div className="flex justify-start relative z-10" style={{ height: '48px', alignItems: 'center', marginLeft: '19.5px' }}>
+                            <div className="flex flex-col items-center justify-center ml-6 relative z-10 h-10" style={{ alignItems: 'center' }}>
                               <PlusButtonWithMenu onAddPlace={() => {}} onAddNote={() => {}} />
                             </div>
                           )}
                         </div>
                       ))}
-                      {/* After the last pin, if there are any destinations */}
-                      {day.destinations.length > 0 && (
-                        <div className="flex justify-start ml-11 relative z-10" style={{ marginTop: '-18px', marginBottom: '6px' }}>
-                          <PlusButtonWithMenu onAddPlace={() => {}} onAddNote={() => {}} />
-                        </div>
-                      )}
                     </SortableContext>
                   </DndContext>
                 )}

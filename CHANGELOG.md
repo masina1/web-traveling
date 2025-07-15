@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **[FEATURE]** Undo/Redo support for itinerary changes: permanent Undo and Redo buttons in the itinerary panel header, allowing users to revert or reapply changes to destinations (add, delete, move, copy, drag & drop). UI uses modern Heroicons and disables buttons when not available.
 - **[FEATURE]** Added autocomplete for city/country search in trip creation form
 - **[FEATURE]** CityCountrySearch component with Google Places integration
 - **[IMPROVEMENT]** Enhanced trip creation UX with intelligent location suggestions
