@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 4,
+            "activePatchIndex": 5,
             "patches": [
                 {
                     "date": 1752474186083,
@@ -24,6 +24,10 @@
                 {
                     "date": 1752500241274,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -6,8 +6,15 @@\n and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).\r\n \r\n ## [Unreleased]\r\n \r\n+### Added\r\n+\r\n+- **[FEATURE]** Added autocomplete for city/country search in trip creation form\r\n+- **[FEATURE]** CityCountrySearch component with Google Places integration\r\n+- **[IMPROVEMENT]** Enhanced trip creation UX with intelligent location suggestions\r\n+- **[IMPROVEMENT]** Keyboard navigation support for location autocomplete (arrow keys, Enter, Escape)\r\n+\r\n ### Fixed\r\n \r\n - **[BUGFIX]** Fixed Google Maps centering issue - map now centers on trip location instead of defaulting to New York\r\n - **[IMPROVEMENT]** Enhanced map initialization with geocoding support for trip locations\r\n"
+                },
+                {
+                    "date": 1752579612082,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -12,8 +12,9 @@\n - **[FEATURE]** Added autocomplete for city/country search in trip creation form\r\n - **[FEATURE]** CityCountrySearch component with Google Places integration\r\n - **[IMPROVEMENT]** Enhanced trip creation UX with intelligent location suggestions\r\n - **[IMPROVEMENT]** Keyboard navigation support for location autocomplete (arrow keys, Enter, Escape)\r\n+- **[IMPROVEMENT]** City/country autocomplete now only suggests cities and countries (no states/regions)\r\n \r\n ### Fixed\r\n \r\n - **[BUGFIX]** Fixed Google Maps centering issue - map now centers on trip location instead of defaulting to New York\r\n"
                 }
             ],
             "date": 1752474186083,

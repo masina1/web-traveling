@@ -21,7 +21,9 @@ export default function CityCountrySearch({
   placeholder = "e.g., Paris, France",
   className = ""
 }: CityCountrySearchProps) {
-  const [searchValue, setSearchValue] = useState(value);
+  // Use inputValue for the input field, searchQuery only for triggering search
+  const [inputValue, setInputValue] = useState(value);
+  const [searchQuery, setSearchQuery] = useState('');
   const [predictions, setPredictions] = useState<google.maps.places.AutocompletePrediction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
@@ -31,14 +33,12 @@ export default function CityCountrySearch({
   const inputRef = useRef<HTMLInputElement>(null);
   const suggestionsRef = useRef<HTMLDivElement>(null);
   const searchTimeout = useRef<NodeJS.Timeout | null>(null);
-  const lastSelectedValue = useRef<string>('');
-  const isSelecting = useRef<boolean>(false);
+  const isSelectingRef = useRef(false); // Flag to prevent input change from triggering search during selection
 
   // Initialize Google Places service
   useEffect(() => {
     const initializeServices = async () => {
       if (!window.google?.maps?.places) {
-        // Load Google Places API if not already loaded
         const script = document.createElement('script');
         script.src = `https://maps.googleapis.com/maps/api/js?key=${process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY}&libraries=places`;
         script.async = true;
@@ -65,32 +65,23 @@ export default function CityCountrySearch({
     initializeServices();
   }, []);
 
-  // Handle search with debouncing and proper prevention logic
+  // ONLY search based on searchQuery, not displayValue
   useEffect(() => {
-    // Clear any existing timeout
     if (searchTimeout.current) {
       clearTimeout(searchTimeout.current);
     }
 
-    // Don't search if we're in the middle of a selection
-    if (isSelecting.current) {
-      console.log('🚫 Skipping search - selection in progress');
+    if (!searchQuery.trim()) {
+      setPredictions([]);
+      setShowSuggestions(false);
       return;
     }
 
-    // Don't search if this is the same value we just selected
-    if (searchValue === lastSelectedValue.current) {
-      console.log('🚫 Skipping search - same as last selected value:', searchValue);
-      return;
-    }
-
+    console.log('🔍 Searching for:', searchQuery);
+    
     searchTimeout.current = setTimeout(() => {
-      if (searchValue.trim() && autocompleteService.current) {
-        console.log('🔍 Searching for cities/countries:', searchValue.trim());
-        handleSearch(searchValue.trim());
-      } else {
-        setPredictions([]);
-        setShowSuggestions(false);
+      if (autocompleteService.current) {
+        handleSearch(searchQuery);
       }
     }, 300);
 
@@ -99,9 +90,9 @@ export default function CityCountrySearch({
         clearTimeout(searchTimeout.current);
       }
     };
-  }, [searchValue]);
+  }, [searchQuery]); // Only depends on searchQuery
 
-  const handleSearch = async (value: string) => {
+  const handleSearch = async (query: string) => {
     if (!autocompleteService.current) {
       console.warn('⚠️ Autocomplete service not initialized');
       return;
@@ -110,13 +101,11 @@ export default function CityCountrySearch({
     setIsLoading(true);
 
     const request: google.maps.places.AutocompletionRequest = {
-      input: value,
-      types: ['(cities)'], // Focus on cities and administrative areas
-      // No componentRestrictions - allow worldwide search
+      input: query,
+      types: ['(cities)'],
     };
 
     try {
-      // Use the promise-based approach to avoid the callback deprecation warning
       const response = await new Promise<{
         predictions: google.maps.places.AutocompletePrediction[];
         status: google.maps.places.PlacesServiceStatus;
@@ -131,16 +120,13 @@ export default function CityCountrySearch({
       if (response.status === google.maps.places.PlacesServiceStatus.OK && response.predictions.length > 0) {
         console.log('✅ Found predictions:', response.predictions.length);
         
-        // Filter and sort predictions to prioritize cities and countries
         const filteredPredictions = response.predictions.filter((prediction: google.maps.places.AutocompletePrediction) => {
           const types = prediction.types || [];
-          return types.includes('locality') || 
-                 types.includes('administrative_area_level_1') || 
-                 types.includes('country') ||
-                 types.includes('political');
+          // Only allow cities and countries
+          return types.includes('locality') || types.includes('country');
         });
 
-        setPredictions(filteredPredictions.slice(0, 5)); // Limit to 5 suggestions
+        setPredictions(filteredPredictions.slice(0, 5));
         setShowSuggestions(true);
         setSelectedIndex(-1);
       } else {
@@ -156,54 +142,26 @@ export default function CityCountrySearch({
     }
   };
 
+  // Only update searchQuery on user typing
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setSearchValue(value);
-    
-    // Clear the last selected value when user starts typing something new
-    if (lastSelectedValue.current && value !== lastSelectedValue.current) {
-      lastSelectedValue.current = '';
-      console.log('🗑️ Cleared last selected value - user is typing new input');
-    }
-    
-    if (!value.trim()) {
-      setPredictions([]);
-      setShowSuggestions(false);
-    }
+    const newValue = e.target.value;
+    setInputValue(newValue);
+    setSearchQuery(newValue); // Only here!
   };
 
+  // On suggestion click, set inputValue but do NOT update searchQuery
   const handleSuggestionClick = (prediction: google.maps.places.AutocompletePrediction) => {
     const selectedLocation = prediction.description;
-    console.log('✅ Selected location:', selectedLocation);
-    
-    // Set the selection flag to prevent any searches
-    isSelecting.current = true;
-    
-    // Cancel any pending search
+    setInputValue(selectedLocation);
+    setSearchQuery(''); // Clear searchQuery so no search is triggered
+    setShowSuggestions(false);
+    setPredictions([]);
+    setSelectedIndex(-1);
     if (searchTimeout.current) {
       clearTimeout(searchTimeout.current);
       searchTimeout.current = null;
     }
-    
-    // Store the selected value to prevent future searches
-    lastSelectedValue.current = selectedLocation;
-    
-    // Hide suggestions and update UI
-    setShowSuggestions(false);
-    setPredictions([]);
-    setSelectedIndex(-1);
-    
-    // Set the input value
-    setSearchValue(selectedLocation);
-    
-    // Call the selection handler
     onLocationSelect(selectedLocation);
-    
-    // Reset the selection flag after a short delay
-    setTimeout(() => {
-      isSelecting.current = false;
-      console.log('🔄 Selection flag reset');
-    }, 100);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
@@ -236,7 +194,6 @@ export default function CityCountrySearch({
   };
 
   const handleInputBlur = () => {
-    // Delay hiding suggestions to allow for clicks
     setTimeout(() => {
       setShowSuggestions(false);
       setSelectedIndex(-1);
@@ -244,7 +201,7 @@ export default function CityCountrySearch({
   };
 
   const handleInputFocus = () => {
-    if (predictions.length > 0) {
+    if (predictions.length > 0 && searchQuery.trim()) {
       setShowSuggestions(true);
     }
   };
@@ -255,7 +212,7 @@ export default function CityCountrySearch({
         <input
           ref={inputRef}
           type="text"
-          value={searchValue}
+          value={inputValue}
           onChange={handleInputChange}
           onKeyDown={handleKeyDown}
           onBlur={handleInputBlur}

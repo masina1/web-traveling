@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[FEATURE]** CityCountrySearch component with Google Places integration
 - **[IMPROVEMENT]** Enhanced trip creation UX with intelligent location suggestions
 - **[IMPROVEMENT]** Keyboard navigation support for location autocomplete (arrow keys, Enter, Escape)
+- **[IMPROVEMENT]** City/country autocomplete now only suggests cities and countries (no states/regions)
 
 ### Fixed
 

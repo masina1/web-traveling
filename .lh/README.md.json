@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 19,
+            "activePatchIndex": 20,
             "patches": [
                 {
                     "date": 1752433150539,
@@ -84,6 +84,10 @@
                 {
                     "date": 1752502121633,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -230,8 +230,10 @@\n - ✅ **Added**: Autocomplete for city/country search in trip creation form\r\n - ✅ **Enhanced**: Trip creation UX with intelligent location suggestions\r\n - ✅ **Added**: Keyboard navigation support for location autocomplete (arrow keys, Enter, Escape)\r\n - ✅ **Improved**: CityCountrySearch component with Google Places integration\r\n+- ✅ **Fixed**: Google Maps API deprecation warnings and autocomplete re-search bug\r\n+- ✅ **Enhanced**: Robust selection handling with proper state management to prevent duplicate searches\r\n \r\n **[v1.2.2] - 2025-01-15**\r\n \r\n - ✅ **Fixed**: Google Maps centering issue - map now centers on trip location instead of defaulting to New York\r\n"
+                },
+                {
+                    "date": 1752579617258,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -284,8 +284,10 @@\n - ✅ **Added**: Drag & drop functionality for destinations\r\n - ✅ **Fixed**: Map initialization timing issues\r\n - ✅ **Enhanced**: Loading states and error handling\r\n \r\n+**[2025-07-14] - City/country autocomplete now only suggests cities and countries (no states/regions).**\r\n+\r\n For complete changelog with detailed history, see [CHANGELOG.md](CHANGELOG.md).\r\n \r\n ## 🌟 Demo\r\n \r\n"
                 }
             ],
             "date": 1752433150539,

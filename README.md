@@ -285,6 +285,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - ✅ **Fixed**: Map initialization timing issues
 - ✅ **Enhanced**: Loading states and error handling
 
+**[2025-07-14] - City/country autocomplete now only suggests cities and countries (no states/regions).**
+
 For complete changelog with detailed history, see [CHANGELOG.md](CHANGELOG.md).
 
 ## 🌟 Demo
