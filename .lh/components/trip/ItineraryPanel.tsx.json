@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 41,
+            "activePatchIndex": 44,
             "patches": [
                 {
                     "date": 1752433683232,
@@ -172,6 +172,18 @@
                 {
                     "date": 1752495326503,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -592,14 +592,9 @@\n                           placeholder={`Search places for Day ${day.day}...`}\n                           className=\"w-full\"\n                         />\n                         \n-                        {/* Alternative: Click on map hint */}\n-                        <div className=\"mt-2 text-center\">\n-                          <span className=\"text-xs text-gray-500\">\n-                            or click on the map to add a destination\n-                          </span>\n-                        </div>\n+\n                       </div>\n                       \n                       {/* Smart Recommendations for this day */}\n                       <SmartRecommendations\n"
+                },
+                {
+                    "date": 1752579737907,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -117,15 +117,14 @@\n         className={`w-full p-4 text-left hover:bg-gray-100 transition-colors group relative ${\n           isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : ''\n         }`}\n       >\n-        <div className=\"flex items-start space-x-3\">\n-          {/* Drag Handle */}\n-          <div \n-            {...attributes}\n-            {...listeners}\n-            className=\"flex-shrink-0 mt-1 cursor-grab active:cursor-grabbing\"\n-          >\n+        <div className=\"flex items-start space-x-3\"\n+          {...attributes}\n+          {...listeners}\n+        >\n+          {/* Drag Handle Icon (optional, now just visual) */}\n+          <div className=\"flex-shrink-0 mt-1 cursor-grab active:cursor-grabbing\">\n             <svg className=\"w-4 h-4 text-gray-400 hover:text-gray-600\" fill=\"none\" stroke=\"currentColor\" viewBox=\"0 0 24 24\">\n               <path strokeLinecap=\"round\" strokeLinejoin=\"round\" strokeWidth={2} d=\"M4 8h16M4 16h16\" />\n             </svg>\n           </div>\n"
+                },
+                {
+                    "date": 1752580084794,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -460,9 +460,9 @@\n     });\n   };\n \n   return (\n-    <div className=\"h-full flex flex-col bg-white\">\n+    <div className=\"h-full flex flex-col min-h-0 bg-white\">\n       {/* Header */}\n       <div className=\"p-4 border-b border-gray-200\">\n         <div className=\"flex items-center justify-between\">\n           <div>\n"
+                },
+                {
+                    "date": 1752580709478,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,7 @@\n 'use client';\n \n-import { useState } from 'react';\n+import { useState, useRef, useImperativeHandle, forwardRef } from 'react';\n import { Trip, Destination, TripDay } from '@/types';\n import { format, parseISO } from 'date-fns';\n import LocationSearch from './LocationSearch';\n import SmartRecommendations from './SmartRecommendations';\n@@ -246,9 +246,9 @@\n     </div>\n   );\n }\n \n-export default function ItineraryPanel({\n+const ItineraryPanel = forwardRef(function ItineraryPanel({\n   trip,\n   tripDays,\n   selectedDay,\n   selectedDestination,\n@@ -256,9 +256,9 @@\n   onDestinationSelect,\n   onDestinationsChange,\n   onLocationSelect,\n   onDestinationDelete,\n-}: ItineraryPanelProps) {\n+}: ItineraryPanelProps, ref) {\n   const [expandedDays, setExpandedDays] = useState<Set<number>>(new Set([1]));\n   const [isReordering, setIsReordering] = useState(false);\n   const [activeId, setActiveId] = useState<string | null>(null);\n   const [overId, setOverId] = useState<UniqueIdentifier | null>(null);\n@@ -459,8 +459,10 @@\n       return dest;\n     });\n   };\n \n+  const scrollRef = useRef<HTMLDivElement>(null);\n+  useImperativeHandle(ref, () => scrollRef.current as HTMLDivElement);\n   return (\n     <div className=\"h-full flex flex-col min-h-0 bg-white\">\n       {/* Header */}\n       <div className=\"p-4 border-b border-gray-200\">\n@@ -483,9 +485,9 @@\n         </div>\n       </div>\n \n       {/* Days List with Cross-Day Dragging */}\n-      <div className=\"flex-1 overflow-y-auto\">\n+      <div ref={scrollRef} className=\"flex-1 overflow-y-auto hide-native-scrollbar\">\n         <DndContext\n           sensors={sensors}\n           collisionDetection={closestCenter}\n           onDragStart={handleDragStart}\n@@ -612,5 +614,15 @@\n         </DndContext>\n       </div>\n     </div>\n   );\n-} \n\\ No newline at end of file\n+});\n+\n+export default ItineraryPanel;\n+\n+/* Add this to the bottom or in a global CSS file */\n+// .hide-native-scrollbar {\n+//   scrollbar-width: none; /* Firefox */\n+// }\n+// .hide-native-scrollbar::-webkit-scrollbar {\n+//   display: none; /* Chrome, Safari */\n+// } \n\\ No newline at end of file\n"
                 }
             ],
             "date": 1752433683232,

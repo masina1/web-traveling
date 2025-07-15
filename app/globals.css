@@ -47,6 +47,13 @@
   }
 }
 
+.hide-native-scrollbar {
+  scrollbar-width: none; /* Firefox */
+}
+.hide-native-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}
+
 /* Mapbox styles */
 .mapboxgl-popup {
   max-width: 300px;

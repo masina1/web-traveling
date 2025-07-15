@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useRef, useEffect, useState } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { getTrip } from '@/lib/trip-service';
@@ -10,8 +10,24 @@ import { format, parseISO, differenceInDays, addDays } from 'date-fns';
 import Link from 'next/link';
 import TripMap from '@/components/map/TripMap';
 import ItineraryPanel from '@/components/trip/ItineraryPanel';
+import CustomScrollbar from '@/components/ui/CustomScrollbar';
 
 export default function TripDetailPage() {
+  const itineraryRef = useRef<HTMLDivElement>(null);
+  const [splitHeight, setSplitHeight] = useState(0);
+  const splitRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const updateHeight = () => {
+      if (splitRef.current) {
+        setSplitHeight(splitRef.current.offsetHeight);
+      }
+    };
+    updateHeight();
+    window.addEventListener('resize', updateHeight);
+    return () => window.removeEventListener('resize', updateHeight);
+  }, []);
+
   const { id } = useParams();
   const router = useRouter();
   const { user, loading } = useAuth();
@@ -477,15 +493,15 @@ export default function TripDetailPage() {
         </div>
 
       {/* Full-width layout - Seamless edge-to-edge panels */}
-      <div className="lg:flex lg:h-[calc(100vh-120px)] xl:h-[calc(100vh-120px)] 2xl:h-[calc(100vh-120px)]">
-        {/* Left Panel - Itinerary (45% on desktop, 40% on ultra-wide) - Scrollable */}
+      <div ref={splitRef} className="lg:flex lg:h-[calc(100vh-120px)] xl:h-[calc(100vh-120px)] 2xl:h-[calc(100vh-120px)] min-h-0 overflow-y-auto relative">
+        {/* Left Panel - Itinerary (50%) - Scrollable */}
         <div className={`
-          lg:w-[45%] 2xl:w-[40%] lg:block
+          w-1/2 lg:block
           ${isMobileItineraryOpen ? 'block' : 'hidden lg:block'}
-          ${isMobileItineraryOpen ? 'h-[calc(100vh-250px)] bg-white mx-4 rounded-xl shadow-sm border border-gray-200' : 'lg:h-full'}
-          overflow-y-auto
+          h-full bg-white flex flex-col min-h-0
         `}>
           <ItineraryPanel
+            ref={itineraryRef}
             trip={trip}
             tripDays={tripDays}
             selectedDay={selectedDay}
@@ -498,12 +514,11 @@ export default function TripDetailPage() {
           />
         </div>
 
-        {/* Right Panel - Map (55% on desktop, 60% on ultra-wide) - True Full Screen */}
+        {/* Right Panel - Map (50%) - Full Height */}
         <div className={`
-          lg:w-[55%] 2xl:w-[60%] lg:block
+          w-1/2 lg:block
           ${isMobileMapOpen ? 'block' : 'hidden lg:block'}
-          ${isMobileMapOpen ? 'h-[calc(100vh-250px)] bg-white mx-4 rounded-xl shadow-sm border border-gray-200' : 'lg:h-full'}
-          overflow-hidden
+          h-full bg-white flex flex-col min-h-0
         `}>
           <TripMap
             trip={trip}
@@ -514,6 +529,14 @@ export default function TripDetailPage() {
             onDestinationSelect={handleDestinationSelect}
             onDestinationAdd={handleDestinationAdd}
             isAddingDestination={isAddingDestination}
+          />
+        </div>
+        {/* Custom Scrollbar (desktop only) */}
+        <div className="hidden lg:block">
+          <CustomScrollbar
+            containerRef={itineraryRef}
+            height={splitHeight}
+            top={splitRef.current ? splitRef.current.getBoundingClientRect().top : 0}
           />
         </div>
       </div>

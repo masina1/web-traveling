@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 5,
+            "activePatchIndex": 6,
             "patches": [
                 {
                     "date": 1752432614076,
@@ -28,6 +28,10 @@
                 {
                     "date": 1752495508295,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -40,8 +40,12 @@\n     -webkit-line-clamp: 2;\r\n     -webkit-box-orient: vertical;\r\n     overflow: hidden;\r\n   }\r\n+  \r\n+  .no-scrollbar::-webkit-scrollbar {\r\n+    display: none;\r\n+  }\r\n }\r\n \r\n /* Mapbox styles */\r\n .mapboxgl-popup {\r\n"
+                },
+                {
+                    "date": 1752580718490,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -46,8 +46,15 @@\n     display: none;\r\n   }\r\n }\r\n \r\n+.hide-native-scrollbar {\r\n+  scrollbar-width: none; /* Firefox */\r\n+}\r\n+.hide-native-scrollbar::-webkit-scrollbar {\r\n+  display: none; /* Chrome, Safari */\r\n+}\r\n+\r\n /* Mapbox styles */\r\n .mapboxgl-popup {\r\n   max-width: 300px;\r\n }\r\n"
                 }
             ],
             "date": 1752432614076,

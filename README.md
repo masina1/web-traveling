@@ -287,6 +287,12 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **[2025-07-14] - City/country autocomplete now only suggests cities and countries (no states/regions).**
 
+**[2025-07-14] - Itinerary and map panels now use a true 50/50 split with no container wall.**
+
+**[2025-07-14] - Native itinerary scrollbar is hidden and replaced with a custom scrollbar at the far right edge, synced with itinerary scroll.**
+
+**[2025-07-14] - Custom scrollbar is more visible for better usability.**
+
 For complete changelog with detailed history, see [CHANGELOG.md](CHANGELOG.md).
 
 ## 🌟 Demo

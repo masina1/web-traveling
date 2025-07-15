@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef, useImperativeHandle, forwardRef } from 'react';
 import { Trip, Destination, TripDay } from '@/types';
 import { format, parseISO } from 'date-fns';
 import LocationSearch from './LocationSearch';
@@ -118,13 +118,12 @@ function SortableDestination({
           isSelected ? 'bg-blue-50 border-l-4 border-blue-500' : ''
         }`}
       >
-        <div className="flex items-start space-x-3">
-          {/* Drag Handle */}
-          <div 
-            {...attributes}
-            {...listeners}
-            className="flex-shrink-0 mt-1 cursor-grab active:cursor-grabbing"
-          >
+        <div className="flex items-start space-x-3"
+          {...attributes}
+          {...listeners}
+        >
+          {/* Drag Handle Icon (optional, now just visual) */}
+          <div className="flex-shrink-0 mt-1 cursor-grab active:cursor-grabbing">
             <svg className="w-4 h-4 text-gray-400 hover:text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 8h16M4 16h16" />
             </svg>
@@ -248,7 +247,7 @@ function SortableDestination({
   );
 }
 
-export default function ItineraryPanel({
+const ItineraryPanel = forwardRef(function ItineraryPanel({
   trip,
   tripDays,
   selectedDay,
@@ -258,7 +257,7 @@ export default function ItineraryPanel({
   onDestinationsChange,
   onLocationSelect,
   onDestinationDelete,
-}: ItineraryPanelProps) {
+}: ItineraryPanelProps, ref) {
   const [expandedDays, setExpandedDays] = useState<Set<number>>(new Set([1]));
   const [isReordering, setIsReordering] = useState(false);
   const [activeId, setActiveId] = useState<string | null>(null);
@@ -461,8 +460,10 @@ export default function ItineraryPanel({
     });
   };
 
+  const scrollRef = useRef<HTMLDivElement>(null);
+  useImperativeHandle(ref, () => scrollRef.current as HTMLDivElement);
   return (
-    <div className="h-full flex flex-col bg-white">
+    <div className="h-full flex flex-col min-h-0 bg-white">
       {/* Header */}
       <div className="p-4 border-b border-gray-200">
         <div className="flex items-center justify-between">
@@ -485,7 +486,7 @@ export default function ItineraryPanel({
       </div>
 
       {/* Days List with Cross-Day Dragging */}
-      <div className="flex-1 overflow-y-auto">
+      <div ref={scrollRef} className="flex-1 overflow-y-auto hide-native-scrollbar">
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -614,4 +615,14 @@ export default function ItineraryPanel({
       </div>
     </div>
   );
-} 
+});
+
+export default ItineraryPanel;
+
+/* Add this to the bottom or in a global CSS file */
+// .hide-native-scrollbar {
+//   scrollbar-width: none; /* Firefox */
+// }
+// .hide-native-scrollbar::-webkit-scrollbar {
+//   display: none; /* Chrome, Safari */
+// } 

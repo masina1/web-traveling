@@ -14,6 +14,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[IMPROVEMENT]** Enhanced trip creation UX with intelligent location suggestions
 - **[IMPROVEMENT]** Keyboard navigation support for location autocomplete (arrow keys, Enter, Escape)
 - **[IMPROVEMENT]** City/country autocomplete now only suggests cities and countries (no states/regions)
+- **[IMPROVEMENT]** Itinerary and map panels now use a true 50/50 split with no container wall.
+- **[IMPROVEMENT]** Native itinerary scrollbar is hidden and replaced with a custom scrollbar at the far right edge, synced with itinerary scroll.
+- **[IMPROVEMENT]** Custom scrollbar is more visible for better usability.
 
 ### Fixed
 

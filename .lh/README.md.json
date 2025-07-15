@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 20,
+            "activePatchIndex": 21,
             "patches": [
                 {
                     "date": 1752433150539,
@@ -88,6 +88,10 @@
                 {
                     "date": 1752579617258,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -284,8 +284,10 @@\n - ✅ **Added**: Drag & drop functionality for destinations\r\n - ✅ **Fixed**: Map initialization timing issues\r\n - ✅ **Enhanced**: Loading states and error handling\r\n \r\n+**[2025-07-14] - City/country autocomplete now only suggests cities and countries (no states/regions).**\r\n+\r\n For complete changelog with detailed history, see [CHANGELOG.md](CHANGELOG.md).\r\n \r\n ## 🌟 Demo\r\n \r\n"
+                },
+                {
+                    "date": 1752580825715,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -286,8 +286,14 @@\n - ✅ **Enhanced**: Loading states and error handling\r\n \r\n **[2025-07-14] - City/country autocomplete now only suggests cities and countries (no states/regions).**\r\n \r\n+**[2025-07-14] - Itinerary and map panels now use a true 50/50 split with no container wall.**\r\n+\r\n+**[2025-07-14] - Native itinerary scrollbar is hidden and replaced with a custom scrollbar at the far right edge, synced with itinerary scroll.**\r\n+\r\n+**[2025-07-14] - Custom scrollbar is more visible for better usability.**\r\n+\r\n For complete changelog with detailed history, see [CHANGELOG.md](CHANGELOG.md).\r\n \r\n ## 🌟 Demo\r\n \r\n"
                 }
             ],
             "date": 1752433150539,
