@@ -498,7 +498,7 @@ export default function TripDetailPage() {
         <div className={`
           w-1/2 lg:block
           ${isMobileItineraryOpen ? 'block' : 'hidden lg:block'}
-          h-full bg-white flex flex-col min-h-0
+          h-full bg-white flex flex-col min-h-0 relative
         `}>
           <ItineraryPanel
             ref={itineraryRef}
@@ -512,6 +512,14 @@ export default function TripDetailPage() {
             onLocationSelect={handleDestinationAdd}
             onDestinationDelete={handleDestinationDelete}
           />
+          {/* Custom Scrollbar (desktop only) */}
+          <div className="hidden lg:block">
+            <CustomScrollbar
+              containerRef={itineraryRef}
+              height={splitHeight}
+              top={0}
+            />
+          </div>
         </div>
 
         {/* Right Panel - Map (50%) - Full Height */}
@@ -529,14 +537,6 @@ export default function TripDetailPage() {
             onDestinationSelect={handleDestinationSelect}
             onDestinationAdd={handleDestinationAdd}
             isAddingDestination={isAddingDestination}
-          />
-        </div>
-        {/* Custom Scrollbar (desktop only) */}
-        <div className="hidden lg:block">
-          <CustomScrollbar
-            containerRef={itineraryRef}
-            height={splitHeight}
-            top={splitRef.current ? splitRef.current.getBoundingClientRect().top : 0}
           />
         </div>
       </div>

@@ -70,7 +70,7 @@ export const CustomScrollbar: React.FC<CustomScrollbarProps> = ({ containerRef, 
   return (
     <div
       style={{
-        position: 'fixed',
+        position: 'absolute',
         top,
         right: 0,
         height,
