@@ -308,6 +308,8 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 **[2025-07-14] - Custom scrollbar is more visible for better usability.**
 
+**[2025-07-25] - Fixed custom scrollbar positioning.**
+
 For complete changelog with detailed history, see [CHANGELOG.md](CHANGELOG.md).
 
 ## 🌟 Demo

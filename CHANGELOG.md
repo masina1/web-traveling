@@ -25,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **[BUGFIX]** Fixed custom scrollbar positioning. It is now correctly placed on the right edge of the itinerary panel.
 - **[BUGFIX]** Fixed Google Maps centering issue - map now centers on trip location instead of defaulting to New York
 - **[IMPROVEMENT]** Enhanced map initialization with geocoding support for trip locations
 - **[IMPROVEMENT]** Added automatic zoom level adjustment based on location type (country vs city)
