@@ -21,6 +21,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **[FEATURE]** Enhanced destination service with auth-aware functions (createWithAuth, updateWithAuth, deleteWithAuth)
 - **[SECURITY]** Permission-based access control - Owner, edit, and view permissions with proper validation
 
+### Fixed
+
+- **[BUGFIX]** Fixed missing shareSettings initialization for existing trips - checkboxes in ShareModal now work without errors
+- **[BUGFIX]** Resolved shared trip page runtime errors by adding missing TripMap props (tripDays, selectedDestination, etc.)
+- **[BUGFIX]** Added null checking throughout TripMap component to handle undefined tripDays gracefully
+- **[BUGFIX]** Fixed map loading timing issue on shared trips - map now loads properly on first visit without requiring refresh
+- **[IMPROVEMENT]** Improved loading sequence and auth handling to prevent unnecessary reloads and ensure smooth UX
+
 ### Removed
 
 - **[DOCUMENTATION]** Removed offline mode from roadmap and documentation - feature deemed too complex with limited use case for travel planning apps

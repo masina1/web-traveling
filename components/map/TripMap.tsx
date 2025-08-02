@@ -301,7 +301,7 @@ export default function TripMap({
     });
 
     sortedDestinations.forEach((destination, index) => {
-      const dayColor = tripDays.find(d => d.day === destination.day)?.color;
+              const dayColor = tripDays?.find(d => d.day === destination.day)?.color;
       
       // Calculate proper sequential pin number within the day
       const destinationsInDay = sortedDestinations.filter(d => d.day === destination.day);
@@ -431,7 +431,7 @@ export default function TripMap({
           addDebugInfo(`Found business: ${locationName} at ${address}`);
           
           // Create new destination object
-          const selectedDayData = tripDays.find(d => d.day === selectedDay);
+          const selectedDayData = tripDays?.find(d => d.day === selectedDay);
           const newDestination: Destination = {
             id: '', // Will be set by server
             tripId: trip.id,
@@ -475,7 +475,7 @@ export default function TripMap({
                   addDebugInfo(`Found place from query: ${locationName} at ${placeAddress}`);
                   
                   // Create new destination object
-                  const selectedDayData = tripDays.find(d => d.day === selectedDay);
+                  const selectedDayData = tripDays?.find(d => d.day === selectedDay);
                   const newDestination: Destination = {
                     id: '', // Will be set by server
                     tripId: trip.id,
@@ -528,7 +528,7 @@ export default function TripMap({
                   addDebugInfo(`Using geocoded name: ${locationName}`);
 
                   // Create new destination object
-                  const selectedDayData = tripDays.find(d => d.day === selectedDay);
+                  const selectedDayData = tripDays?.find(d => d.day === selectedDay);
                   const newDestination: Destination = {
                     id: '', // Will be set by server
                     tripId: trip.id,
@@ -712,7 +712,7 @@ export default function TripMap({
               <span className="text-gray-600">Day {selectedDay}</span>
               <div 
                 className="w-4 h-4 rounded-full"
-                style={{ backgroundColor: tripDays.find(d => d.day === selectedDay)?.color.pin }}
+                style={{ backgroundColor: tripDays?.find(d => d.day === selectedDay)?.color.pin || '#3B82F6' }}
               />
             </div>
             
@@ -749,7 +749,7 @@ export default function TripMap({
         <div className="absolute bottom-4 left-4 bg-white rounded-lg shadow-md p-3 max-w-xs">
           <h3 className="font-semibold text-gray-900 mb-2">Trip Days</h3>
           <div className="space-y-1">
-            {tripDays.slice(0, 5).map((day) => (
+            {tripDays?.slice(0, 5).map((day) => (
               <div key={day.day} className="flex items-center space-x-2 text-sm">
                 <div 
                   className="w-3 h-3 rounded-full"
@@ -759,8 +759,8 @@ export default function TripMap({
                 <span className="text-gray-500">({day.destinations.length} stops)</span>
               </div>
             ))}
-            {tripDays.length > 5 && (
-              <div className="text-xs text-gray-500">+{tripDays.length - 5} more days</div>
+            {(tripDays?.length || 0) > 5 && (
+              <div className="text-xs text-gray-500">+{(tripDays?.length || 0) - 5} more days</div>
             )}
           </div>
         </div>

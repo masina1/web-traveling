@@ -150,15 +150,23 @@ export default function ShareModal({ trip, isOpen, onClose, onTripUpdate }: Shar
     try {
       await updateTripSharingSettings(trip.id, settings, user!.uid);
       
+      // Initialize shareSettings if it doesn't exist
+      const currentShareSettings = trip.shareSettings || {
+        isPublic: false,
+        allowPublicView: false,
+        allowPublicEdit: false,
+        sharedUsers: [],
+      };
+      
       // Update local trip state
       const updatedTrip = {
         ...trip,
         isPublic: settings.isPublic ?? trip.isPublic,
         shareSettings: {
-          ...trip.shareSettings,
-          isPublic: settings.isPublic ?? trip.shareSettings?.isPublic ?? false,
-          allowPublicView: settings.allowPublicView ?? trip.shareSettings?.allowPublicView ?? false,
-          allowPublicEdit: settings.allowPublicEdit ?? trip.shareSettings?.allowPublicEdit ?? false,
+          ...currentShareSettings,
+          isPublic: settings.isPublic ?? currentShareSettings.isPublic,
+          allowPublicView: settings.allowPublicView ?? currentShareSettings.allowPublicView,
+          allowPublicEdit: settings.allowPublicEdit ?? currentShareSettings.allowPublicEdit,
         },
       };
       

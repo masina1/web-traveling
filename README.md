@@ -191,11 +191,13 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 ### 🤝 Trip Sharing & Collaboration
 
 - **Public sharing** with shareable links (view-only or edit access)
-- **Private sharing** with specific users via email invitation
+- **Private sharing** with specific users via email invitation  
 - **Permission levels**: Owner, Edit, View with proper access control
 - **Collaborative editing** with conflict resolution and activity tracking
 - **Real-time updates** when multiple users edit the same trip
 - **Authentication gating** for edit access (view can be public)
+- **Persistent links** that work reliably across multiple visits
+- **Seamless experience** with proper loading sequences and error handling
 
 ### 🔮 Future Enhancements
 

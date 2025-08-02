@@ -205,11 +205,31 @@ export async function updateTripSharingSettings(
   try {
     const tripRef = doc(db, TRIPS_COLLECTION, tripId);
     
+    // First, get the current trip to ensure shareSettings exists
+    const tripDoc = await getDoc(tripRef);
+    if (!tripDoc.exists()) {
+      throw new Error('Trip not found');
+    }
+    
+    const tripData = tripDoc.data();
+    const currentShareSettings = tripData.shareSettings || {
+      isPublic: false,
+      allowPublicView: false,
+      allowPublicEdit: false,
+      sharedUsers: [],
+    };
+    
+    // Create the updated shareSettings object
+    const updatedShareSettings = {
+      ...currentShareSettings,
+      ...(settings.isPublic !== undefined && { isPublic: settings.isPublic }),
+      ...(settings.allowPublicView !== undefined && { allowPublicView: settings.allowPublicView }),
+      ...(settings.allowPublicEdit !== undefined && { allowPublicEdit: settings.allowPublicEdit }),
+    };
+    
     await updateDoc(tripRef, {
-      'shareSettings.isPublic': settings.isPublic,
-      'shareSettings.allowPublicView': settings.allowPublicView,
-      'shareSettings.allowPublicEdit': settings.allowPublicEdit,
-      isPublic: settings.isPublic, // Keep backward compatibility
+      shareSettings: updatedShareSettings,
+      isPublic: settings.isPublic ?? updatedShareSettings.isPublic, // Keep backward compatibility
       updatedAt: Timestamp.now(),
     });
 

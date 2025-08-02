@@ -38,7 +38,7 @@ export default function SharedTripPage() {
     if (!token) return;
     
     loadSharedTrip();
-  }, [token, user]);
+  }, [token]); // Remove user dependency to avoid reloading when auth state changes
 
   const loadSharedTrip = async () => {
     try {
@@ -53,7 +53,8 @@ export default function SharedTripPage() {
       }
 
       // Check if edit permission requires authentication
-      if (tripPermission === 'edit' && !sharedTrip.shareSettings?.allowPublicEdit && !user) {
+      // Only check user auth if we need it, don't wait for auth to complete for view-only trips
+      if (tripPermission === 'edit' && !sharedTrip.shareSettings?.allowPublicEdit && !authLoading && !user) {
         setRequiresAuth(true);
         return;
       }
@@ -87,10 +88,14 @@ export default function SharedTripPage() {
       }
 
       setTripDays(generatedTripDays);
+      
+      // Small delay to ensure components are fully mounted before map initialization
+      setTimeout(() => {
+        setLoading(false);
+      }, 100);
     } catch (error) {
       console.error('Error loading shared trip:', error);
       setError('Failed to load trip. Please try again.');
-    } finally {
       setLoading(false);
     }
   };
@@ -209,7 +214,7 @@ export default function SharedTripPage() {
     );
   }
 
-  if (!trip) return null;
+  if (!trip || tripDays.length === 0) return null;
 
   const canEdit = permission === 'edit' && (user || trip.shareSettings?.allowPublicEdit);
 
@@ -290,8 +295,12 @@ export default function SharedTripPage() {
           <TripMap
             trip={trip}
             destinations={destinations}
-            onDestinationAdd={canEdit ? (dest) => setDestinations([...destinations, dest]) : undefined}
-            readOnly={!canEdit}
+            tripDays={tripDays}
+            selectedDestination={selectedDestination}
+            selectedDay={selectedDay}
+            onDestinationSelect={handleDestinationSelect}
+            onDestinationAdd={canEdit ? handleLocationSelect : () => {}}
+            isAddingDestination={false}
           />
         </div>
       </div>
