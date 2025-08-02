@@ -182,11 +182,20 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 - [x] Multi-day itinerary management
 - [x] Drag & drop destination reordering
 - [x] Cross-day destination moving
+- [x] **Freeform destinations (ungrouped)** - Add places without specific days/times
 - [x] Mobile responsive design
 - [x] Real-time data synchronization
 - [x] Trip sharing with public links
 - [x] Collaborative editing with permissions
 - [x] Activity tracking and conflict resolution
+
+### 🗂️ Flexible Trip Planning
+
+- **Freeform destinations** - Add places without specific days or times initially
+- **Ungrouped section** - Dedicated area for destinations not yet scheduled
+- **Easy scheduling** - Convert ungrouped destinations to timed ones with "Add time" button
+- **Mixed planning** - Combine detailed daily schedules with flexible location lists
+- **Smart defaults** - Default times and day placement when converting to scheduled destinations
 
 ### 🤝 Trip Sharing & Collaboration
 

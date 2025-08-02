@@ -34,8 +34,8 @@ export async function createDestination(destinationData: CreateDestinationData):
     if (typeof destinationData.lat !== 'number' || typeof destinationData.lng !== 'number') {
       throw new Error('Valid coordinates are required');
     }
-    if (!destinationData.day || destinationData.day < 1) {
-      throw new Error('Valid day number is required');
+    if (typeof destinationData.day !== 'number' || destinationData.day < 0) {
+      throw new Error('Valid day number is required (0 for ungrouped, 1+ for specific days)');
     }
     if (!destinationData.orderIndex || destinationData.orderIndex < 1) {
       throw new Error('Valid order index is required');

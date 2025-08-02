@@ -9,6 +9,7 @@ interface LocationSearchProps {
   tripId: string;
   placeholder?: string;
   className?: string;
+  allowUngrouped?: boolean; // New prop to enable ungrouped destinations
 }
 
 export default function LocationSearch({
@@ -16,13 +17,15 @@ export default function LocationSearch({
   selectedDay,
   tripId,
   placeholder = "Search for places...",
-  className = ""
+  className = "",
+  allowUngrouped = false
 }: LocationSearchProps) {
   const [searchValue, setSearchValue] = useState('');
   const [predictions, setPredictions] = useState<google.maps.places.AutocompletePrediction[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedIndex, setSelectedIndex] = useState(-1);
+  const [createAsUngrouped, setCreateAsUngrouped] = useState(false);
   
   const autocompleteService = useRef<google.maps.places.AutocompleteService | null>(null);
   const placesService = useRef<google.maps.places.PlacesService | null>(null);
@@ -191,6 +194,7 @@ export default function LocationSearch({
         
         if (status === google.maps.places.PlacesServiceStatus.OK && place) {
           // Create destination object
+          const destinationDay = createAsUngrouped ? 0 : selectedDay;
           const newDestination: Destination = {
             id: crypto.randomUUID(),
             tripId: tripId,
@@ -198,7 +202,7 @@ export default function LocationSearch({
             address: place.formatted_address || '',
             lat: place.geometry?.location?.lat() || 0,
             lng: place.geometry?.location?.lng() || 0,
-            day: selectedDay,
+            day: destinationDay,
             notes: '',
             orderIndex: 1, // Will be adjusted by parent component
             placeId: place.place_id,
@@ -286,6 +290,22 @@ export default function LocationSearch({
 
   return (
     <div className={`relative ${className}`}>
+      {/* Ungrouped toggle */}
+      {allowUngrouped && (
+        <div className="mb-2 flex items-center space-x-2">
+          <input
+            type="checkbox"
+            id="create-ungrouped"
+            checked={createAsUngrouped}
+            onChange={(e) => setCreateAsUngrouped(e.target.checked)}
+            className="h-4 w-4 text-primary-600 focus:ring-primary-500 border-gray-300 rounded"
+          />
+          <label htmlFor="create-ungrouped" className="text-sm text-gray-700">
+            Add as ungrouped destination (no specific day or time)
+          </label>
+        </div>
+      )}
+      
       <div className="relative">
         <input
           ref={inputRef}

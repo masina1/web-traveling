@@ -28,8 +28,9 @@ import {
 import {
   CSS,
 } from '@dnd-kit/utilities';
-import { reorderDestinations, moveDestinationToDay } from '@/lib/destination-service';
+import { reorderDestinations, moveDestinationToDay, updateDestination } from '@/lib/destination-service';
 import { PhotoIcon, Bars3Icon, ArrowUturnLeftIcon, ArrowUturnRightIcon } from '@heroicons/react/24/outline';
+import UngroupedDestinations from './UngroupedDestinations';
 
 interface ItineraryPanelProps {
   trip: Trip;
@@ -485,7 +486,7 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
       newExpanded.add(day);
     }
     setExpandedDays(newExpanded);
-    onDaySelect(day);
+    onDaySelect?.(day);
   };
 
   // 2. Add a checkbox to the left of each pin in both SortableDestination and SortableDestinationPicture
@@ -500,7 +501,7 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
   // Add logic for Copy to, Move to, and Delete actions
   const handleBulkCopyTo = (dayNum: number) => {
     const toCopy = allDestinations.filter(dest => selectedPinIds.includes(dest.id));
-    const maxOrder = Math.max(0, ...tripDays.find(d => d.day === dayNum)?.destinations.map(d => d.orderIndex) || []);
+    const maxOrder = Math.max(0, ...(tripDays?.find(d => d.day === dayNum)?.destinations.map(d => d.orderIndex) || []));
     const copied = toCopy.map((dest, i) => ({
       ...dest,
       id: `${dest.id}-copy-${Date.now()}-${i}`,
@@ -514,7 +515,7 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
   const handleBulkMoveTo = (dayNum: number) => {
     const toMove = allDestinations.filter(dest => selectedPinIds.includes(dest.id));
     const notMoved = allDestinations.filter(dest => !selectedPinIds.includes(dest.id));
-    const maxOrder = Math.max(0, ...tripDays.find(d => d.day === dayNum)?.destinations.map(d => d.orderIndex) || []);
+    const maxOrder = Math.max(0, ...(tripDays?.find(d => d.day === dayNum)?.destinations.map(d => d.orderIndex) || []));
     const moved = toMove.map((dest, i) => ({
       ...dest,
       day: dayNum,
@@ -533,6 +534,64 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
 
   // Get all destinations for sortable context (support both new and legacy interfaces)
   const allDestinations = destinations || (tripDays ? tripDays.flatMap(day => day.destinations) : []);
+  
+  // Separate ungrouped destinations (day = 0) from grouped ones
+  const ungroupedDestinations = allDestinations.filter(dest => dest.day === 0);
+  const groupedDestinations = allDestinations.filter(dest => dest.day > 0);
+
+  // Handler to convert ungrouped destination to timed destination
+  const handleAddTimeToDestination = async (destination: Destination) => {
+    // For now, move to day 1 and add basic times - in the future, show a modal to select day and times
+    const targetDay = 1;
+    const targetDayData = tripDays?.find(d => d.day === targetDay);
+    const newOrderIndex = (targetDayData?.destinations.length || 0) + 1;
+    
+    try {
+      // Update the destination with day, order, and default times
+      const updatedDestination = {
+        ...destination,
+        day: targetDay,
+        orderIndex: newOrderIndex,
+        startTime: '09:00', // Default start time
+        endTime: '10:00'    // Default end time
+      };
+
+      // Update in database
+      await updateDestination(destination.id, {
+        day: targetDay,
+        orderIndex: newOrderIndex,
+        startTime: '09:00',
+        endTime: '10:00'
+      });
+
+      // Update local state
+      const updatedDestinations = allDestinations.map(dest => 
+        dest.id === destination.id ? updatedDestination : dest
+      );
+      
+      handleDestinationsChange(updatedDestinations);
+    } catch (error) {
+      console.error('Error converting ungrouped destination:', error);
+    }
+  };
+
+  // Handler to reorder ungrouped destinations
+  const handleReorderUngroupedDestinations = async (newDestinations: Destination[]) => {
+    const updatedAllDestinations = allDestinations.map(dest => {
+      const updated = newDestinations.find(newDest => newDest.id === dest.id);
+      return updated || dest;
+    });
+    
+    handleDestinationsChange(updatedAllDestinations);
+    
+    // Update in database
+    try {
+      const destinationIds = newDestinations.map(dest => dest.id);
+      await reorderDestinations(trip.id, 0, destinationIds); // Use day 0 for ungrouped
+    } catch (error) {
+      console.error('Error reordering ungrouped destinations:', error);
+    }
+  };
 
   const handleDragStart = (event: any) => {
     setActiveId(event.active.id);
@@ -564,7 +623,7 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
       if (isDroppedOnDay) {
         // Cross-day drop - move to end of target day
         const targetDay = parseInt(over.id.toString().replace('day-', ''));
-        const targetDayData = tripDays.find(d => d.day === targetDay);
+        const targetDayData = tripDays?.find(d => d.day === targetDay);
         
         if (targetDayData && targetDay !== draggedDestination.day) {
           // Calculate proper sequential order index
@@ -600,7 +659,7 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
 
         if (sourceDay === targetDay) {
           // Same day reordering
-          const dayData = tripDays.find(d => d.day === sourceDay);
+          const dayData = tripDays?.find(d => d.day === sourceDay);
           if (!dayData) return;
 
           const oldIndex = dayData.destinations.findIndex(dest => dest.id === active.id);
@@ -632,7 +691,7 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
           await reorderDestinations(trip.id, sourceDay, destinationIds);
         } else {
           // Cross-day drop next to specific destination
-          const targetDayData = tripDays.find(d => d.day === targetDay);
+          const targetDayData = tripDays?.find(d => d.day === targetDay);
           if (!targetDayData) return;
 
           const targetIndex = targetDayData.destinations.findIndex(dest => dest.id === over.id);
@@ -770,7 +829,7 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
                 <button className="text-gray-700 text-base font-medium hover:underline hover:text-primary-600 transition" onClick={() => setBulkDropdown(bulkDropdown === 'copy' ? null : 'copy')}>Copy to</button>
                 {bulkDropdown === 'copy' && (
                   <div className="absolute left-0 mt-2 bg-white border border-gray-300 rounded shadow z-40 min-w-[120px]">
-                    {tripDays.map(day => (
+                    {tripDays?.map(day => (
                       <button key={day.day} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => handleBulkCopyTo(day.day)}>
                         Day {day.day}
                       </button>
@@ -782,7 +841,7 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
                 <button className="text-gray-700 text-base font-medium hover:underline hover:text-primary-600 transition" onClick={() => setBulkDropdown(bulkDropdown === 'move' ? null : 'move')}>Move to</button>
                 {bulkDropdown === 'move' && (
                   <div className="absolute left-0 mt-2 bg-white border border-gray-300 rounded shadow z-40 min-w-[120px]">
-                    {tripDays.map(day => (
+                    {tripDays?.map(day => (
                       <button key={day.day} className="block w-full text-left px-4 py-2 text-gray-700 hover:bg-gray-100" onClick={() => handleBulkMoveTo(day.day)}>
                         Day {day.day}
                       </button>
@@ -798,7 +857,44 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
       )}
       {/* Days and Destinations */}
       <div ref={scrollRef} className="flex-1 overflow-y-auto hide-native-scrollbar">
-        {tripDays.map((day) => (
+        {/* Quick Add Location - Always visible for ungrouped destinations */}
+        {!readOnly && (
+          <div className="border-b border-gray-200 p-4 bg-white">
+            <LocationSearch
+              onLocationSelect={(destination) => {
+                // Add as ungrouped destination
+                const ungroupedDestination = {
+                  ...destination,
+                  day: 0,
+                  orderIndex: ungroupedDestinations.length + 1,
+                };
+                onLocationSelect?.(ungroupedDestination);
+              }}
+              selectedDay={0}
+              tripId={trip.id}
+              placeholder="Add a place to your trip (will be ungrouped initially)..."
+              className="w-full"
+              allowUngrouped={true}
+            />
+          </div>
+        )}
+
+        {/* Ungrouped Destinations Section */}
+        {ungroupedDestinations.length > 0 && (
+          <UngroupedDestinations
+            destinations={ungroupedDestinations}
+            onDestinationSelect={onDestinationSelect}
+            onDestinationDelete={onDestinationDelete}
+            onAddTimeToDestination={handleAddTimeToDestination}
+            onReorderDestinations={handleReorderUngroupedDestinations}
+            selectedPinIds={selectedPinIds}
+            handleCheckboxChange={handleCheckboxChange}
+            viewMode={viewMode}
+            readOnly={readOnly}
+          />
+        )}
+
+        {tripDays?.map((day) => (
           <div key={day.day} className="border-b border-gray-100">
             {/* Day Header */}
             <button
@@ -870,9 +966,9 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
                             <SortableDestination
                               destination={destination}
                               dayColor={day.color}
-                              selectedDestination={selectedDestination}
-                              onDestinationSelect={onDestinationSelect}
-                              onDestinationDelete={onDestinationDelete}
+                              selectedDestination={selectedDestination || null}
+                              onDestinationSelect={onDestinationSelect || (() => {})}
+                              onDestinationDelete={onDestinationDelete || (() => {})}
                               isLastItem={idx === day.destinations.length - 1}
                               selectedPinIds={selectedPinIds}
                               handleCheckboxChange={handleCheckboxChange}
@@ -881,9 +977,9 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
                             <SortableDestinationPicture
                               destination={destination}
                               dayColor={day.color}
-                              selectedDestination={selectedDestination}
-                              onDestinationSelect={onDestinationSelect}
-                              onDestinationDelete={onDestinationDelete}
+                              selectedDestination={selectedDestination || null}
+                              onDestinationSelect={onDestinationSelect || (() => {})}
+                              onDestinationDelete={onDestinationDelete || (() => {})}
                               isLastItem={idx === day.destinations.length - 1}
                               selectedPinIds={selectedPinIds}
                               handleCheckboxChange={handleCheckboxChange}
@@ -911,8 +1007,8 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
                         day: day.day,
                         orderIndex: day.destinations.length + 1,
                       };
-                      onLocationSelect(updatedDestination);
-                      onDaySelect(day.day);
+                      onLocationSelect?.(updatedDestination);
+                      onDaySelect?.(day.day);
                     }}
                     selectedDay={day.day}
                     tripId={trip.id}
@@ -926,10 +1022,10 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
                 {/* Smart Recommendations for this day */}
                 <SmartRecommendations
                   trip={trip}
-                  tripDays={tripDays}
+                  tripDays={tripDays || []}
                   selectedDay={day.day}
-                  onDestinationAdd={onLocationSelect}
-                  existingDestinations={tripDays.flatMap(d => d.destinations)}
+                  onDestinationAdd={onLocationSelect || (() => {})}
+                  existingDestinations={tripDays?.flatMap(d => d.destinations) || []}
                 />
               </div>
             )}

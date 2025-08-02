@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **[MAJOR FEATURE]** Freeform destinations (ungrouped destinations) - Users can now add destinations without specifying specific days or times, displayed in a dedicated "Ungrouped" section at the top of the itinerary
+- **[FEATURE]** UngroupedDestinations component with full drag-and-drop, checkbox selection, and view mode support (picture/compact)
+- **[FEATURE]** "Add time" functionality to convert ungrouped destinations to timed destinations with default scheduling
+- **[FEATURE]** Enhanced LocationSearch with ungrouped destination toggle - users can choose to add destinations as ungrouped when searching
+- **[FEATURE]** Quick Add Location section at top of itinerary for easy ungrouped destination creation
+- **[IMPROVEMENT]** Updated destination validation to support day = 0 for ungrouped destinations in database
 - **[FEATURE]** Undo/Redo support for itinerary changes: permanent Undo and Redo buttons in the itinerary panel header, allowing users to revert or reapply changes to destinations (add, delete, move, copy, drag & drop). UI uses modern Heroicons and disables buttons when not available.
 
 ### Added (continued)

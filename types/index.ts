@@ -29,7 +29,7 @@ export type Destination = {
   address: string;
   lat: number;
   lng: number;
-  day: number;
+  day: number; // Use 0 for ungrouped/freeform destinations
   startTime?: string;
   endTime?: string;
   notes?: string;
