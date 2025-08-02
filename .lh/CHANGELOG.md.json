@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 8,
+            "activePatchIndex": 9,
             "patches": [
                 {
                     "date": 1752474186083,
@@ -40,6 +40,10 @@
                 {
                     "date": 1752594221252,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,8 +8,9 @@\n ## [Unreleased]\r\n \r\n ### Added\r\n \r\n+- **[FEATURE]** Undo/Redo support for itinerary changes: permanent Undo and Redo buttons in the itinerary panel header, allowing users to revert or reapply changes to destinations (add, delete, move, copy, drag & drop). UI uses modern Heroicons and disables buttons when not available.\r\n - **[FEATURE]** Added autocomplete for city/country search in trip creation form\r\n - **[FEATURE]** CityCountrySearch component with Google Places integration\r\n - **[IMPROVEMENT]** Enhanced trip creation UX with intelligent location suggestions\r\n - **[IMPROVEMENT]** Keyboard navigation support for location autocomplete (arrow keys, Enter, Escape)\r\n"
+                },
+                {
+                    "date": 1754142234369,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -9,8 +9,15 @@\n \r\n ### Added\r\n \r\n - **[FEATURE]** Undo/Redo support for itinerary changes: permanent Undo and Redo buttons in the itinerary panel header, allowing users to revert or reapply changes to destinations (add, delete, move, copy, drag & drop). UI uses modern Heroicons and disables buttons when not available.\r\n+\r\n+### Removed\r\n+\r\n+- **[DOCUMENTATION]** Removed offline mode from roadmap and documentation - feature deemed too complex with limited use case for travel planning apps\r\n+\r\n+### Added (continued)\r\n+\r\n - **[FEATURE]** Added autocomplete for city/country search in trip creation form\r\n - **[FEATURE]** CityCountrySearch component with Google Places integration\r\n - **[IMPROVEMENT]** Enhanced trip creation UX with intelligent location suggestions\r\n - **[IMPROVEMENT]** Keyboard navigation support for location autocomplete (arrow keys, Enter, Escape)\r\n@@ -33,15 +40,18 @@\n ### Planned\r\n \r\n - Trip sharing with public links\r\n - Photo upload and management\r\n-- Offline mode with service workers\r\n - Route optimization and directions\r\n - Weather integration\r\n - Expense tracking\r\n - Collaborative trip planning\r\n - Export to PDF/Calendar\r\n \r\n+### Removed Features\r\n+\r\n+- **Offline mode with service workers** - Removed due to complexity and limited use case for travel planning\r\n+\r\n ## [1.1.0] - 2025-07-14\r\n \r\n ### Added\r\n \r\n"
                 }
             ],
             "date": 1752474186083,

@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **[FEATURE]** Undo/Redo support for itinerary changes: permanent Undo and Redo buttons in the itinerary panel header, allowing users to revert or reapply changes to destinations (add, delete, move, copy, drag & drop). UI uses modern Heroicons and disables buttons when not available.
 
+### Added (continued)
+
+- **[MAJOR FEATURE]** Trip sharing with public links - Users can share trips with read-only or edit access
+- **[FEATURE]** ShareModal component with link generation, user invitations, and permission management
+- **[FEATURE]** Public trip view page (shared/[token]) with authentication requirements for edit access
+- **[FEATURE]** Collaborative editing with permission checks and conflict resolution using last-writer-wins strategy
+- **[FEATURE]** Trip activity logging - Track all changes with user attribution (add, edit, delete, move destinations)
+- **[FEATURE]** Enhanced destination service with auth-aware functions (createWithAuth, updateWithAuth, deleteWithAuth)
+- **[SECURITY]** Permission-based access control - Owner, edit, and view permissions with proper validation
+
 ### Removed
 
 - **[DOCUMENTATION]** Removed offline mode from roadmap and documentation - feature deemed too complex with limited use case for travel planning apps
@@ -39,12 +49,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 
-- Trip sharing with public links
 - Photo upload and management
 - Route optimization and directions
 - Weather integration
 - Expense tracking
-- Collaborative trip planning
 - Export to PDF/Calendar
 
 ### Removed Features

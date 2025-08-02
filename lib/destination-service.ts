@@ -10,9 +10,11 @@ import {
   where,
   orderBy,
   Timestamp,
+  runTransaction,
 } from 'firebase/firestore';
 import { db } from './firebase';
 import { Destination, CreateDestinationData, UpdateDestinationData } from '@/types';
+import { logTripActivity, getUserTripPermission } from './sharing-service';
 
 const DESTINATIONS_COLLECTION = 'destinations';
 
@@ -244,6 +246,209 @@ export async function deleteAllTripDestinations(tripId: string): Promise<void> {
     await Promise.all(deletePromises);
   } catch (error) {
     console.error('Error deleting all trip destinations:', error);
+    throw error;
+  }
+}
+
+// Collaborative editing functions with permission checks and conflict resolution
+
+// Create destination with permission check and activity logging
+export async function createDestinationWithAuth(
+  destinationData: CreateDestinationData,
+  userId: string,
+  userDisplayName?: string
+): Promise<string> {
+  try {
+    // Check user permission
+    const permission = await getUserTripPermission(destinationData.tripId, userId);
+    if (permission !== 'owner' && permission !== 'edit') {
+      throw new Error('Insufficient permissions to add destinations');
+    }
+
+    const destinationId = await createDestination(destinationData);
+    
+    // Log activity
+    await logTripActivity(
+      destinationData.tripId,
+      userId,
+      'added_destination',
+      `Added destination: ${destinationData.locationName}`,
+      userDisplayName
+    );
+
+    return destinationId;
+  } catch (error) {
+    console.error('Error creating destination with auth:', error);
+    throw error;
+  }
+}
+
+// Update destination with permission check and conflict resolution
+export async function updateDestinationWithAuth(
+  destinationId: string,
+  updates: UpdateDestinationData,
+  userId: string,
+  userDisplayName?: string
+): Promise<void> {
+  try {
+    return await runTransaction(db, async (transaction) => {
+      const destinationRef = doc(db, DESTINATIONS_COLLECTION, destinationId);
+      const destinationDoc = await transaction.get(destinationRef);
+      
+      if (!destinationDoc.exists()) {
+        throw new Error('Destination not found');
+      }
+
+      const destinationData = destinationDoc.data() as Destination;
+      
+      // Check user permission
+      const permission = await getUserTripPermission(destinationData.tripId, userId);
+      if (permission !== 'owner' && permission !== 'edit') {
+        throw new Error('Insufficient permissions to edit destinations');
+      }
+
+      // Check for conflicts (simple last-writer-wins for now)
+      if (updates.updatedAt && destinationData.updatedAt) {
+        const localUpdate = updates.updatedAt instanceof Date ? updates.updatedAt : updates.updatedAt.toDate();
+        const serverUpdate = destinationData.updatedAt instanceof Date ? destinationData.updatedAt : destinationData.updatedAt.toDate();
+        
+        if (localUpdate < serverUpdate) {
+          console.warn('Potential conflict detected, server version is newer');
+          // For now, we'll proceed with last-writer-wins
+          // In the future, we could implement more sophisticated conflict resolution
+        }
+      }
+
+      const updateData = {
+        ...updates,
+        updatedAt: Timestamp.now(),
+      };
+
+      transaction.update(destinationRef, updateData);
+
+      // Log activity (outside transaction)
+      setTimeout(() => {
+        logTripActivity(
+          destinationData.tripId,
+          userId,
+          'updated_destination',
+          `Updated destination: ${destinationData.locationName}`,
+          userDisplayName
+        );
+      }, 0);
+    });
+  } catch (error) {
+    console.error('Error updating destination with auth:', error);
+    throw error;
+  }
+}
+
+// Delete destination with permission check
+export async function deleteDestinationWithAuth(
+  destinationId: string,
+  userId: string,
+  userDisplayName?: string
+): Promise<void> {
+  try {
+    // Get destination first to check trip and log activity
+    const destinationRef = doc(db, DESTINATIONS_COLLECTION, destinationId);
+    const destinationDoc = await getDoc(destinationRef);
+    
+    if (!destinationDoc.exists()) {
+      throw new Error('Destination not found');
+    }
+
+    const destinationData = destinationDoc.data() as Destination;
+    
+    // Check user permission
+    const permission = await getUserTripPermission(destinationData.tripId, userId);
+    if (permission !== 'owner' && permission !== 'edit') {
+      throw new Error('Insufficient permissions to delete destinations');
+    }
+
+    await deleteDestination(destinationId);
+    
+    // Log activity
+    await logTripActivity(
+      destinationData.tripId,
+      userId,
+      'removed_destination',
+      `Removed destination: ${destinationData.locationName}`,
+      userDisplayName
+    );
+  } catch (error) {
+    console.error('Error deleting destination with auth:', error);
+    throw error;
+  }
+}
+
+// Reorder destinations with permission check
+export async function reorderDestinationsWithAuth(
+  destinations: Destination[],
+  userId: string,
+  userDisplayName?: string
+): Promise<void> {
+  try {
+    if (destinations.length === 0) return;
+    
+    // Check user permission for the trip
+    const permission = await getUserTripPermission(destinations[0].tripId, userId);
+    if (permission !== 'owner' && permission !== 'edit') {
+      throw new Error('Insufficient permissions to reorder destinations');
+    }
+
+    await reorderDestinations(destinations);
+    
+    // Log activity
+    await logTripActivity(
+      destinations[0].tripId,
+      userId,
+      'updated_destination',
+      `Reordered destinations`,
+      userDisplayName
+    );
+  } catch (error) {
+    console.error('Error reordering destinations with auth:', error);
+    throw error;
+  }
+}
+
+// Move destination to different day with permission check
+export async function moveDestinationToDayWithAuth(
+  destinationId: string,
+  newDay: number,
+  userId: string,
+  userDisplayName?: string
+): Promise<void> {
+  try {
+    // Get destination first to check trip and log activity
+    const destinationRef = doc(db, DESTINATIONS_COLLECTION, destinationId);
+    const destinationDoc = await getDoc(destinationRef);
+    
+    if (!destinationDoc.exists()) {
+      throw new Error('Destination not found');
+    }
+
+    const destinationData = destinationDoc.data() as Destination;
+    
+    // Check user permission
+    const permission = await getUserTripPermission(destinationData.tripId, userId);
+    if (permission !== 'owner' && permission !== 'edit') {
+      throw new Error('Insufficient permissions to move destinations');
+    }
+
+    await moveDestinationToDay(destinationId, newDay);
+    
+    // Log activity
+    await logTripActivity(
+      destinationData.tripId,
+      userId,
+      'moved_destination',
+      `Moved ${destinationData.locationName} to day ${newDay}`,
+      userDisplayName
+    );
+  } catch (error) {
+    console.error('Error moving destination with auth:', error);
     throw error;
   }
 } 

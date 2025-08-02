@@ -10,6 +10,16 @@ export type Trip = {
   coverImage?: string;
   createdAt: Date;
   updatedAt: Date;
+  // Sharing and collaboration
+  shareToken?: string; // Unique token for public links
+  shareSettings: {
+    isPublic: boolean;
+    allowPublicView: boolean;
+    allowPublicEdit: boolean;
+    sharedUsers: SharedUser[];
+  };
+  lastEditedBy?: string; // User ID of last editor
+  lastEditedAt?: Date;
 };
 
 export type Destination = {
@@ -42,6 +52,12 @@ export type CreateTripData = {
   userId: string;
   description?: string;
   coverImage?: string;
+  shareSettings?: {
+    isPublic: boolean;
+    allowPublicView: boolean;
+    allowPublicEdit: boolean;
+    sharedUsers: SharedUser[];
+  };
 };
 
 export type UpdateTripData = {
@@ -94,6 +110,33 @@ export type User = {
   email: string;
   displayName: string;
   sharedTrips: string[];
+};
+
+export type SharedUser = {
+  userId: string;
+  email: string;
+  displayName: string;
+  permission: 'view' | 'edit';
+  invitedAt: Date;
+  acceptedAt?: Date;
+};
+
+export type ShareLink = {
+  tripId: string;
+  token: string;
+  permission: 'view' | 'edit';
+  expiresAt?: Date;
+  createdAt: Date;
+};
+
+export type TripActivity = {
+  id: string;
+  tripId: string;
+  userId: string;
+  userDisplayName: string;
+  action: 'created' | 'updated' | 'added_destination' | 'removed_destination' | 'moved_destination' | 'shared' | 'unshared';
+  details: string;
+  timestamp: Date;
 };
 
 export type PlaceSuggestion = {

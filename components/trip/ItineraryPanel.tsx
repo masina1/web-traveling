@@ -33,14 +33,17 @@ import { PhotoIcon, Bars3Icon, ArrowUturnLeftIcon, ArrowUturnRightIcon } from '@
 
 interface ItineraryPanelProps {
   trip: Trip;
-  tripDays: TripDay[];
-  selectedDay: number;
-  selectedDestination: Destination | null;
-  onDaySelect: (day: number) => void;
-  onDestinationSelect: (destination: Destination) => void;
+  destinations: Destination[];
   onDestinationsChange: (destinations: Destination[]) => void;
-  onLocationSelect: (destination: Destination) => void;
-  onDestinationDelete: (destinationId: string) => void;
+  readOnly?: boolean;
+  // Legacy props for backward compatibility
+  tripDays?: TripDay[];
+  selectedDay?: number;
+  selectedDestination?: Destination | null;
+  onDaySelect?: (day: number) => void;
+  onDestinationSelect?: (destination: Destination) => void;
+  onLocationSelect?: (destination: Destination) => void;
+  onDestinationDelete?: (destinationId: string) => void;
 }
 
 // Droppable day container component
@@ -409,12 +412,15 @@ function PlusButtonWithMenu({ onAddPlace, onAddNote }: { onAddPlace: () => void;
 
 const ItineraryPanel = forwardRef(function ItineraryPanel({
   trip,
+  destinations,
+  onDestinationsChange,
+  readOnly = false,
+  // Legacy props for backward compatibility
   tripDays,
   selectedDay,
   selectedDestination,
   onDaySelect,
   onDestinationSelect,
-  onDestinationsChange,
   onLocationSelect,
   onDestinationDelete,
 }: ItineraryPanelProps, ref) {
@@ -525,8 +531,8 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
     setBulkDropdown(null);
   };
 
-  // Get all destinations for sortable context
-  const allDestinations = tripDays.flatMap(day => day.destinations);
+  // Get all destinations for sortable context (support both new and legacy interfaces)
+  const allDestinations = destinations || (tripDays ? tripDays.flatMap(day => day.destinations) : []);
 
   const handleDragStart = (event: any) => {
     setActiveId(event.active.id);

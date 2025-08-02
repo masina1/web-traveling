@@ -22,6 +22,12 @@ export async function createTrip(tripData: CreateTripData): Promise<string> {
   try {
     const tripWithTimestamps = {
       ...tripData,
+      shareSettings: tripData.shareSettings || {
+        isPublic: tripData.isPublic || false,
+        allowPublicView: tripData.isPublic || false,
+        allowPublicEdit: false,
+        sharedUsers: [],
+      },
       createdAt: Timestamp.now(),
       updatedAt: Timestamp.now(),
     };
