@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **[FEATURE]** Undo/Redo support for itinerary changes: permanent Undo and Redo buttons in the itinerary panel header, allowing users to revert or reapply changes to destinations (add, delete, move, copy, drag & drop). UI uses modern Heroicons and disables buttons when not available.
+
+### Removed
+
+- **[DOCUMENTATION]** Removed offline mode from roadmap and documentation - feature deemed too complex with limited use case for travel planning apps
+
+### Added (continued)
+
 - **[FEATURE]** Added autocomplete for city/country search in trip creation form
 - **[FEATURE]** CityCountrySearch component with Google Places integration
 - **[IMPROVEMENT]** Enhanced trip creation UX with intelligent location suggestions
@@ -34,12 +41,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Trip sharing with public links
 - Photo upload and management
-- Offline mode with service workers
 - Route optimization and directions
 - Weather integration
 - Expense tracking
 - Collaborative trip planning
 - Export to PDF/Calendar
+
+### Removed Features
+
+- **Offline mode with service workers** - Removed due to complexity and limited use case for travel planning
 
 ## [1.1.0] - 2025-07-14
 

@@ -131,10 +131,13 @@ Updated Feature Roadmap
 - Public trip view (read-only link)
 🔮 Future (v2.0 and beyond)
 - Export to PDF
-- Change history log: “Who moved/added what”
+- Change history log: "Who moved/added what"
 - Route optimization (walkable flow)
-- Offline support
 - Save favorite locations
+
+🚫 Removed Features
+Features that were considered but removed from the roadmap:
+- Offline support - Removed due to complexity and limited use case for travel planning
 User Flow Scenarios
 📌 6. User Starts a Trip Without Adding Any Destinations
 - Creates trip: “Trip to Kyoto” → selects country/city.

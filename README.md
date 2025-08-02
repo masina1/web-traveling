@@ -134,7 +134,6 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 
 - **Auto-save** changes to Firebase
 - **Instant sync** across multiple devices
-- **Offline support** with cached data
 - **Conflict resolution** for concurrent edits
 
 ### 🕹️ Undo/Redo for Itinerary Changes
@@ -190,12 +189,17 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 
 - [ ] Trip sharing with public links
 - [ ] Photo upload and management
-- [ ] Offline mode with service workers
 - [ ] Route optimization and directions
 - [ ] Weather integration
 - [ ] Expense tracking
 - [ ] Collaborative trip planning
 - [ ] Export to PDF/Calendar
+
+### 🚫 Removed Features
+
+Features that were considered but removed from the roadmap:
+
+- **Offline mode with service workers** - Removed due to complexity and limited use case for travel planning apps
 
 ## 🧪 Testing
 
