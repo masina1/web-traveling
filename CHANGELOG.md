@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **[FEATURE]** Popular places for empty days - When days have no destinations, the app now shows popular tourist attractions and places to visit in the trip's main location, helping users discover what to do
+- **[FEATURE]** Enhanced SmartRecommendations component with location-based popular places using Google Places API 
+- **[FEATURE]** Expanded curated recommendations for major cities (Tokyo, London, Paris, New York, Rome) with high-quality images and descriptions
+- **[IMPROVEMENT]** Dynamic recommendation headers - shows "Popular places in [Location]" for empty days vs "Recommended places" for contextual suggestions
+- **[IMPROVEMENT]** Intelligent recommendation logic - uses Google Geocoding API to find popular tourist attractions within 50km radius of trip location
 - **[MAJOR FEATURE]** Freeform destinations (ungrouped destinations) - Users can now add destinations without specifying specific days or times, displayed in a dedicated "Ungrouped" section at the top of the itinerary
 - **[FEATURE]** UngroupedDestinations component with full drag-and-drop, checkbox selection, and view mode support (picture/compact)
 - **[FEATURE]** "Add time" functionality to convert ungrouped destinations to timed destinations with default scheduling

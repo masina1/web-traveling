@@ -1025,7 +1025,7 @@ const ItineraryPanel = forwardRef(function ItineraryPanel({
                   tripDays={tripDays || []}
                   selectedDay={day.day}
                   onDestinationAdd={onLocationSelect || (() => {})}
-                  existingDestinations={tripDays?.flatMap(d => d.destinations) || []}
+                  existingDestinations={day.destinations}
                 />
               </div>
             )}

@@ -99,6 +99,66 @@ const CURATED_RECOMMENDATIONS = {
       photo: 'https://images.unsplash.com/photo-1515920892043-e8b3b7b13bee?w=400&h=300&fit=crop',
     },
   ],
+  paris: [
+    {
+      name: 'Eiffel Tower',
+      address: 'Champ de Mars, 5 Avenue Anatole France, Paris',
+      lat: 48.8584,
+      lng: 2.2945,
+      category: 'tourist_attraction',
+      description: 'Iconic iron lattice tower and symbol of Paris',
+      photo: 'https://images.unsplash.com/photo-1511739001486-6bfe10ce785f?w=400&h=300&fit=crop',
+    },
+    {
+      name: 'Louvre Museum',
+      address: 'Rue de Rivoli, Paris',
+      lat: 48.8606,
+      lng: 2.3376,
+      category: 'museum',
+      description: 'World\'s largest art museum and historic monument',
+      photo: 'https://images.unsplash.com/photo-1566139653951-ba56b00c32c3?w=400&h=300&fit=crop',
+    },
+  ],
+  'new york': [
+    {
+      name: 'Statue of Liberty',
+      address: 'Liberty Island, New York',
+      lat: 40.6892,
+      lng: -74.0445,
+      category: 'tourist_attraction',
+      description: 'Symbol of freedom and democracy',
+      photo: 'https://images.unsplash.com/photo-1485738422979-f5c462d49f74?w=400&h=300&fit=crop',
+    },
+    {
+      name: 'Central Park',
+      address: 'New York, NY',
+      lat: 40.7829,
+      lng: -73.9654,
+      category: 'park',
+      description: 'Large public park in Manhattan',
+      photo: 'https://images.unsplash.com/photo-1568515045052-f9a854d70bfd?w=400&h=300&fit=crop',
+    },
+  ],
+  rome: [
+    {
+      name: 'Colosseum',
+      address: 'Piazza del Colosseo, Rome',
+      lat: 41.8902,
+      lng: 12.4922,
+      category: 'tourist_attraction',
+      description: 'Ancient amphitheatre and iconic Roman landmark',
+      photo: 'https://images.unsplash.com/photo-1520986606214-8b456906c813?w=400&h=300&fit=crop',
+    },
+    {
+      name: 'Vatican City',
+      address: 'Vatican City',
+      lat: 41.9029,
+      lng: 12.4534,
+      category: 'tourist_attraction',
+      description: 'Independent city-state and spiritual center',
+      photo: 'https://images.unsplash.com/photo-1588175996685-a4ca49c83006?w=400&h=300&fit=crop',
+    },
+  ],
 };
 
 export default function SmartRecommendations({
@@ -157,8 +217,6 @@ export default function SmartRecommendations({
   }, [selectedDay, existingDestinations, trip]);
 
   const generateRecommendations = async () => {
-    if (!existingDestinations.length) return;
-    
     setIsLoading(true);
     setError(null);
     
@@ -169,9 +227,18 @@ export default function SmartRecommendations({
       const curatedRecs = getCuratedRecommendations();
       newRecommendations.push(...curatedRecs);
       
-      // Get Google Places recommendations near existing destinations
+      // Get Google Places recommendations
       if (placesService.current) {
-        const placesRecs = await getPlacesRecommendations();
+        let placesRecs: RecommendationItem[] = [];
+        
+        if (existingDestinations.length > 0) {
+          // Get recommendations near existing destinations
+          placesRecs = await getPlacesRecommendations();
+        } else {
+          // Get popular places in the trip's main location when no destinations exist
+          placesRecs = await getPopularPlacesInLocation();
+        }
+        
         newRecommendations.push(...placesRecs);
       }
       
@@ -286,6 +353,68 @@ export default function SmartRecommendations({
     });
   };
 
+  const getPopularPlacesInLocation = async (): Promise<RecommendationItem[]> => {
+    return new Promise((resolve) => {
+      if (!placesService.current) {
+        resolve([]);
+        return;
+      }
+
+      // Use trip location to search for popular places
+      const geocoder = new google.maps.Geocoder();
+      
+      geocoder.geocode({ address: trip.location }, (results, status) => {
+        if (status !== 'OK' || !results || results.length === 0) {
+          console.error('Geocoding failed for trip location:', trip.location);
+          resolve([]);
+          return;
+        }
+
+        const location = results[0].geometry.location;
+        const searchLocation = {
+          lat: location.lat(),
+          lng: location.lng()
+        };
+
+        // Search for popular tourist attractions in the area
+        const request: google.maps.places.PlaceSearchRequest = {
+          location: searchLocation,
+          radius: 50000, // 50km radius
+          type: 'tourist_attraction' as any,
+        };
+
+        placesService.current!.nearbySearch(request, (results, status) => {
+          if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+            const recommendations: RecommendationItem[] = results
+              .filter(place => place.rating && place.rating >= 4.0) // Only well-rated places
+              .slice(0, 8) // Limit to 8 popular places
+              .map((place) => ({
+                id: place.place_id || crypto.randomUUID(),
+                name: place.name || 'Unknown Place',
+                address: place.vicinity || place.formatted_address || '',
+                lat: place.geometry?.location?.lat() || 0,
+                lng: place.geometry?.location?.lng() || 0,
+                category: place.types?.[0] || 'tourist_attraction',
+                rating: place.rating,
+                priceLevel: place.price_level,
+                photos: place.photos?.slice(0, 3).map(photo => 
+                  photo.getUrl({ maxWidth: 400, maxHeight: 300 })
+                ) || [],
+                description: `Popular ${place.types?.[0]?.replace(/_/g, ' ') || 'attraction'} in ${trip.location}`,
+                source: 'places' as const,
+                placeId: place.place_id,
+              }));
+
+            resolve(recommendations);
+          } else {
+            console.error('Places search failed:', status);
+            resolve([]);
+          }
+        });
+      });
+    });
+  };
+
   const handleAddRecommendation = (rec: RecommendationItem) => {
     const selectedDayData = tripDays.find(d => d.day === selectedDay);
     
@@ -366,17 +495,7 @@ export default function SmartRecommendations({
     }
   }, [recommendations, selectedCategory, isExpanded]);
 
-  if (!existingDestinations.length) {
-    return (
-      <div className="p-4 text-center text-gray-500">
-        <svg className="w-12 h-12 mx-auto mb-3 text-gray-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-        </svg>
-        <p className="text-sm">Add destinations to see smart recommendations</p>
-      </div>
-    );
-  }
+
 
   if (isLoading) {
     return (
@@ -426,7 +545,12 @@ export default function SmartRecommendations({
           onClick={() => setIsExpanded(!isExpanded)}
           className="flex items-center w-full text-left hover:bg-gray-50 transition-colors rounded-md p-1 -m-1"
         >
-          <h3 className="text-sm font-medium text-gray-700">Recommended places</h3>
+          <h3 className="text-sm font-medium text-gray-700">
+            {existingDestinations.length === 0 
+              ? `Popular places in ${trip.location}` 
+              : 'Recommended places'
+            }
+          </h3>
           <svg 
             className={`w-4 h-4 text-gray-500 transition-transform duration-200 ml-2 ${isExpanded ? 'rotate-180' : ''}`}
             fill="none" 

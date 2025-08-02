@@ -183,6 +183,7 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 - [x] Drag & drop destination reordering
 - [x] Cross-day destination moving
 - [x] **Freeform destinations (ungrouped)** - Add places without specific days/times
+- [x] **Popular places for empty days** - Discover top attractions when planning
 - [x] Mobile responsive design
 - [x] Real-time data synchronization
 - [x] Trip sharing with public links
@@ -196,6 +197,14 @@ Open [http://localhost:3000](http://localhost:3000) to view the app.
 - **Easy scheduling** - Convert ungrouped destinations to timed ones with "Add time" button
 - **Mixed planning** - Combine detailed daily schedules with flexible location lists
 - **Smart defaults** - Default times and day placement when converting to scheduled destinations
+
+### 🎯 Smart Discovery
+
+- **Popular places on empty days** - Automatically shows top attractions when days have no destinations
+- **Location-aware suggestions** - Uses trip location to find relevant tourist attractions and landmarks
+- **Curated recommendations** - Hand-picked suggestions for major cities (Tokyo, London, Paris, New York, Rome)
+- **Google Places integration** - Real-time popular places with ratings, photos, and details
+- **Contextual recommendations** - Different suggestions based on existing destinations vs empty planning
 
 ### 🤝 Trip Sharing & Collaboration
 
