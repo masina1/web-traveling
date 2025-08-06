@@ -3,7 +3,7 @@
     "activeCommit": 0,
     "commits": [
         {
-            "activePatchIndex": 13,
+            "activePatchIndex": 14,
             "patches": [
                 {
                     "date": 1752474186083,
@@ -60,6 +60,10 @@
                 {
                     "date": 1754150142022,
                     "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,8 +8,14 @@\n ## [Unreleased]\r\n \r\n ### Added\r\n \r\n+- **[MAJOR FEATURE]** Freeform destinations (ungrouped destinations) - Users can now add destinations without specifying specific days or times, displayed in a dedicated \"Ungrouped\" section at the top of the itinerary\r\n+- **[FEATURE]** UngroupedDestinations component with full drag-and-drop, checkbox selection, and view mode support (picture/compact)\r\n+- **[FEATURE]** \"Add time\" functionality to convert ungrouped destinations to timed destinations with default scheduling\r\n+- **[FEATURE]** Enhanced LocationSearch with ungrouped destination toggle - users can choose to add destinations as ungrouped when searching\r\n+- **[FEATURE]** Quick Add Location section at top of itinerary for easy ungrouped destination creation\r\n+- **[IMPROVEMENT]** Updated destination validation to support day = 0 for ungrouped destinations in database\r\n - **[FEATURE]** Undo/Redo support for itinerary changes: permanent Undo and Redo buttons in the itinerary panel header, allowing users to revert or reapply changes to destinations (add, delete, move, copy, drag & drop). UI uses modern Heroicons and disables buttons when not available.\r\n \r\n ### Added (continued)\r\n \r\n"
+                },
+                {
+                    "date": 1754150454445,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,8 +8,13 @@\n ## [Unreleased]\r\n \r\n ### Added\r\n \r\n+- **[FEATURE]** Popular places for empty days - When days have no destinations, the app now shows popular tourist attractions and places to visit in the trip's main location, helping users discover what to do\r\n+- **[FEATURE]** Enhanced SmartRecommendations component with location-based popular places using Google Places API\r\n+- **[FEATURE]** Expanded curated recommendations for major cities (Tokyo, London, Paris, New York, Rome) with high-quality images and descriptions\r\n+- **[IMPROVEMENT]** Dynamic recommendation headers - shows \"Popular places in [Location]\" for empty days vs \"Recommended places\" for contextual suggestions\r\n+- **[IMPROVEMENT]** Intelligent recommendation logic - uses Google Geocoding API to find popular tourist attractions within 50km radius of trip location\r\n - **[MAJOR FEATURE]** Freeform destinations (ungrouped destinations) - Users can now add destinations without specifying specific days or times, displayed in a dedicated \"Ungrouped\" section at the top of the itinerary\r\n - **[FEATURE]** UngroupedDestinations component with full drag-and-drop, checkbox selection, and view mode support (picture/compact)\r\n - **[FEATURE]** \"Add time\" functionality to convert ungrouped destinations to timed destinations with default scheduling\r\n - **[FEATURE]** Enhanced LocationSearch with ungrouped destination toggle - users can choose to add destinations as ungrouped when searching\r\n"
                 }
             ],
             "date": 1752474186083,

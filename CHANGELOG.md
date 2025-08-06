@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - **[FEATURE]** Popular places for empty days - When days have no destinations, the app now shows popular tourist attractions and places to visit in the trip's main location, helping users discover what to do
-- **[FEATURE]** Enhanced SmartRecommendations component with location-based popular places using Google Places API 
+- **[FEATURE]** Enhanced SmartRecommendations component with location-based popular places using Google Places API
 - **[FEATURE]** Expanded curated recommendations for major cities (Tokyo, London, Paris, New York, Rome) with high-quality images and descriptions
 - **[IMPROVEMENT]** Dynamic recommendation headers - shows "Popular places in [Location]" for empty days vs "Recommended places" for contextual suggestions
 - **[IMPROVEMENT]** Intelligent recommendation logic - uses Google Geocoding API to find popular tourist attractions within 50km radius of trip location
