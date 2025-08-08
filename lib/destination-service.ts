@@ -397,7 +397,11 @@ export async function reorderDestinationsWithAuth(
       throw new Error('Insufficient permissions to reorder destinations');
     }
 
-    await reorderDestinations(destinations);
+    await reorderDestinations(
+      destinations[0].tripId,
+      destinations[0].day,
+      destinations.map(d => d.id)
+    );
     
     // Log activity
     await logTripActivity(
@@ -437,7 +441,8 @@ export async function moveDestinationToDayWithAuth(
       throw new Error('Insufficient permissions to move destinations');
     }
 
-    await moveDestinationToDay(destinationId, newDay);
+    const newOrderIndex = await getNextOrderIndex(destinationData.tripId, newDay);
+    await moveDestinationToDay(destinationId, newDay, newOrderIndex);
     
     // Log activity
     await logTripActivity(
